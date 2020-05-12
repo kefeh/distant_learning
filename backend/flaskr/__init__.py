@@ -49,11 +49,13 @@ def create_app(test_config=None):
     @app.route('/educations', methods=['POST'])
     def add_education():
         data = request.json
+        print(data)
         if ((data.get('name', '') == '') or (data.get('system_id', '') == '')):
             abort(422)
         try:
             education = Education(name=data.get(
-                'name'), system_id=data.get('system_id'))
+                'name'))
+            education.system_id = data.get('system_id')
             education.insert()
         except Exception:
             abort(422)
@@ -72,7 +74,8 @@ def create_app(test_config=None):
             abort(422)
         try:
             category = Category(name=data.get(
-                'name'), education_id=data.get('education_id'))
+                'name'))
+            category.education_id=data.get('education_id')
             category.insert()
         except Exception:
             abort(422)
@@ -87,18 +90,14 @@ def create_app(test_config=None):
     def add_sub_category():
         data = request.json
         category_id = data.get('category_id', None)
-        sub_category_id = data.get('sub_category_id', None)
 
-        if ((data.get('name', '') == '')):
+        if ((data.get('name', '') == '') or (data.get('category_id', '') == '')):
             abort(422)
         try:
-            if any((category_id, sub_category_id)) and not(
-                    category_id and sub_category_id):
-                sub_category = SubCategory(name=data.get(
-                    'name'), education_id=data.get('education_id'))
-                sub_category.insert()
-            else:
-                abort(422)
+            sub_category = SubCategory(name=data.get(
+                'name'))
+            sub_category.category_id=data.get('category_id')
+            sub_category.insert()
         except Exception:
             abort(422)
 
@@ -120,7 +119,8 @@ def create_app(test_config=None):
             if any((category_id, sub_category_id)) and not(
                     category_id and sub_category_id):
                 classes = Classes(name=data.get(
-                    'name'), education_id=data.get('education_id'))
+                    'name'))
+                classes.sub_category_id=data.get('sub_category_id')
                 classes.insert()
             else:
                 abort(422)
@@ -141,7 +141,8 @@ def create_app(test_config=None):
             abort(422)
         try:
             subject = Subject(name=data.get(
-                'name'), education_id=data.get('class_id'))
+                'name'))
+            subject.class_id=data.get('class_id')
             subject.insert()
         except Exception:
             abort(422)
@@ -151,6 +152,7 @@ def create_app(test_config=None):
 
     @app.route('/video', methods=['POST'])
     def add_video():
+        from datetime import datetime
         data = request.form
         data = data.to_dict(flat=False)
         print(request.files)
@@ -171,9 +173,10 @@ def create_app(test_config=None):
             link, title = resp
             print(link)
         try:
+            date = datetime.strptime(data.get('date')[0], '%Y-%m-%d')
             up_video = Video(name=data.get(
-                'name'), link=link, description=description, date=data.get(
-                    'date'), subject_id=data.get('subject_id'))
+                'name')[0], link=link[0], description=description[0], date=date)
+            up_video.subject_id=data.get('subject_id')[0]
             up_video.insert()
         except Exception:
             abort(422)
@@ -195,6 +198,25 @@ def create_app(test_config=None):
             return jsonify({'url': link, 'message':'success'})
         abort(422)
 
+
+    @app.route('/systems', methods=['GET'])
+    def get_systems():
+        systems = System.query.all()
+        from pprint import pprint
+        result = []
+        for system in systems:
+            edu = []
+            for ed in system.education_list:
+                s_ed = ed.format()
+                s = s_ed.pop('category_list')
+                edu.append(s_ed)
+            result.append({
+                'name': system.name,
+                'id': system.id,
+                'education_list': edu
+            })
+
+        return jsonify({'data':result, 'message': 'success'})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()

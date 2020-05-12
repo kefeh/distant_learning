@@ -54,7 +54,7 @@ class System(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'education_list': self.education_list
+            # 'education_list': self.education_list
         }
 
 
@@ -72,6 +72,7 @@ class Education(db.Model):
     system_id = Column(Integer, ForeignKey('systems.id', ondelete='cascade'))
 
     category_list = relationship('Category', backref='education')
+    classes = relationship('Classes', backref='education')
 
     def __init__(self, name):
         self.name = name
@@ -91,7 +92,7 @@ class Education(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'category_list': self.category_list
+            # 'category_list': self.category_list
         }
 
 
@@ -129,7 +130,8 @@ class Category(db.Model):
     def format(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            # 'sub_categories': self.sub_categories
         }
 
 
@@ -145,12 +147,12 @@ class SubCategory(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 # It can either be a parent of a sub_category or a class
-    sub_categories = relationship('SubCategories', backref='categories')
-    classes = relationship('Classes', backref='categories')
+    # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
+    classes = relationship('Classes', backref='sub_categories')
 
 # the subcategory can be a child of a category or of a sub_category
     category_id = Column(Integer, ForeignKey('categories.id', ondelete='cascade'), nullable=True)
-    sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
+    # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
 
     def __init__(self, name):
         self.name = name
@@ -169,7 +171,8 @@ class SubCategory(db.Model):
     def format(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            # 'classes': self.classes
         }
 
 
@@ -189,6 +192,7 @@ class Classes(db.Model):
 
     sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
     category_id = Column(Integer, ForeignKey('categories.id', ondelete='cascade'), nullable=True)
+    education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'))
 
     def __init__(self, name):
         self.name = name
@@ -207,7 +211,8 @@ class Classes(db.Model):
     def format(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            # 'subjects': self.subjects
         }
 
 
@@ -244,7 +249,8 @@ class Subject(db.Model):
     def format(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            # 'videos': self.videos
         }
 
 

@@ -61,7 +61,7 @@ def upload_video(file_name, title, description):
     try:
         file_name = convert_to_path(file_name, title)
         request = youtube.videos().insert(
-            part="snippet,status,player",
+            part="snippet,player,status",
             body={
                 "snippet": {
                     "categoryId": "22",
@@ -70,11 +70,14 @@ def upload_video(file_name, title, description):
                 },
                 "status": {
                     "privacyStatus": "private"
-                }
+                },
+                "player": {},
             },
-            media_body=MediaFileUpload(file_name)
+            media_body=MediaFileUpload(file_name),
         )
         response = request.execute()
+        from pprint import pprint
+        pprint(response)
 
         # the response has a player key which looks like
         # 'player': {'embedHtml': '<iframe width="480" height="270" '
@@ -84,8 +87,10 @@ def upload_video(file_name, title, description):
         # 'picture-in-picture" '
         # 'allowfullscreen></iframe>'},
 
-        embedHTML = response.get('player').get('embedHtml')
-        link = embedHTML.split("'src=", 1)[1].split("'", 1)[0].strip('"')
+        # embedHTML = response.get('player').get('embedHtml')
+        base = '//www.youtube.com/embed/'
+        vid_id = response.get('id')
+        link = f"{base}{vid_id}"
     except Exception as exp:
         print(exp)
         return None
