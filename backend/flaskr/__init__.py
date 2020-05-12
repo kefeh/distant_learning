@@ -5,7 +5,8 @@ from sqlalchemy import func
 from flask_cors import CORS
 import random
 
-from models import setup_db, Question, Category, db
+from models import setup_db, System, Category, Education, SubCategory, Classes, Subject, Video
+from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
 
@@ -25,133 +26,302 @@ def create_app(test_config=None):
                              'GET, PUT, POST, PATCH, DELETE, OPTIONS')
         return response
 
-    @app.route('/categories', methods=['GET'])
-    def get_categories():
-        categories = Category.query.all()
-        result = {}
-        for category in categories:
-            result[category.id] = category.type
+# Add endpoints
 
-        return jsonify({'categories': result})
+# add system
+    @app.route('/systems', methods=['POST'])
+    def add_system():
+        data = request.json
+        if ((data.get('name') == '')):
+            abort(422)
+        try:
+            system = System(name=data.get('name'))
+            system.insert()
+        except Exception:
+            abort(422)
 
-    def question_get_return(page, category_id=None, search_term=None):
-        """
-        Generic question search and formatter, that always return the
-        first page of the results if no page number is specified
-        """
-        num_quest = 10
-        if category_id:
-            # here we are handling the case where we need questions
-            # on a particular category
-            questions = Question.query.filter(
-                Question.category == category_id).paginate(
-                max_per_page=num_quest, page=page)
-            category = Category.query.get(category_id)
-            if not category:
-                abort(404)
-            category_type = category.type
-        elif search_term:
-            # Here we are handling the search for a question not
-            # case sensitive search if the term is a substring of the question
-            questions = Question.query.filter(
-                func.lower(Question.question).contains(
-                    search_term.lower())).paginate(
-                max_per_page=num_quest, page=page)
-            category_type = ' '
-        else:
-            questions = Question.query.paginate(
-                max_per_page=num_quest, page=page)
-            category_type = ' '
+        return jsonify({'message': 'success', 'id': system.id})
 
-        questions = [dict(question.format()) for question in questions.items]
-        categories = Category.query.all()
-        category_result = {}
-        for category in categories:
-            category_result[category.id] = category.type
 
-        result = {
-            "questions": questions,
-            "total_questions": len(questions),
-            "current_category": category_type,
-            'categories': category_result
-        }
+# Add Education level
 
-        return result
 
-    @app.route('/questions', methods=['GET'])
-    def get_questions():
-        page = request.args.get('page', 1, type=int)
+    @app.route('/educations', methods=['POST'])
+    def add_education():
+        data = request.json
+        if ((data.get('name', '') == '') or (data.get('system_id', '') == '')):
+            abort(422)
+        try:
+            education = Education(name=data.get(
+                'name'), system_id=data.get('system_id'))
+            education.insert()
+        except Exception:
+            abort(422)
 
-        result = question_get_return(page)
+        return jsonify({'message': 'success', 'id': education.id})
 
-        if len(result) == 0:
+
+# Add Category level
+
+
+    @app.route('/categories', methods=['POST'])
+    def add_category():
+        data = request.json
+        if ((data.get('name', '') == '') or (
+                data.get('education_id', '') == '')):
+            abort(422)
+        try:
+            category = Category(name=data.get(
+                'name'), education_id=data.get('education_id'))
+            category.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': category.id})
+
+
+# Add Sub Category level
+
+
+    @app.route('/sub_categories', methods=['POST'])
+    def add_sub_category():
+        data = request.json
+        category_id = data.get('category_id', None)
+        sub_category_id = data.get('sub_category_id', None)
+
+        if ((data.get('name', '') == '')):
+            abort(422)
+        try:
+            if any((category_id, sub_category_id)) and not(
+                    category_id and sub_category_id):
+                sub_category = SubCategory(name=data.get(
+                    'name'), education_id=data.get('education_id'))
+                sub_category.insert()
+            else:
+                abort(422)
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': sub_category.id})
+
+
+# Add Class level
+
+
+    @app.route('/class', methods=['POST'])
+    def add_class():
+        data = request.json
+        category_id = data.get('category_id', None)
+        sub_category_id = data.get('sub_category_id', None)
+
+        if ((data.get('name', '') == '')):
+            abort(422)
+        try:
+            if any((category_id, sub_category_id)) and not(
+                    category_id and sub_category_id):
+                classes = Classes(name=data.get(
+                    'name'), education_id=data.get('education_id'))
+                classes.insert()
+            else:
+                abort(422)
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': classes.id})
+
+
+# Add Category level
+
+
+    @app.route('/subject', methods=['POST'])
+    def add_subject():
+        data = request.json
+        if ((data.get('name', '') == '') or (
+                data.get('class_id', '') == '')):
+            abort(422)
+        try:
+            subject = Subject(name=data.get(
+                'name'), education_id=data.get('class_id'))
+            subject.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': subject.id})
+
+
+    @app.route('/video', methods=['POST'])
+    def add_video():
+        data = request.form
+        data = data.to_dict(flat=False)
+        print(request.files)
+        if ('file' not in request.files) and (data.get('link', '') == ''):
             abort(400)
-
-        return jsonify(result)
-
-    @app.route('/questions/<int:question_id>', methods=['DELETE'])
-    def delete_question(question_id):
-        question = Question.query.get(question_id)
-        if not question:
-            abort(404)
-        try:
-            question.delete()
-        except Exception:
-            abort(500)
-        return jsonify({'message': "Delete Successful"})
-
-    @app.route('/questions', methods=['POST'])
-    def add_question():
-        data = request.json
-        if ((data.get('question') == '') or (data.get('answer') == '') or
-                (data.get('category') == '') or
-                (data.get('difficulty') == '')):
+        link = data.get('link', '')
+        if ((data.get('description', '') == '') or (
+                data.get('date', '') == '')):
             abort(422)
+        description = data.get('description', '')
+        date = data.get('date', '')
+        if 'file' in request.files:
+            video = request.files['file']
+            if video.filename == '':
+                abort(400)
+            file_name = video.filename
+            resp = upload_video(video, file_name, description)
+            link, title = resp
+            print(link)
         try:
-            question = Question(
-                question=data.get('question', ''), answer=data.get(
-                    'answer'), category=data.get(
-                        'category'), difficulty=data.get('difficulty'))
-            question.insert()
+            up_video = Video(name=data.get(
+                'name'), link=link, description=description, date=data.get(
+                    'date'), subject_id=data.get('subject_id'))
+            up_video.insert()
         except Exception:
             abort(422)
 
-        return jsonify({'message': 'success'})
+        return jsonify({'message': 'success', 'id': up_video.id})
 
-    @app.route('/questions/search', methods=['POST'])
-    def search_question():
-        search_term = request.json.get('searchTerm', '')
-        result = question_get_return(1, search_term=search_term)
-        if not result.get('questions'):
-            abort(404)
+    def add_upload_video():
+        if ('file' not in request.files):
+            print('no file')
+            abort(400)
+        video = request.files['file']
+        if video.filename == '':
+            print('no file name')
+            abort(400)
+        file_name = video.filename
+        resp = upload_video(video, file_name, description)
+        link, title = resp
+        if link:
+            return jsonify({'url': link, 'message':'success'})
+        abort(422)
 
-        return jsonify(result)
+    # @app.route('/system', methods=['GET'])
+    # def get_categories():
+    #     categories = Category.query.all()
+    #     result = {}
+    #     for category in categories:
+    #         result[category.id] = category.type
 
-    @app.route("/categories/<int:category_id>/questions", methods=['GET'])
-    def get_question_per_category(category_id):
-        result = question_get_return(1, category_id=category_id)
-        if not result:
-            abort(404)
+    #     return jsonify({'categories': result})
 
-        return jsonify(result)
+    # def question_get_return(page, category_id=None, search_term=None):
+    #     """
+    #     Generic question search and formatter, that always return the
+    #     first page of the results if no page number is specified
+    #     """
+    #     num_quest = 10
+    #     if category_id:
+    #         # here we are handling the case where we need questions
+    #         # on a particular category
+    #         questions = Question.query.filter(
+    #             Question.category == category_id).paginate(
+    #             max_per_page=num_quest, page=page)
+    #         category = Category.query.get(category_id)
+    #         if not category:
+    #             abort(404)
+    #         category_type = category.type
+    #     elif search_term:
+    #         # Here we are handling the search for a question not
+    #         # case sensitive search if the term is a substring of the question
+    #         questions = Question.query.filter(
+    #             func.lower(Question.question).contains(
+    #                 search_term.lower())).paginate(
+    #             max_per_page=num_quest, page=page)
+    #         category_type = ' '
+    #     else:
+    #         questions = Question.query.paginate(
+    #             max_per_page=num_quest, page=page)
+    #         category_type = ' '
 
-    @app.route('/quizzes', methods=['POST'])
-    def quizes():
-        data = request.json
-        previous_questions_list = data.get('previous_questions')
-        quiz_category = data.get('quiz_category')
+    #     questions = [dict(question.format()) for question in questions.items]
+    #     categories = Category.query.all()
+    #     category_result = {}
+    #     for category in categories:
+    #         category_result[category.id] = category.type
 
-        if not quiz_category:
-            abort(422)
+    #     result = {
+    #         "questions": questions,
+    #         "total_questions": len(questions),
+    #         "current_category": category_type,
+    #         'categories': category_result
+    #     }
 
-        question = Question.query.filter(
-            Question.category == quiz_category.get('id')).filter(
-            Question.id.notin_(previous_questions_list)).order_by(
-            func.random()).limit(1).all()
+    #     return result
 
-        if question:
-            question = dict(question[0].format())
-        return jsonify({'question': question})
+    # @app.route('/questions', methods=['GET'])
+    # def get_questions():
+    #     page = request.args.get('page', 1, type=int)
+
+    #     result = question_get_return(page)
+
+    #     if len(result) == 0:
+    #         abort(400)
+
+    #     return jsonify(result)
+
+    # @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    # def delete_question(question_id):
+    #     question = Question.query.get(question_id)
+    #     if not question:
+    #         abort(404)
+    #     try:
+    #         question.delete()
+    #     except Exception:
+    #         abort(500)
+    #     return jsonify({'message': "Delete Successful"})
+
+    # @app.route('/questions', methods=['POST'])
+    # def add_question():
+    #     data = request.json
+    #     if ((data.get('question') == '') or (data.get('answer') == '') or
+    #             (data.get('category') == '') or
+    #             (data.get('difficulty') == '')):
+    #         abort(422)
+    #     try:
+    #         question = Question(
+    #             question=data.get('question', ''), answer=data.get(
+    #                 'answer'), category=data.get(
+    #                     'category'), difficulty=data.get('difficulty'))
+    #         question.insert()
+    #     except Exception:
+    #         abort(422)
+
+    #     return jsonify({'message': 'success'})
+
+    # @app.route('/questions/search', methods=['POST'])
+    # def search_question():
+    #     search_term = request.json.get('searchTerm', '')
+    #     result = question_get_return(1, search_term=search_term)
+    #     if not result.get('questions'):
+    #         abort(404)
+
+    #     return jsonify(result)
+
+    # @app.route("/categories/<int:category_id>/questions", methods=['GET'])
+    # def get_question_per_category(category_id):
+    #     result = question_get_return(1, category_id=category_id)
+    #     if not result:
+    #         abort(404)
+
+    #     return jsonify(result)
+
+    # @app.route('/quizzes', methods=['POST'])
+    # def quizes():
+    #     data = request.json
+    #     previous_questions_list = data.get('previous_questions')
+    #     quiz_category = data.get('quiz_category')
+
+    #     if not quiz_category:
+    #         abort(422)
+
+    #     question = Question.query.filter(
+    #         Question.category == quiz_category.get('id')).filter(
+    #         Question.id.notin_(previous_questions_list)).order_by(
+    #         func.random()).limit(1).all()
+
+    #     if question:
+    #         question = dict(question[0].format())
+    #     return jsonify({'question': question})
 
     @app.errorhandler(404)
     def not_found(error):
