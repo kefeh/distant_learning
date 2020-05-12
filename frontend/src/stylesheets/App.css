@@ -1,0 +1,76 @@
+body {
+  min-height: 100%;
+  color: #191919;
+  background-color: #f5f5f5;
+  letter-spacing: .1px;
+  /* font: 400 14px/1.6 "PT Serif", Verdana, sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url("http://www.minesec.gov.cm/wp-content/uploads/2017/11/Background-PC-2-MINESEC.jpg");
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.App-header {
+  background-color: #468908;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  padding-right: 5rem;
+}
+
+.App {
+  width: 60%;
+  margin: 0 auto;
+  margin-top: 2rem;
+  background-color: #fff;
+}
+
+.App-header > h1 {
+  color: dodgerblue;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 2em;
+}
+
+li {
+  text-align: center;
+  margin: 5px 0px;
+}
+
+ul {
+  list-style-type: none;
+  padding-inline-start: 0px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: auto;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  h2{
+      font-size: 0.5rem;
+  }
+  .App-header{
+    padding: 0.8rem;
+    padding-right: 2rem;
+  }
+  .App {
+    width: 100%;
+  }
+}

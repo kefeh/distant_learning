@@ -1,0 +1,63 @@
+.national-colors {
+    padding: 1em;
+    background-color: #E84641;
+    display: block;
+    position: relative;
+}
+
+.national-colors::before {
+    content: '';
+    background: #468908;
+    width: 8rem;
+    padding: 1em;
+    position: absolute;
+    left: 0em;
+    top: 0;
+}
+
+.national-colors::after {
+    content: '06 Sept 2020';
+    font-size: 0.6rem;
+    font-weight: bold;
+    text-align: center;
+    background: #ECDF00;
+    width: 5rem;
+    padding: 0.62rem 1rem;
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 0;
+    clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.logo {
+    padding: 2rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.logo__ministry,
+.logo__republic {
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 20%;
+    color: #353535;
+}
+
+@media only screen and (max-width: 900px) {
+    /* For mobile phones: */
+    .logo__republic{
+        display: none;
+    }
+    .logo__ministry{
+        flex: 1;
+        left: 0;
+        font-size: 1.3rem;
+        text-align: center;
+    }
+    .logo{
+        justify-content: space-around;
+    }
+  }
