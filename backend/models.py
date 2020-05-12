@@ -1,10 +1,10 @@
 import os
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer, create_engine, ForeignKey, DateTime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 import json
 
-database_name = "trivia"
+database_name = "distantLearn"
 database_path = "postgres:///{}".format(database_name)
 
 db = SQLAlchemy()
@@ -34,7 +34,6 @@ class System(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
     education_list = relationship("Education", backref="system")
 
     def __init__(self, name):
@@ -70,7 +69,6 @@ class Education(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
     system_id = Column(Integer, ForeignKey('systems.id', ondelete='cascade'))
 
     category_list = relationship('Category', backref='education')
@@ -109,7 +107,6 @@ class Category(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
     education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'))
 
     sub_categories = relationship('SubCategory', backref='categories')
@@ -147,7 +144,6 @@ class SubCategory(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
 # It can either be a parent of a sub_category or a class
     sub_categories = relationship('SubCategories', backref='categories')
     classes = relationship('Classes', backref='categories')
@@ -188,7 +184,6 @@ class Classes(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
 
     sujects = relationship('Subject', backref='classes')
 
@@ -227,7 +222,6 @@ class Subject(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    answer = Column(String)
 
     videos = relationship('Video', backref='subject')
 
