@@ -199,6 +199,163 @@ def create_app(test_config=None):
         abort(422)
 
 
+    @app.route('/educations', methods=['GET'])
+    def get_education():
+        system_id = request.args.get('system_id')
+        if system_id:
+            educations = Education.query.filter(Education.system_id == system_id)
+        else:
+            educations = Education.query.all()
+        result = []
+        # print(educations)
+        if not educations:
+            abort(400)
+        for education in educations:
+            sm_edu = education.format()
+            category_lists = sm_edu.get('category_list')
+            result.append(sm_edu)
+            classes = sm_edu.get('classes', [])
+            cat_list = []
+            for category in category_lists:
+                category = category.format()
+                t = category.pop('sub_categories')
+                cat_list.append(category)
+                c_list = []
+                for a_class in category.get('classes'):
+                    a_class = a_class.format()
+                    a_class.pop('subjects')
+                    c_list.append(a_class)
+                category['classes'] = c_list
+            class_list = []
+            for s_class in classes:
+                s_class = s_class.format()
+                s_class.pop('subjects')
+                class_list.append(s_class)
+            sm_edu['category_list'] = cat_list
+            sm_edu['classes'] = cat_list
+        from pprint import pprint
+        pprint(educations)
+        
+        return jsonify({'data': result, 'message': 'success'})
+    
+    
+    @app.route('/categories', methods=['GET'])
+    def get_categories():
+        education_id = request.args.get('education_id')
+        if education_id:
+            categories = Category.query.filter(Category.education_id == education_id)
+        else:
+            categories = Category.query.all()
+        result = []
+        if not categories:
+            abort(400)
+        for category in categories:
+            category = category.format()
+            sub_cats = category.get('sub_categories', [])
+            classes = category.get('classes', [])
+            sub_cat_list = []
+            for sub_cat in sub_cats:
+                sub_cat = sub_cat.format()
+                sub_cat_list.append(sub_cat)
+                clas_l = []
+                for a_class in sub_cat.get('classes'):
+                    a_class = a_class.format()
+                    a_class.pop('subjects')
+                    clas_l.append(a_class)
+                sub_cat['classes'] = clas_l
+            class_list = []
+            for s_class in classes:
+                s_class = s_class.format()
+                s_class.pop('subjects')
+                class_list.append(s_class)
+            category['sub_categories'] = sub_cat_list
+            category['classes'] = class_list
+            result.append(category)
+        return jsonify({'data': result, 'message': 'success'})
+
+
+    @app.route('/sub_categories', methods=['GET'])
+    def get_sub_categories():
+        category_id = request.args.get('category_id')
+        if category_id:
+            categories = SubCategory.query.filter(SubCategory.category_id == category_id)
+        else:
+            categories = SubCategory.query.all()
+        result = []
+        if not categories:
+            abort(400)
+        for category in categories:
+            category = category.format()
+            classes = category.get('classes', [])
+            class_list = []
+            for s_class in classes:
+                s_class = s_class.format()
+                s_class.pop('subjects')
+                class_list.append(s_class)
+            category['classes'] = class_list
+            result.append(category)
+        return jsonify({'data': result, 'message': 'success'})
+
+
+    @app.route('/class', methods=['GET'])
+    def get_classes():
+        sub_category_id = request.args.get('sub_category_id')
+        category_id = request.args.get('category_id')
+
+        if category_id:
+            classes = Classes.query.filter(Classes.category_id == category_id)
+        elif sub_category_id:
+            classes = Classes.query.filter(Classes.sub_category_id == sub_category_id)
+        else:
+            classes = Classes.query.all()
+        result = []
+        if not classes:
+            abort(400)
+        for some_class in classes:
+            some_class = some_class.format()
+            some_class.pop('subjects')
+            result.append(some_class)
+
+        return jsonify({'data': result, 'message': 'success'})
+
+
+    @app.route('/subject', methods=['GET'])
+    def get_classes():
+        class_id = request.args.get('class_id')
+
+        if class_id:
+            subjects = Subject.query.filter(Subject.class_id == class_id)
+        else:
+            subjects = Subject.query.all()
+        result = []
+        if not subjects:
+            abort(400)
+        for some_subject in subjects:
+            some_subject = some_subject.format()
+            some_subject.pop('videos')
+            result.append(some_subject)
+
+        return jsonify({'data': result, 'message': 'success'})
+
+
+    @app.route('/videos', methods=['GET'])
+    def get_classes():
+        subject_id = request.args.get('subject_id')
+
+        if subject_id:
+            videos = Video.query.filter(Video.subject_id == subject_id)
+        else:
+            videos = Subject.query.all()
+        result = []
+        if not videos:
+            abort(400)
+        for some_video in videos:
+            some_video = some_video.format()
+            result.append(some_video)
+
+        return jsonify({'data': result, 'message': 'success'})
+
+
     @app.route('/systems', methods=['GET'])
     def get_systems():
         systems = System.query.all()
