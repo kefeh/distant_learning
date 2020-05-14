@@ -251,7 +251,7 @@ class Subject(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            # 'videos': self.videos
+            'videos': self.videos
         }
 
 

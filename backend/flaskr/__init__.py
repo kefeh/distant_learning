@@ -320,7 +320,7 @@ def create_app(test_config=None):
 
 
     @app.route('/subject', methods=['GET'])
-    def get_classes():
+    def get_subject():
         class_id = request.args.get('class_id')
 
         if class_id:
@@ -339,7 +339,7 @@ def create_app(test_config=None):
 
 
     @app.route('/videos', methods=['GET'])
-    def get_classes():
+    def get_video():
         subject_id = request.args.get('subject_id')
 
         if subject_id:
