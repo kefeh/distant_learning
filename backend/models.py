@@ -229,7 +229,7 @@ class Subject(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
 
-    videos = relationship('Video', backref='subject')
+    # videos = relationship('Video', backref='subject')
 
     class_id = Column(Integer, ForeignKey('classes.id', ondelete='cascade'))
 
@@ -261,39 +261,39 @@ video
 '''
 
 
-class Video(db.Model):
-    __tablename__ = 'videos'
+# class Video(db.Model):
+#     __tablename__ = 'videos'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    link = Column(String)
-    description = Column(String)
-    date = Column(DateTime)
+#     id = Column(Integer, primary_key=True)
+#     name = Column(String)
+#     link = Column(String)
+#     description = Column(String)
+#     date = Column(DateTime)
 
-    subject_id = Column(Integer, ForeignKey('subjects.id', ondelete='cascade'))
+#     subject_id = Column(Integer, ForeignKey('subjects.id', ondelete='cascade'))
 
-    def __init__(self, name, link, description, date):
-        self.name = name
-        self.link = link
-        self.description = description
-        self.date = date
+#     def __init__(self, name, link, description, date):
+#         self.name = name
+#         self.link = link
+#         self.description = description
+#         self.date = date
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+#     def insert(self):
+#         db.session.add(self)
+#         db.session.commit()
 
-    def update(self):
-        db.session.commit()
+#     def update(self):
+#         db.session.commit()
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+#     def delete(self):
+#         db.session.delete(self)
+#         db.session.commit()
 
-    def format(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'link': self.link,
-            'description': self.description,
-            'date': self.date
-        }
+#     def format(self):
+#         return {
+#             'id': self.id,
+#             'name': self.name,
+#             'link': self.link,
+#             'description': self.description,
+#             'date': self.date
+#         }

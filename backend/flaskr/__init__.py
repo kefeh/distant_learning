@@ -5,7 +5,7 @@ from sqlalchemy import func
 from flask_cors import CORS
 import random
 
-from models import setup_db, System, Category, Education, SubCategory, Classes, Subject, Video
+from models import setup_db, System, Category, Education, SubCategory, Classes, Subject#, Video
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -31,14 +31,16 @@ def create_app(test_config=None):
 # add system
     @app.route('/systems', methods=['POST'])
     def add_system():
+        print("adding systems")
         data = request.json
+        print(data)
         if ((data.get('name') == '')):
             abort(422)
-        try:
-            system = System(name=data.get('name'))
-            system.insert()
-        except Exception:
-            abort(422)
+    # try:
+        system = System(name=data.get('name'))
+        system.insert()
+    # except Exception:
+    #     abort(422)
 
         return jsonify({'message': 'success', 'id': system.id})
 
@@ -199,6 +201,9 @@ def create_app(test_config=None):
         abort(422)
 
 
+# Get endpoints
+
+
     @app.route('/educations', methods=['GET'])
     def get_education():
         system_id = request.args.get('system_id')
@@ -208,8 +213,6 @@ def create_app(test_config=None):
             educations = Education.query.all()
         result = []
         # print(educations)
-        if not educations:
-            abort(400)
         for education in educations:
             sm_edu = education.format()
             category_lists = sm_edu.get('category_list')
@@ -237,8 +240,8 @@ def create_app(test_config=None):
         pprint(educations)
         
         return jsonify({'data': result, 'message': 'success'})
-    
-    
+
+
     @app.route('/categories', methods=['GET'])
     def get_categories():
         education_id = request.args.get('education_id')
@@ -247,8 +250,6 @@ def create_app(test_config=None):
         else:
             categories = Category.query.all()
         result = []
-        if not categories:
-            abort(400)
         for category in categories:
             category = category.format()
             sub_cats = category.get('sub_categories', [])
@@ -282,8 +283,6 @@ def create_app(test_config=None):
         else:
             categories = SubCategory.query.all()
         result = []
-        if not categories:
-            abort(400)
         for category in categories:
             category = category.format()
             classes = category.get('classes', [])
@@ -309,8 +308,6 @@ def create_app(test_config=None):
         else:
             classes = Classes.query.all()
         result = []
-        if not classes:
-            abort(400)
         for some_class in classes:
             some_class = some_class.format()
             some_class.pop('subjects')
@@ -328,8 +325,6 @@ def create_app(test_config=None):
         else:
             subjects = Subject.query.all()
         result = []
-        if not subjects:
-            abort(400)
         for some_subject in subjects:
             some_subject = some_subject.format()
             some_subject.pop('videos')
@@ -347,8 +342,6 @@ def create_app(test_config=None):
         else:
             videos = Subject.query.all()
         result = []
-        if not videos:
-            abort(400)
         for some_video in videos:
             some_video = some_video.format()
             result.append(some_video)
@@ -374,6 +367,54 @@ def create_app(test_config=None):
             })
 
         return jsonify({'data':result, 'message': 'success'})
+
+
+    @app.route('/systems/<int:system_id>', methods=['DELETE'])
+    def delete_system(system_id):
+        system = System.query.get(system_id)
+        if not system:
+            abort(404)
+        try:
+            system.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted": system_id})
+
+    
+    @app.route('/educations/<int:education_id>', methods=['DELETE'])
+    def delete_education(education_id):
+        education = Education.query.get(education_id)
+        if not education:
+            abort(404)
+        try:
+            education.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, 'deleted': education_id})
+
+
+    @app.route('/categories/<int:category_id>', methods=['DELETE'])
+    def delete_category(category_id):
+        category = Category.query.get(category_id)
+        if not category:
+            abort(404)
+        try:
+            category.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, 'deleted': category_id})
+
+    
+    @app.route('/sub_categories/<int:sub_category_id>', methods=['DELETE'])
+    def delete_sub_category(sub_category_id):
+        sub_category = SubCategory.query.get(sub_category_id)
+        if not sub_category:
+            abort(404)
+        try:
+            sub_category.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted":sub_category_id})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()
