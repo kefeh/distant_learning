@@ -2,6 +2,76 @@
   padding: 0px 0px 10px;
 }
 
-#add-form {
+#add-items__form {
+  text-align: left;
+  margin-top: 2rem;
+}
+
+.form-view {
+  display: flex;
+  flex-direction: row;
+  padding: 5% 0;
+}
+
+
+.form-view__item-view {
+  flex: 1;
+  margin-top: 3em;
+}
+
+.form-view__categories-list{
+  display: flex;
+  width: 20%;
+  flex-direction: column;
+}
+
+.form-view__categories-list > ul{
+  display: flex;
+  flex-direction: column;
+  border-right: 0.5px solid rgba(0, 0, 0, 0.2);
+}
+
+.form-view__categories-list > h2 {
+  text-align: left;
+  margin: 0;
+  padding-left: 1.8em;
+  margin-bottom: 1em;
+}
+
+.add-items__form-view > label {
+  margin-top: 1rem;
+  padding-left: 25%;
+}
+
+label span {
+  display: inline-block;
+  margin-right: 1rem;
+  width: 7em;
+  font-size: 0.8rem;
+}
+
+.form-view__categories-list-item{
+  font-size: 0.8em;
+  text-align: left;
+  padding: 1.2em 2em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+  background-color: #468908;
+  border: none;
+  color: white;
+  padding: 10px 26px;
+  text-decoration: none;
+  cursor: pointer;
   text-align: center;
+  width: 20%;
+  margin-top: 1.5rem;
+}
+
+input[type=text] {
+  border: 2px solid #468908bd;
+  border-radius: 4px;
+  padding: 8px 5px;
 }
