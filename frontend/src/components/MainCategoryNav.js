@@ -1,88 +1,220 @@
-import React, { Component } from 'react';
-import '../stylesheets/MainCategoryNav.css';
+import React, { Component } from "react";
+import "../stylesheets/MainCategoryNav.css";
+import $ from "jquery";
+
+const tabData = [
+    {
+        education_list: [
+            {
+                id: 1,
+                name: "teacher training",
+            },
+        ],
+        id: 1,
+        name: "English",
+    },
+    {
+        education_list: [],
+        id: 2,
+        name: "English",
+    },
+    {
+        education_list: [
+            {
+                id: 1,
+                name: "teacher training",
+            },
+            {
+                id: 2,
+                name: "student training",
+            },
+        ],
+        id: 3,
+        name: "Baccalaurate",
+    },
+];
 
 class MainCategoryNav extends Component {
-  constructor(){
-    super();
-    this.state = {
-      visibleSub: false,
-      activeId: null,
-      eduList: [],
-      sysList: [],
-      subActiveId: null,
-      prevActiveIndex: 0,
-      prevActiveIndexSub: 0,
+    constructor(props) {
+        super(props);
+        this.state = {
+            level1Data: {
+                isFetching: false,
+                data: null,
+                error: null,
+            },
+            level2Data: [],
+            lastLevelData: {
+                isFetching: false,
+                data: null,
+                error: null,
+            },
+        };
     }
-  }
+    componentDidMount() {
+        this.setState(
+            (prevState) => ({
+                ...prevState,
+                level1Data: {
+                    ...prevState.level1Data,
+                    isFetching: true,
+                },
+            }),
+            () =>
+                setTimeout(() => {
+                    this.setState(
+                        (prevState) => ({
+                            ...prevState,
+                            level1Data: {
+                                ...prevState.level1Data,
+                                data: tabData,
+                                isFetching: false,
+                            },
+                        }),
+                        () => {
+                            if (this.state.level1Data.data) {
+                                let item = this.state.level1Data.data[0];
+                                $(`div#${item.id}${item.name}`).trigger("click");
+                            }
+                        }
+                    );
+                }, 1000)
+        );
+    }
 
-  setEducationList(value) {
-    this.setState( {nextLevel: value.education_list})
-  }
+    displayTab = (data) => {
+        return (
+            <div className="row tab-color">
+                {data.map((item) => (
+                    <div
+                        key={item.id}
+                        id={`${item.id}${item.name}`}
+                        onClick={() => this.showChildData(item.education_list)}
+                        type="button"
+                        className="col single-tab-hover text-center py-3 font-weight-bolder"
+                    >
+                        {item.name}
+                    </div>
+                ))}
+            </div>
+        );
+    };
 
-  flipActiveSystem(index, item_id) {
-    const navs_items = document.getElementsByClassName('sub')
-    if(navs_items){
-      navs_items[this.prevActiveIndexSub].classList.remove('active')
-      navs_items[index].classList.add('active')
-      this.activeId = item_id;
-      this.prevActiveIndexSub = index;}
-  }
+    showChildData = (data) => {
+        console.log(data);
+        if (data === this.state.level2Data && this.state.level2Data.length > 0) {
+            this.setState((prevState) => ({
+                ...prevState,
+                level2Data: [],
+                lastLevelData: {
+                    isFetching: false,
+                    data: null,
+                    error: null,
+                },
+            }));
+        } else if (!data) {
+            this.fetchLeaveData();
+        } else if (data.length === 0) {
+            this.setState(
+                (prevState) => ({
+                    ...prevState,
+                    level2Data: [],
+                }),
+                () => this.fetchLeaveData()
+            );
+        } else {
+            this.setState((prevState) => ({
+                ...prevState,
+                level2Data: data,
+                lastLevelData: {
+                    isFetching: false,
+                    data: null,
+                    error: null,
+                },
+            }));
+        }
+    };
 
-  flipActive(index, item_id) {
-    const navs_items = document.getElementsByClassName('system')
-    if(navs_items){
-    navs_items[this.prevActiveIndex].classList.remove('active')
-    navs_items[index].classList.add('active')
-    this.activeId = item_id;
-    this.prevActiveIndex = index;}
-    console.log(this.eduList)
-    this.setState( {visibleSub: this.eduList?true:false})
-    this.sysList.forEach(element => {
-      if (element.id === item_id){
-        this.eduList = element.education_list
-      }
-    });
-  }
+    fetchLeaveData = () => {
+        this.setState(
+            (prevState) => ({
+                ...prevState,
+                lastLevelData: {
+                    ...prevState.lastLevelData,
+                    isFetching: true,
+                },
+            }),
+            () =>
+                setTimeout(() => {
+                    this.setState((prevState) => ({
+                        ...prevState,
+                        lastLevelData: {
+                            ...prevState.lastLevelData,
+                            data: "fetched",
+                            isFetching: false,
+                        },
+                    }));
+                }, 1000)
+        );
+    };
 
-  render() {
-    const { list_values, current_system } = this.props;
-    this.activeId = current_system?current_system.id:null;
-    this.prevActiveIndex = 0;
-    this.prevActiveIndexSub = 0;
-    this.subActiveId = current_system?current_system.education_list[0].id:null;
-    this.eduList = current_system?current_system.education_list:null;
-    this.sysList = list_values
-    
-    return (
-      <div>
-        {this.activeId && <div>
-        <div className='Main-holder_nav main-system'>
-          <ul className="Main-holder_nav__list">
-            {
-              list_values.map(
-                (list_item, ind) => (
-                  <li key={ind} className="Main-holder_nav__item"><a href="#" onClick={() => this.flipActive(ind, list_item.id)} className={"Main-holder_nav__link system Main-holder__nav__link--button" + (Number(this.activeId)===list_item.id ? ' active' : '')}>{list_item.name}</a></li>
-                )
-              )
-            }
-          </ul>
-        </div>
-        <div className='Main-holder_nav main-sub' style={{"visibility": this.state.visibleSub ? 'visible' : 'hidden'}}>
-          <ul className="Main-holder_nav__list">
-            {
-              current_system && current_system.education_list.map(
-                (list_value, ind) => (
-                  <li key={ind} className="Main-holder_nav__item"><a href="#" onClick={() => this.flipActiveSystem(ind, list_value.id)} className={"Main-holder_nav__link sub Main-holder__nav__link--button" + (Number(this.subActiveId)===list_value.id ? ' active' : '')}>{list_value.name}</a></li>
-                )
-              )
-            }
-          </ul>
-        </div>
-      </div>
-          }
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div>
+                {this.state.level1Data.isFetching ? (
+                    <div className="text-center py-3">
+                        <div className="spinner-grow text-success" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                ) : this.state.level1Data.error ? (
+                    <div className="alert alert-danger" role="alert">
+                        Error occured file fetching data
+                    </div>
+                ) : this.state.level1Data.data ? (
+                    <div className="container">
+                        {this.displayTab(this.state.level1Data.data)}
+                        {this.state.level2Data.length > 0 && (
+                            <div className="row tab-color">
+                                {this.state.level2Data.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        id={`${item.id}${item.name}`}
+                                        onClick={() => this.showChildData(item.education_list)}
+                                        type="button"
+                                        className="col single-tab-hover text-center py-3 font-weight-bolder"
+                                    >
+                                        {item.name}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <div className="mt-5">
+                            {this.state.lastLevelData.isFetching ? (
+                                <div className="text-center">
+                                    <div className="spinner-border" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            ) : this.state.lastLevelData.error ? (
+                                <div className="alert alert-danger" role="alert">
+                                    Error occured file fetching data
+                                </div>
+                            ) : this.state.lastLevelData.data ? (
+                                <div className="alert alert-danger" role="alert">
+                                    Success fetching data
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="alert alert-danger" role="alert">
+                        Something aint right
+                    </div>
+                )}
+            </div>
+        );
+    }
 }
 
 export default MainCategoryNav;

@@ -1,3 +1,12 @@
+.tab-color{
+    background-color: #e5e5e5;
+}
+
+.single-tab-hover:hover{
+    background-color: greenyellow;
+}
+
+
 .Main-holder_nav__list {
     margin: 0;
     padding: 0;
