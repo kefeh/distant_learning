@@ -4,9 +4,9 @@ import '../stylesheets/Header.css';
 
 class Header extends Component {
 
-  // navTo(uri){
-  //   window.location.href = window.location.origin + uri;
-  // }
+  navTo(uri){
+    window.location.href = window.location.origin + uri;
+  }
 
   render() {
     return (
@@ -19,13 +19,10 @@ class Header extends Component {
         <div className="App-header">
           <h2 /*onClick={() => {this.navTo('/about')}}*/>About</h2>
           <h2 /*onClick={() => {this.navTo('/contact')}}*/>Contact</h2>
-        </div>
-        {/* <div className="App-header">
-          <h1 onClick={() => {this.navTo('')}}>Udacitrivia</h1>
           <h2 onClick={() => {this.navTo('')}}>List</h2>
           <h2 onClick={() => {this.navTo('/add')}}>Add</h2>
           <h2 onClick={() => {this.navTo('/play')}}>Play</h2>
-        </div> */}
+      </div>
       </div>
     );
   }
