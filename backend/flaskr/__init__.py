@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request, abort, jsonify
+from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_cors import CORS
@@ -13,7 +14,7 @@ QUESTIONS_PER_PAGE = 10
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../../frontend/build", static_url_path="")
     setup_db(app)
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -25,6 +26,17 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Methods',
                              'GET, PUT, POST, PATCH, DELETE, OPTIONS')
         return response
+
+
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def index(path):
+        if path != "" and os.path.exists(app.static_folder + '/' + path):
+            file_name = path.split("/")[-1]
+            dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
+            return send_from_directory(dir_name, file_name)
+        return send_from_directory(app.static_folder, 'index.html')
+
 
 # Add endpoints
 
@@ -122,7 +134,12 @@ def create_app(test_config=None):
                     category_id and sub_category_id):
                 classes = Classes(name=data.get(
                     'name'))
-                classes.sub_category_id=data.get('sub_category_id')
+                classes.sub_category_id=int(data.get('sub_category_id')) if data.get(
+                    'sub_category_id') and int(data.get(
+                        'sub_category_id') )> 0 else None
+                classes.category_id=int(data.get('category_id') )if data.get(
+                    'category_id') and int(data.get(
+                        'category_id')) > 0 else None
                 classes.insert()
             else:
                 abort(422)
@@ -415,6 +432,41 @@ def create_app(test_config=None):
         except Exception:
             abort(500)
         return jsonify({'success': True, "deleted":sub_category_id})
+
+    @app.route('/class/<int:class_id>', methods=['DELETE'])
+    def delete_class(class_id):
+        classes = Classes.query.get(class_id)
+        if not classes:
+            abort(404)
+        try:
+            classes.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted":class_id})
+
+
+    @app.route('/subject/<int:subject_id>', methods=['DELETE'])
+    def delete_subject(subject_id):
+        subject = Subject.query.get(subject_id)
+        if not subject:
+            abort(404)
+        try:
+            subject.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted":subject_id})
+
+    
+    @app.route('/video/<int:video_id>', methods=['DELETE'])
+    def delete_video(video_id):
+        video = Video.query.get(video_id)
+        if not video:
+            abort(404)
+        try:
+            video.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted":video_id})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()
@@ -545,10 +597,13 @@ def create_app(test_config=None):
 
     @app.errorhandler(404)
     def not_found(error):
-        return jsonify({
-            'error': 404,
-            'message': 'Not Found'
-        }), 404
+        if request.path.startswith("/api/"):
+            return jsonify({
+                'error': 404,
+                'message': 'Not Found'
+            }), 404
+        return send_from_directory(app.static_folder, 'index.html')
+
 
     @app.errorhandler(422)
     def unprocessable(error):

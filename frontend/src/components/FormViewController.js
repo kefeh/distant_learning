@@ -4,6 +4,8 @@ import AddSystem from './AddSystem'
 import AddEducation from './AddEducation'
 import AddCategory from './AddCategory'
 import AddSubCategory from './AddSubCategory'
+import AddClass from './AddClass'
+import AddSubject from './AddSubject'
 
 class FormViewController extends Component {
   constructor(){
@@ -37,16 +39,16 @@ class FormViewController extends Component {
             <AddSubCategory/>
         );
     }
-    // if (selection === 'CLASS'){
-    //     return (
-    //         <AddClass/>
-    //     );
-    // }
-    // if (selection === 'SUBJECT'){
-    //     return (
-    //         <AddSubject/>
-    //     );
-    // }
+    if (selection === 'CLASS'){
+        return (
+            <AddClass/>
+        );
+    }
+    if (selection === 'SUBJECT'){
+        return (
+            <AddSubject/>
+        );
+    }
     // if (selection === 'VIDEO'){
     //     return (
     //         <AddVideo/>
