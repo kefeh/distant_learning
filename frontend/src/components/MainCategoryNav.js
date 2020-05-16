@@ -1,6 +1,74 @@
 import React, { Component } from "react";
 import "../stylesheets/MainCategoryNav.css";
 import $ from "jquery";
+import ContentDisplay from "./ContentDisplay";
+
+const leaveData = [
+    {
+        children: [
+            {
+                children: [
+                    {
+                        children: [
+                            {
+                                children: [],
+                                id: 9,
+                                name: "Ngiri",
+                            },
+                            ,
+                            {
+                                children: [],
+                                id: 10,
+                                name: "Dirane",
+                            },
+                        ],
+                        id: 7,
+                        name: "Iven",
+                    },
+                    ,
+                    {
+                        children: [],
+                        id: 8,
+                        name: "Poker",
+                    },
+                ],
+                id: 3,
+                name: "kefeh",
+            },
+            ,
+            {
+                children: [],
+                id: 4,
+                name: "collins",
+            },
+        ],
+        id: 0,
+        name: "angafor",
+    },
+    {
+        children: [],
+        id: 1,
+        name: "brandon",
+    },
+    {
+        children: [
+            ,
+            {
+                children: [],
+                id: 5,
+                name: "djoukam",
+            },
+            ,
+            {
+                children: [],
+                id: 6,
+                name: "simplice",
+            },
+        ],
+        id: 2,
+        name: "njenewone",
+    },
+];
 
 const tabData = [
     {
@@ -70,13 +138,9 @@ class MainCategoryNav extends Component {
                                 data: tabData,
                                 isFetching: false,
                             },
+                            level2Data: tabData[0].education_list,
                         }),
-                        () => {
-                            if (this.state.level1Data.data) {
-                                let item = this.state.level1Data.data[0];
-                                $(`div#${item.id}${item.name}`).trigger("click");
-                            }
-                        }
+                        () => this.showChildData(this.state.level2Data.education_list)
                     );
                 }, 1000)
         );
@@ -150,7 +214,7 @@ class MainCategoryNav extends Component {
                         ...prevState,
                         lastLevelData: {
                             ...prevState.lastLevelData,
-                            data: "fetched",
+                            data: leaveData,
                             isFetching: false,
                         },
                     }));
@@ -201,8 +265,8 @@ class MainCategoryNav extends Component {
                                     Error occured file fetching data
                                 </div>
                             ) : this.state.lastLevelData.data ? (
-                                <div className="alert alert-danger" role="alert">
-                                    Success fetching data
+                                <div className="container pb-5">
+                                    <ContentDisplay leaveData={this.state.lastLevelData.data} />
                                 </div>
                             ) : null}
                         </div>
