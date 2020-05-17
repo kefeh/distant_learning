@@ -19,9 +19,14 @@ const useStyles = makeStyles((theme) => ({
 function AccordionCollapseDisplay({ child }) {
     const classes = useStyles();
     return child.children && child.children.length > 0 ? (
-        <div className={classes.root}>
+        <div className={`${classes.root} my-2`}>
             <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id={child.id}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    style={{ backgroundColor: "#e5e5e5" }}
+                    aria-controls="panel1a-content"
+                    id={child.id}
+                >
                     <Typography className={classes.heading}>{child.name}</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
@@ -36,9 +41,14 @@ function AccordionCollapseDisplay({ child }) {
             </ExpansionPanel>
         </div>
     ) : (
-        <div className={classes.root}>
+        <div className={`${classes.root} my-2`}>
             <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id={child.id}>
+                <ExpansionPanelSummary
+                    onClick={() => window.alert("done")}
+                    style={{ backgroundColor: "#e5e5e5" }}
+                    aria-controls="panel1a-content"
+                    id={child.id}
+                >
                     <Typography>{child.name}</Typography>
                 </ExpansionPanelSummary>
             </ExpansionPanel>
@@ -54,7 +64,7 @@ class ContentDisplay extends Component {
                     {this.props.leaveData && this.props.leaveData.length > 0 ? (
                         this.props.leaveData.map((item) => (
                             <div key={item.id} className="col">
-                                <h5 className="text-center">{item.name}</h5>
+                                <h5>{item.name.toUpperCase()}</h5>
                                 {item.children && item.children.length > 0
                                     ? item.children.map((child) => <AccordionCollapseDisplay key={child.id} child={child} />)
                                     : null}

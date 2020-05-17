@@ -17,11 +17,11 @@ class Header extends Component {
           <span className='logo__republic'>REPUBLIC OF CAMEROON</span>
         </div>
         <div className="App-header">
-          <h2 /*onClick={() => {this.navTo('/about')}}*/>About</h2>
-          <h2 /*onClick={() => {this.navTo('/contact')}}*/>Contact</h2>
-          <h2 onClick={() => {this.navTo('')}}>List</h2>
-          <h2 onClick={() => {this.navTo('/add')}}>Add</h2>
-          <h2 onClick={() => {this.navTo('/play')}}>Play</h2>
+          <h5 /*onClick={() => {this.navTo('/about')}}*/>About</h5>
+          <h5 /*onClick={() => {this.navTo('/contact')}}*/>Contact</h5>
+          <h5 onClick={() => {this.navTo('')}}>List</h5>
+          <h5 onClick={() => {this.navTo('/add')}}>Add</h5>
+          <h5 onClick={() => {this.navTo('/play')}}>Play</h5>
       </div>
       </div>
     );
