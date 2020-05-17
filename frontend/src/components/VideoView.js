@@ -18,7 +18,7 @@ class FormView extends Component {
 
   componentDidMount() {
     this.getSubjects();
-    this.state.selection?this.getVideos():(() => {})();
+    this.state.selection?this.getVideos(this.state.selection):(() => {})();
   }
   
   getSubjects = () => {
@@ -30,7 +30,7 @@ class FormView extends Component {
       type: "GET",
       success: (result) => {
         this.setState({ subjects: result.data, selection: result.data?result.data[0]:null  })
-        this.getVideos()
+        this.getVideos(this.state.selection)
         return;
       },
       error: (error) => {
@@ -40,12 +40,14 @@ class FormView extends Component {
     })
   }
 
-  getVideos = () => {
+  getVideos = (selection) => {
+    console.log(selection)
+    var selection_id = selection.id?selection.id:this.state.selection.id
     $.ajax({
-      url: `/videos?subject_id=${this.state.selection.id}`, //TODO: update request URL
+      url: `/videos?subject_id=${selection_id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ videos: result.data})
+        this.setState({ videos: result.data, selection: selection?selection.id:this.state.selection})
         return;
       },
       error: (error) => {
@@ -56,21 +58,18 @@ class FormView extends Component {
   }
 
   setSelection = (some_selection) => {
-    this.setState({
-      selection: some_selection
-    })
+    this.getVideos(some_selection)
     return;
   }
 
   render() {
-    console.log(this.state.selection);
     return (
       <div className="form-view">
         <div className="form-view__categories-list" >
           <h2>Subjects</h2>
           <ul>
           {this.state.subjects && this.state.subjects.map((item, ind)=> (
-              <li className={`form-view__categories-list-item ${item.name === this.state.selection.name ? 'active' : null}`} onClick={() => {this.setSelection(item.name)}}>
+              <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection(item)}}>
                 {item.name}
               </li>))}
               
@@ -80,9 +79,9 @@ class FormView extends Component {
           <div className="video">
             <ul>
             {this.state.videos && this.state.videos.map((item, ind)=> (
-              <li className="video__list">
+              <li key={item.id} className="video__list">
                   <div className="video__card">
-                    <iframe title={item.name} src={item.link} allowfullscreen="allowfullscreen"
+                    <iframe title={item.name} src={item.link} allowfullscreen="allowFullScreen"
                         mozallowfullscreen="mozallowfullscreen" 
                         msallowfullscreen="msallowfullscreen" 
                         oallowfullscreen="oallowfullscreen" 
