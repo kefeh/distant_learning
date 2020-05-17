@@ -6,6 +6,7 @@ import AddCategory from './AddCategory'
 import AddSubCategory from './AddSubCategory'
 import AddClass from './AddClass'
 import AddSubject from './AddSubject'
+import AddVideo from './AddVideo'
 
 class FormViewController extends Component {
   constructor(){
@@ -49,11 +50,11 @@ class FormViewController extends Component {
             <AddSubject/>
         );
     }
-    // if (selection === 'VIDEO'){
-    //     return (
-    //         <AddVideo/>
-    //     );
-    // }
+    if (selection === 'VIDEO'){
+        return (
+            <AddVideo/>
+        );
+    }
     return (
         <AddSystem/>
     );
