@@ -10,7 +10,7 @@ import './stylesheets/App.css';
 import FormView from './components/FormView';
 import MainView from './components/MainView';
 import Header from './components/Header';
-import QuizView from './components/QuizView';
+import VideoView from './components/VideoView';
 
 
 class App extends Component {
@@ -22,7 +22,7 @@ class App extends Component {
         <Switch>
           <Route path="/" exact component={MainView} />
           <Route path="/add" component={FormView} />
-          <Route path="/play" component={QuizView} />
+          <Route path="/play" component={VideoView} />
           <Route component={MainView} />
         </Switch>
       </Router>

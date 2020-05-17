@@ -18,7 +18,10 @@
   flex: 1;
   margin-top: 3em;
 }
-
+.form-view__item-video{
+  margin: 3em;
+  flex: 1;
+}
 .form-view__categories-list{
   display: flex;
   width: 20%;
@@ -49,7 +52,10 @@ label span {
   width: 7em;
   font-size: 0.8rem;
 }
-
+.video__card-text span{
+  font-size: 0.8em;
+  padding: 0.2em;
+}
 .form-view__categories-list-item{
   font-size: 0.8em;
   text-align: left;
@@ -78,4 +84,95 @@ input[type=text], textarea {
 
 .hide{
   display: none;
+}
+
+.video__list{
+  display: flex;
+  flex-direction: column;
+}
+
+.video__card {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  width: 12rem;
+}
+
+.video__list iframe{
+  width: 98%;
+}
+
+.video__card-text{
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  font-weight: bold;
+}
+.form-view__item-video ul{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 900px) {
+  /* For mobile phones: */
+  .video__card{
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  .video__list{
+      flex-direction: column;
+  }
+  .form-view {
+    display: flex;
+    flex-direction: column;
+    padding: 5% 0;
+  }
+
+  .form-view__categories-list > ul{
+    display: flex;
+    flex-direction: row;
+    border: 0;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+    margin: 0;
+    overflow-y: scroll;
+  }
+  .form-view__categories-list h2{
+    padding: 1em;
+  }
+  .form-view__categories-list{
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+  }
+  .form-view__item-view {
+    margin: 0;
+    padding: 0;
+  }
+  .form-view__categories-list > h2 {
+    margin: 0;
+  }
+  .form-view__categories-list-item{
+    font-size: 0.5em;
+    text-align: left;
+    padding: 0.6em 1em;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  span{
+    font-size: 0.5em;
+  }
+  .video ul{
+    margin: 0;
+  }
+  .video__card span{
+    font-size: 0.6em;
+  }
+  .video__card-text span{
+    padding: 0.2em;
+  }
+  .video__card-text{
+    padding: 0.4em 0.8em;
+  }
 }
