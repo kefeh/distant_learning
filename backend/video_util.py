@@ -94,7 +94,7 @@ def upload_video(file_name, title, description):
     except Exception as exp:
         print(exp)
         return None
-    return link, title
+    return link
 
 def convert_to_path(video, filename):
     vid_path = os.path.join(BASE_PATH, 'videos')

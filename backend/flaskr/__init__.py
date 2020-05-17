@@ -6,7 +6,7 @@ from sqlalchemy import func
 from flask_cors import CORS
 import random
 
-from models import setup_db, System, Category, Education, SubCategory, Classes, Subject#, Video
+from models import setup_db, System, Category, Education, SubCategory, Classes, Subject, Video
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -175,11 +175,12 @@ def create_app(test_config=None):
         data = request.form
         data = data.to_dict(flat=False)
         print(request.files)
-        if ('file' not in request.files) and (data.get('link', '') == ''):
+        print(data)
+        if ('file' not in request.files) and (data.get('link', '')[0] == ''):
             abort(400)
         link = data.get('link', '')
-        if ((data.get('description', '') == '') or (
-                data.get('date', '') == '')):
+        if ((data.get('description', '')[0] == '') or (
+                data.get('date', '')[0] == '')):
             abort(422)
         description = data.get('description', '')
         date = data.get('date', '')
@@ -189,12 +190,14 @@ def create_app(test_config=None):
                 abort(400)
             file_name = video.filename
             resp = upload_video(video, file_name, description)
-            link, title = resp
+            link = resp
             print(link)
+            from time import sleep
+            sleep(5)
         try:
             date = datetime.strptime(data.get('date')[0], '%Y-%m-%d')
             up_video = Video(name=data.get(
-                'name')[0], link=link[0], description=description[0], date=date)
+                'name')[0], link=link[0], description=description[0], date=date[0])
             up_video.subject_id=data.get('subject_id')[0]
             up_video.insert()
         except Exception:
@@ -212,7 +215,7 @@ def create_app(test_config=None):
             abort(400)
         file_name = video.filename
         resp = upload_video(video, file_name, description)
-        link, title = resp
+        link = resp
         if link:
             return jsonify({'url': link, 'message':'success'})
         abort(422)
@@ -357,10 +360,12 @@ def create_app(test_config=None):
         if subject_id:
             videos = Video.query.filter(Video.subject_id == subject_id)
         else:
-            videos = Subject.query.all()
+            videos = Video.query.all()
         result = []
         for some_video in videos:
             some_video = some_video.format()
+            from pprint import pprint
+            pprint(some_video)
             result.append(some_video)
 
         return jsonify({'data': result, 'message': 'success'})
