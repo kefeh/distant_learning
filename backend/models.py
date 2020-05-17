@@ -295,5 +295,5 @@ class Video(db.Model):
             'name': self.name,
             'link': self.link,
             'description': self.description,
-            'date': self.date
+            'date': self.date.strftime('%Y/%m/%d')
         }

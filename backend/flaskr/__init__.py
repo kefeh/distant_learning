@@ -194,14 +194,14 @@ def create_app(test_config=None):
             print(link)
             from time import sleep
             sleep(5)
-        try:
-            date = datetime.strptime(data.get('date')[0], '%Y-%m-%d')
-            up_video = Video(name=data.get(
-                'name')[0], link=link[0], description=description[0], date=date[0])
-            up_video.subject_id=data.get('subject_id')[0]
-            up_video.insert()
-        except Exception:
-            abort(422)
+    # try:
+        date = datetime.strptime(data.get('date')[0], '%Y-%m-%d')
+        up_video = Video(name=data.get(
+            'name')[0], link=link[0], description=description[0], date=date)
+        up_video.subject_id=data.get('subject_id')[0]
+        up_video.insert()
+    # except Exception:
+    #     abort(422)
 
         return jsonify({'message': 'success', 'id': up_video.id})
 
