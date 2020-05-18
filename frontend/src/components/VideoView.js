@@ -30,7 +30,7 @@ class FormView extends Component {
       type: "GET",
       success: (result) => {
         this.setState({ subjects: result.data, selection: result.data?result.data[0]:null  })
-        this.getVideos(this.state.selection)
+        // this.getVideos(this.state.selection)
         return;
       },
       error: (error) => {
@@ -42,7 +42,7 @@ class FormView extends Component {
 
   getVideos = (selection) => {
     console.log(selection)
-    var selection_id = selection.id?selection.id:this.state.selection.id
+    var selection_id = (typeof selection !== 'undefined')?selection.id:this.state.selection.id
     $.ajax({
       url: `/videos?subject_id=${selection_id}`, //TODO: update request URL
       type: "GET",
