@@ -7,66 +7,89 @@ const leaveData = [
     {
         children: [
             {
+                id: 2,
+                name: "Form 1",
+            },
+            ,
+            {
+                id: 3,
+                name: "Form 2",
+            },
+            {
+                children: [
+                    {
+                        id: 6,
+                        name: "Form 3",
+                    },
+                    ,
+                    {
+                        id: 7,
+                        name: "Form 4",
+                    },
+                    {
+                        id: 8,
+                        name: "Form 5",
+                    },
+                ],
+                id: 4,
+                name: "Science",
+            },
+            {
+                children: [],
+                id: 5,
+                name: "Arts",
+            },
+        ],
+        id: 0,
+        name: "Ordinary Level",
+    },
+    {
+        children: [
+            {
                 children: [
                     {
                         children: [
                             {
-                                children: [],
-                                id: 9,
-                                name: "Ngiri",
+                                id: 15,
+                                name: "Lower Sixth",
                             },
                             ,
                             {
-                                children: [],
-                                id: 10,
-                                name: "Dirane",
+                                id: 16,
+                                name: "Upper Sixth",
                             },
                         ],
-                        id: 7,
-                        name: "Iven",
+                        id: 11,
+                        name: "Lower Sixth",
                     },
                     ,
                     {
-                        children: [],
-                        id: 8,
-                        name: "Poker",
+                        id: 12,
+                        name: "Upper Sixth",
                     },
                 ],
-                id: 3,
-                name: "kefeh",
+                id: 9,
+                name: "Science",
             },
             ,
             {
-                children: [],
-                id: 4,
-                name: "collins",
+                children: [
+                    {
+                        id: 13,
+                        name: "Lower Sixth",
+                    },
+                    ,
+                    {
+                        id: 14,
+                        name: "Upper Sixth",
+                    },
+                ],
+                id: 10,
+                name: "Arts",
             },
         ],
-        id: 0,
-        name: "angafor",
-    },
-    {
-        children: [],
         id: 1,
-        name: "brandon",
-    },
-    {
-        children: [
-            ,
-            {
-                children: [],
-                id: 5,
-                name: "djoukam",
-            },
-            ,
-            {
-                children: [],
-                id: 6,
-                name: "simplice",
-            },
-        ],
-        id: 2,
-        name: "njenewone",
+        name: "Advanced Level",
     },
 ];
 
@@ -74,30 +97,24 @@ const tabData = [
     {
         education_list: [
             {
-                id: 1,
+                id: 2,
+                name: "general education",
+            },
+            {
+                id: 3,
+                name: "technical education",
+            },
+            {
+                id: 4,
                 name: "teacher training",
             },
         ],
-        id: 1,
+        id: 0,
         name: "English",
     },
     {
         education_list: [],
-        id: 2,
-        name: "English",
-    },
-    {
-        education_list: [
-            {
-                id: 1,
-                name: "teacher training",
-            },
-            {
-                id: 2,
-                name: "student training",
-            },
-        ],
-        id: 3,
+        id: 1,
         name: "Baccalaurate",
     },
 ];
@@ -117,6 +134,8 @@ class MainCategoryNav extends Component {
                 data: null,
                 error: null,
             },
+            selectedItem1: null,
+            selectedItem2: null,
         };
     }
     componentDidMount() {
@@ -139,6 +158,11 @@ class MainCategoryNav extends Component {
                                 isFetching: false,
                             },
                             level2Data: tabData[0].education_list,
+                            selectedItem1: tabData[0].id + tabData[0].name,
+                            selectedItem2:
+                                tabData[0].education_list && tabData[0].education_list.length > 0
+                                    ? tabData[0].education_list[0].id + tabData[0].education_list[0].name
+                                    : null,
                         }),
                         () => this.showChildData(this.state.level2Data.education_list)
                     );
@@ -148,20 +172,38 @@ class MainCategoryNav extends Component {
 
     displayTab = (data) => {
         return (
-            <div className="row tab-color">
+            <div className="row" style={{ borderBottom: "1px solid white", backgroundColor: "rgba(196, 196, 196, 0.13)" }}>
                 {data.map((item) => (
                     <div
                         key={item.id}
                         id={`${item.id}${item.name}`}
-                        onClick={() => this.showChildData(item.education_list)}
+                        onClick={() => this.handleTabClick(item, item.education_list)}
                         type="button"
-                        className="col single-tab-hover text-center py-3 font-weight-bolder"
+                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                            item.id + item.name === this.state.selectedItem1 ? "active" : null
+                        }`}
                     >
-                        {item.name}
+                        {item.name.toUpperCase()}
                     </div>
                 ))}
             </div>
         );
+    };
+
+    handleTabClick = (data, nextData) => {
+        this.setState((prevState) => ({
+            ...prevState,
+            selectedItem1: data.id + data.name,
+        }));
+        this.showChildData(nextData);
+    };
+
+    handleTab2Click = (data, nextData) => {
+        this.setState((prevState) => ({
+            ...prevState,
+            selectedItem2: data.id + data.name,
+        }));
+        this.showChildData(nextData);
     };
 
     showChildData = (data) => {
@@ -239,21 +281,23 @@ class MainCategoryNav extends Component {
                     <div className="container">
                         {this.displayTab(this.state.level1Data.data)}
                         {this.state.level2Data.length > 0 && (
-                            <div className="row tab-color">
+                            <div className="row">
                                 {this.state.level2Data.map((item) => (
                                     <div
                                         key={item.id}
                                         id={`${item.id}${item.name}`}
-                                        onClick={() => this.showChildData(item.education_list)}
+                                        onClick={() => this.handleTab2Click(item, item.education_list)}
                                         type="button"
-                                        className="col single-tab-hover text-center py-3 font-weight-bolder"
+                                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                                            item.id + item.name === this.state.selectedItem2 ? "active" : null
+                                        }`}
                                     >
-                                        {item.name}
+                                        {item.name.toUpperCase()}
                                     </div>
                                 ))}
                             </div>
                         )}
-                        <div className="mt-5">
+                        <div className="mt-5" style={{ minHeight: "400px" }}>
                             {this.state.lastLevelData.isFetching ? (
                                 <div className="text-center">
                                     <div className="spinner-border" role="status">
