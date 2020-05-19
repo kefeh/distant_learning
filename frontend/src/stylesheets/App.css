@@ -33,6 +33,12 @@ body {
   color: dodgerblue;
 }
 
+.App-header > h6 {
+  margin: 0;
+  margin-left: 1em;
+  padding: 0.6em;
+}
+
 .App-intro {
   font-size: large;
 }

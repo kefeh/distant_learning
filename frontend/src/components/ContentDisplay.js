@@ -97,10 +97,10 @@ class ContentDisplay extends Component {
     render() {
         return (
             <div className="container">
-                <div className="row">
+                <div className="row justify-content-center">
                     {this.props.leaveData && this.props.leaveData.length > 0 ? (
                         this.props.leaveData.map((item) => (
-                            <div key={item.id} className="col">
+                            <div key={item.id} className="col-5">
                                 <h5 className="text-left">{item.name}</h5>
                                 {item.children && item.children.length > 0
                                     ? item.children.map((child) => <AccordionCollapseDisplay key={child.id} child={child} />)
