@@ -97,6 +97,11 @@ class FormView extends Component {
     }
   }
 
+  setSelection = (some_selection) => {
+    this.getVideos(some_selection);
+    return;
+  };
+
   render() {
     const { from_add } = this.props;
     return (
