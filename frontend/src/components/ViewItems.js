@@ -9,7 +9,6 @@ class ViewItems extends Component {
     }
   }
   componentWillMount() {
-  console.log("I have mounted")
   this.setState( {items: this.props.items})
   this.items = this.state.items
   }
@@ -20,7 +19,7 @@ class ViewItems extends Component {
     return (
       <div className="view-holder">
         { this.items && <div id="view-items" className="view-holder__view-items">
-          <h2>Present Items</h2>
+          <h2>Already Added</h2>
           <ul >
             {this.items.map((item, ind) => (
               <li key={item['id']} className="view-holder__list-item">

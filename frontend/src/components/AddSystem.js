@@ -92,10 +92,10 @@ class AddSystem extends Component {
           getSystems={this.getSystems}
         />
         <div id="add-items__form">
-          <h2>Add a New System</h2>
+          <h2>Add a New System Of Education</h2>
           <form className="add-items__form-view" id="add-systems-form" onSubmit={this.submitSystem}>
             <label>
-              <span>System</span>
+              <span>System Of Education</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <input type="submit" className="button" value="Submit" />

@@ -110,16 +110,16 @@ class AddEducation extends Component {
           getEducations={this.getEducations}
         />
         <div id="add-items__form">
-          <h2>Add a New Education</h2>
+          <h2>Add a New Type of Education</h2>
           <form className="add-items__form-view" id="add-educations-form" onSubmit={this.submitEducation}>
             <label>
-              <span>Education</span>
+              <span>Education Type</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <label>
-                <span>System</span>
+                <span>System Of Education</span>
                 <select name="system_id" onChange={this.handleChange}>
-                    <option value={0}>Select a system</option>
+                    <option value={0}>Select a System Of Education</option>
                     {this.state.systems && this.state.systems.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}

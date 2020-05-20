@@ -110,16 +110,16 @@ class AddCategory extends Component {
           getCategories={this.getCategories}
         />
         <div id="add-items__form">
-          <h2>Add a New category</h2>
+          <h2>Add a New Level Or Cycle</h2>
           <form className="add-items__form-view" id="add-categories-form" onSubmit={this.submitCategory}>
             <label>
-              <span>Category</span>
+              <span>Level Or Cycle</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <label>
-                <span>Education</span>
+                <span>Education Type</span>
                 <select name="education_id" onChange={this.handleChange}>
-                    <option value={0}>Select an education</option>
+                    <option value={0}>Select an Education Type</option>
                     {this.state.educations && this.state.educations.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}

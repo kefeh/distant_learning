@@ -140,9 +140,9 @@ class AddClass extends Component {
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <label className={this.state.sub_category_id?'hide':null}>
-                <span>Category</span>
+                <span>Level Or Cycle</span>
                 <select name="category_id" onChange={this.handleChange}>
-                    <option value={0}>Select a category</option>
+                    <option value={0}>Select a Level Or Cycle</option>
                     {this.state.categories && this.state.categories.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}
@@ -151,9 +151,9 @@ class AddClass extends Component {
                 </select>
             </label>
             <label className={this.state.category_id?'hide':null}>
-                <span>Sub Category</span>
+                <span>Stream Of Education</span>
                 <select name="sub_category_id" onChange={this.handleChange}>
-                    <option value={0}>Select a sub category</option>
+                    <option value={0}>Select a Stream Of Education</option>
                     {this.state.sub_categories && this.state.sub_categories.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}

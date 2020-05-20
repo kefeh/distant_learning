@@ -13,15 +13,6 @@ body {
   background-attachment: fixed;
 }
 
-.App-header {
-  background-color: #468908;
-  color: white;
-  display: flex;
-  justify-content: flex-end;
-  padding: .6rem;
-  padding-right: 5rem;
-}
-
 .App {
   width: 60%;
   margin: 0 auto;
@@ -29,24 +20,18 @@ body {
   background-color: #fff;
 }
 
-.App-header > h1 {
-  color: dodgerblue;
-}
-
-.App-header > h6 {
-  margin: 0;
-  margin-left: 1em;
-  padding: 0.6em;
-}
-
 .App-intro {
   font-size: large;
 }
 
-h6 {
+h5 {
+  display: block;
   text-align: center;
-  font-size: 1rem;
+  font-size: 10px;
+  line-height: 16px;
+  padding: 14px 21px;
   font-weight: bold;
+  margin: 0;
   margin-left: 2em;
 }
 
@@ -77,5 +62,6 @@ form {
     padding-right: 2rem;
   }
   .App {
-    width: 100%; }
+    width: 100%; 
+  }
 }

@@ -33,25 +33,25 @@ class FormView extends Component {
           <h2>ADD CATEGORY</h2>
           <ul>
               <li className={`form-view__categories-list-item SYSTEMS ${"SYSTEMS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SYSTEMS')}}>
-                SYSTEMS
+                System Of Education
               </li>
               <li className={`form-view__categories-list-item EDUCATION ${"EDUCATION" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('EDUCATION')}}>
-                EDUCATION
+                Education Type
               </li>
               <li className={`form-view__categories-list-item CATEGORY ${"CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CATEGORY')}}>
-                CATEGORY
+                Level Or Cycle
               </li>
               <li className={`form-view__categories-list-item SUB-CATEGORY ${"SUB-CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SUB-CATEGORY')}}>
-                SUB CATEGORY
+                Stream Of Education
               </li>
               <li className={`form-view__categories-list-item CLASS ${"CLASS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CLASS')}}>
-                CLASS
+                Class
               </li>
               <li className={`form-view__categories-list-item SUBJECT ${"SUBJECT" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SUBJECT')}}>
-                SUBJECT
+                Subject
               </li>
               <li className={`form-view__categories-list-item VIDEO ${"VIDEO" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('VIDEO')}}>
-                VIDEO
+                Video
               </li>
           </ul>
         </div>
