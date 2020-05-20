@@ -148,25 +148,53 @@ class MainCategoryNav extends Component {
                 },
             }),
             () =>
-                setTimeout(() => {
-                    this.setState(
-                        (prevState) => ({
-                            ...prevState,
-                            level1Data: {
-                                ...prevState.level1Data,
-                                data: tabData,
-                                isFetching: false,
-                            },
-                            level2Data: tabData[0].education_list,
-                            selectedItem1: tabData[0].id + tabData[0].name,
-                            selectedItem2:
-                                tabData[0].education_list && tabData[0].education_list.length > 0
-                                    ? tabData[0].education_list[0].id + tabData[0].education_list[0].name
-                                    : null,
-                        }),
-                        () => this.showChildData(this.state.level2Data.education_list)
-                    );
-                }, 1000)
+                // setTimeout(() => {
+                //     this.setState(
+                //         (prevState) => ({
+                //             ...prevState,
+                //             level1Data: {
+                //                 ...prevState.level1Data,
+                //                 data: tabData,
+                //                 isFetching: false,
+                //             },
+                //             level2Data: tabData[0].education_list,
+                //             selectedItem1: tabData[0].id + tabData[0].name,
+                //             selectedItem2:
+                //                 tabData[0].education_list && tabData[0].education_list.length > 0
+                //                     ? tabData[0].education_list[0].id + tabData[0].education_list[0].name
+                //                     : null,
+                //         }),
+                //         () => this.showChildData(this.state.level2Data.education_list)
+                //     );
+                // }, 1000)
+                $.ajax({
+                    url: `/systems`, //TODO: update request URL
+                    type: "GET",
+                    success: (result) => {
+                        this.setState(
+                                    (prevState) => ({
+                                        ...prevState,
+                                        level1Data: {
+                                            ...prevState.level1Data,
+                                            data: result.data,
+                                            isFetching: false,
+                                        },
+                                        level2Data: result.data[0].education_list,
+                                        selectedItem1: result.data[0].id + result.data[0].name,
+                                        selectedItem2:
+                                        result.data[0].education_list && result.data[0].education_list.length > 0
+                                                ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
+                                                : null,
+                                    }),
+                                    () => this.showChildData(this.state.level2Data.education_list)
+                                );
+                        return;
+                    },
+                    error: (error) => {
+                        alert("Unable to load systems. Please try your request again");
+                        return;
+                    },
+                })
         );
     }
 
@@ -178,8 +206,7 @@ class MainCategoryNav extends Component {
                         key={item.id}
                         id={`${item.id}${item.name}`}
                         onClick={() => this.handleTabClick(item, item.education_list)}
-                        type="button"
-                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
                             item.id + item.name === this.state.selectedItem1 ? "active" : null
                         }`}
                     >
@@ -287,8 +314,7 @@ class MainCategoryNav extends Component {
                                         key={item.id}
                                         id={`${item.id}${item.name}`}
                                         onClick={() => this.handleTab2Click(item, item.education_list)}
-                                        type="button"
-                                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
                                             item.id + item.name === this.state.selectedItem2 ? "active" : null
                                         }`}
                                     >

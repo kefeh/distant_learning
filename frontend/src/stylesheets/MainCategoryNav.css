@@ -2,6 +2,10 @@
     background-color: #e5e5e5;
 }
 
+.hover__cursor__style{
+    cursor: pointer;
+}
+
 .single-tab-hover:hover {
     background-color: rgba(159, 255, 86, 0.4);
 }

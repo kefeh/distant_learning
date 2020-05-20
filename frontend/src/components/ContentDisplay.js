@@ -44,8 +44,9 @@ class AccordionCollapseDisplay extends Component {
         return child.children && child.children.length > 0 ? (
             <>
                 <div
-                    type="button"
-                    className={`my-3 texting-styling ${child.id + child.name === this.state.selectedBlock ? null : "box-shadow"}`}
+                    className={`my-3 hover__cursor__style texting-styling ${
+                        child.id + child.name === this.state.selectedBlock ? null : "box-shadow"
+                    }`}
                     onClick={() => this.toggleDrop(child)}
                 >
                     {/* <ExpansionPanel>
