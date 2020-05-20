@@ -3,122 +3,6 @@ import "../stylesheets/MainCategoryNav.css";
 import $ from "jquery";
 import ContentDisplay from "./ContentDisplay";
 
-const leaveData = [
-    {
-        children: [
-            {
-                id: 2,
-                name: "Form 1",
-            },
-            ,
-            {
-                id: 3,
-                name: "Form 2",
-            },
-            {
-                children: [
-                    {
-                        id: 6,
-                        name: "Form 3",
-                    },
-                    ,
-                    {
-                        id: 7,
-                        name: "Form 4",
-                    },
-                    {
-                        id: 8,
-                        name: "Form 5",
-                    },
-                ],
-                id: 4,
-                name: "Science",
-            },
-            {
-                children: [],
-                id: 5,
-                name: "Arts",
-            },
-        ],
-        id: 0,
-        name: "Ordinary Level",
-    },
-    {
-        children: [
-            {
-                children: [
-                    {
-                        children: [
-                            {
-                                id: 15,
-                                name: "Lower Sixth",
-                            },
-                            ,
-                            {
-                                id: 16,
-                                name: "Upper Sixth",
-                            },
-                        ],
-                        id: 11,
-                        name: "Lower Sixth",
-                    },
-                    ,
-                    {
-                        id: 12,
-                        name: "Upper Sixth",
-                    },
-                ],
-                id: 9,
-                name: "Science",
-            },
-            ,
-            {
-                children: [
-                    {
-                        id: 13,
-                        name: "Lower Sixth",
-                    },
-                    ,
-                    {
-                        id: 14,
-                        name: "Upper Sixth",
-                    },
-                ],
-                id: 10,
-                name: "Arts",
-            },
-        ],
-        id: 1,
-        name: "Advanced Level",
-    },
-];
-
-const tabData = [
-    {
-        education_list: [
-            {
-                id: 2,
-                name: "general education",
-            },
-            {
-                id: 3,
-                name: "technical education",
-            },
-            {
-                id: 4,
-                name: "teacher training",
-            },
-        ],
-        id: 0,
-        name: "English",
-    },
-    {
-        education_list: [],
-        id: 1,
-        name: "Baccalaurate",
-    },
-];
-
 class MainCategoryNav extends Component {
     constructor(props) {
         super(props);
@@ -148,25 +32,35 @@ class MainCategoryNav extends Component {
                 },
             }),
             () =>
-                setTimeout(() => {
-                    this.setState(
-                        (prevState) => ({
-                            ...prevState,
-                            level1Data: {
-                                ...prevState.level1Data,
-                                data: tabData,
-                                isFetching: false,
-                            },
-                            level2Data: tabData[0].education_list,
-                            selectedItem1: tabData[0].id + tabData[0].name,
-                            selectedItem2:
-                                tabData[0].education_list && tabData[0].education_list.length > 0
-                                    ? tabData[0].education_list[0].id + tabData[0].education_list[0].name
-                                    : null,
-                        }),
-                        () => this.showChildData(this.state.level2Data.education_list)
-                    );
-                }, 1000)
+                $.ajax({
+                    url: `/systems`, //TODO: update request URL
+                    type: "GET",
+                    success: (result) => {
+                        console.log("labista one", result.data);
+                        this.setState(
+                            (prevState) => ({
+                                ...prevState,
+                                level1Data: {
+                                    ...prevState.level1Data,
+                                    data: result.data,
+                                    isFetching: false,
+                                },
+                                level2Data: result.data[0].education_list,
+                                selectedItem1: result.data[0].id + result.data[0].name,
+                                selectedItem2:
+                                    result.data[0].education_list && result.data[0].education_list.length > 0
+                                        ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
+                                        : null,
+                            }),
+                            () => this.showChildData(this.state.level2Data[0], this.state.level2Data[0].education_list)
+                        );
+                        return;
+                    },
+                    error: (error) => {
+                        alert("Unable to load systems. Please try your request again");
+                        return;
+                    },
+                })
         );
     }
 
@@ -178,8 +72,7 @@ class MainCategoryNav extends Component {
                         key={item.id}
                         id={`${item.id}${item.name}`}
                         onClick={() => this.handleTabClick(item, item.education_list)}
-                        type="button"
-                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
                             item.id + item.name === this.state.selectedItem1 ? "active" : null
                         }`}
                     >
@@ -195,7 +88,7 @@ class MainCategoryNav extends Component {
             ...prevState,
             selectedItem1: data.id + data.name,
         }));
-        this.showChildData(nextData);
+        this.showChildData(data, nextData);
     };
 
     handleTab2Click = (data, nextData) => {
@@ -203,10 +96,10 @@ class MainCategoryNav extends Component {
             ...prevState,
             selectedItem2: data.id + data.name,
         }));
-        this.showChildData(nextData);
+        this.showChildData(data, nextData);
     };
 
-    showChildData = (data) => {
+    showChildData = (prevData, data) => {
         console.log(data);
         if (data === this.state.level2Data && this.state.level2Data.length > 0) {
             this.setState((prevState) => ({
@@ -219,14 +112,14 @@ class MainCategoryNav extends Component {
                 },
             }));
         } else if (!data) {
-            this.fetchLeaveData();
+            this.fetchLeaveData(prevData);
         } else if (data.length === 0) {
             this.setState(
                 (prevState) => ({
                     ...prevState,
                     level2Data: [],
                 }),
-                () => this.fetchLeaveData()
+                () => this.fetchLeaveData(prevData)
             );
         } else {
             this.setState((prevState) => ({
@@ -241,7 +134,7 @@ class MainCategoryNav extends Component {
         }
     };
 
-    fetchLeaveData = () => {
+    fetchLeaveData = (prevData) => {
         this.setState(
             (prevState) => ({
                 ...prevState,
@@ -251,16 +144,26 @@ class MainCategoryNav extends Component {
                 },
             }),
             () =>
-                setTimeout(() => {
-                    this.setState((prevState) => ({
-                        ...prevState,
-                        lastLevelData: {
-                            ...prevState.lastLevelData,
-                            data: leaveData,
-                            isFetching: false,
-                        },
-                    }));
-                }, 1000)
+                $.ajax({
+                    url: `/categories?education_id=${prevData.id}`, //TODO: update request URL
+                    type: "GET",
+                    success: (result) => {
+                        console.log(result.data);
+                        this.setState((prevState) => ({
+                            ...prevState,
+                            lastLevelData: {
+                                ...prevState.lastLevelData,
+                                data: result.data,
+                                isFetching: false,
+                            },
+                        }));
+                        return;
+                    },
+                    error: (error) => {
+                        alert("Unable to load categories. Please try your request again");
+                        return;
+                    },
+                })
         );
     };
 
@@ -287,8 +190,7 @@ class MainCategoryNav extends Component {
                                         key={item.id}
                                         id={`${item.id}${item.name}`}
                                         onClick={() => this.handleTab2Click(item, item.education_list)}
-                                        type="button"
-                                        className={`col single-tab-hover text-center py-3 font-weight-bolder ${
+                                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
                                             item.id + item.name === this.state.selectedItem2 ? "active" : null
                                         }`}
                                     >
@@ -310,7 +212,7 @@ class MainCategoryNav extends Component {
                                 </div>
                             ) : this.state.lastLevelData.data ? (
                                 <div className="container pb-5">
-                                    <ContentDisplay leaveData={this.state.lastLevelData.data} />
+                                    <ContentDisplay categories={this.state.lastLevelData.data} />
                                 </div>
                             ) : null}
                         </div>

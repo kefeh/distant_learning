@@ -5,8 +5,20 @@
     border-radius: 2px;
 }
 
+.selected__box__style {
+    border-left: 4px solid rgba(92, 206, 4, 0.3);
+    border-radius: 2px;
+}
+
 .texting-styling {
-    padding: 10px 20px;
+    padding: 5px 20px;
+    font-weight: bold;
+}
+
+.remove__link__deco,
+.remove__link__deco:hover {
+    color: inherit;
+    text-decoration: none;
 }
 
 .inner-div-style {
