@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 
 import ViewItems from "./ViewItems"
+import VideoView from "./VideoView"
 
 import '../stylesheets/FormView.css';
 
@@ -12,7 +13,6 @@ class AddSubject extends Component {
       name: "",
       link: "",
       description: "",
-      date: "",
       video: "",
       videos: [],
       subjects: [],
@@ -70,7 +70,6 @@ class AddSubject extends Component {
     formData.append('subject_id', this.state.subject_id)
     formData.append('link', this.state.link)
     formData.append('description', this.state.description)
-    formData.append('date', this.state.date)
     console.log(formData)
     console.log(this.state.video)
     this.setState({
@@ -126,11 +125,6 @@ class AddSubject extends Component {
   render() {
     return (
       <div className="add-items">
-        <ViewItems 
-          items={this.state.videos}
-          deleteAction = {this.deleteAction}
-          getVideos={this.getVideos}
-        />
         <div id="add-items__form">
           <h2>Add a new Video</h2>
           <form className="add-items__form-view" id="add-video-form" onSubmit={this.submitVideo}>
@@ -147,10 +141,6 @@ class AddSubject extends Component {
                 name="description"
                 onChange={this.handleChange}
               />
-            </label>
-            <label>
-              <span>Date</span>
-              <input type="text" name="date" onChange={this.handleChange}/>
             </label>
             <label>
               <span>Link</span>
@@ -176,6 +166,9 @@ class AddSubject extends Component {
             <input type="submit" className="button" value="Submit" />}
           </form>
         </div>
+        <VideoView 
+          from_add={this.state.subjects[0]}
+        />
       </div>
     );
   }

@@ -58,42 +58,42 @@ youtube = googleapiclient.discovery.build(
 
 
 def upload_video(file_name, title, description):
-    try:
-        file_name = convert_to_path(file_name, title)
-        request = youtube.videos().insert(
-            part="snippet,player,status",
-            body={
-                "snippet": {
-                    "categoryId": "22",
-                    "description": description,
-                    "title": title
-                },
-                "status": {
-                    "privacyStatus": "private"
-                },
-                "player": {},
+# try:
+    file_name = convert_to_path(file_name, title)
+    request = youtube.videos().insert(
+        part="snippet,player,status",
+        body={
+            "snippet": {
+                "categoryId": "22",
+                "description": description,
+                "title": title
             },
-            media_body=MediaFileUpload(file_name),
-        )
-        response = request.execute()
-        from pprint import pprint
-        pprint(response)
+            "status": {
+                "privacyStatus": "private"
+            },
+            "player": {},
+        },
+        media_body=MediaFileUpload(file_name),
+    )
+    response = request.execute()
+    from pprint import pprint
+    pprint(response)
 
-        # the response has a player key which looks like
-        # 'player': {'embedHtml': '<iframe width="480" height="270" '
-        # 'src="//www.youtube.com/embed/U73sYiT1R8M" '
-        # 'frameborder="0" allow="accelerometer; '
-        # 'autoplay; encrypted-media; gyroscope; '
-        # 'picture-in-picture" '
-        # 'allowfullscreen></iframe>'},
+    # the response has a player key which looks like
+    # 'player': {'embedHtml': '<iframe width="480" height="270" '
+    # 'src="//www.youtube.com/embed/U73sYiT1R8M" '
+    # 'frameborder="0" allow="accelerometer; '
+    # 'autoplay; encrypted-media; gyroscope; '
+    # 'picture-in-picture" '
+    # 'allowfullscreen></iframe>'},
 
-        # embedHTML = response.get('player').get('embedHtml')
-        base = '//www.youtube.com/embed/'
-        vid_id = response.get('id')
-        link = f"{base}{vid_id}"
-    except Exception as exp:
-        print(exp)
-        return None
+    # embedHTML = response.get('player').get('embedHtml')
+    base = '//www.youtube.com/embed/'
+    vid_id = response.get('id')
+    link = f"{base}{vid_id}"
+# except Exception as exp:
+#     print(exp)
+#     return None
     return link
 
 def convert_to_path(video, filename):

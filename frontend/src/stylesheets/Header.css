@@ -46,6 +46,19 @@
     color: #353535;
 }
 
+.App-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 1rem;
+    background-color: #468908;
+    color: white;
+}
+
+.App-header > h5 {
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 900px) {
     /* For mobile phones: */
     .logo__republic{
@@ -59,5 +72,11 @@
     }
     .logo{
         justify-content: space-around;
+    }
+    .App-header {
+        font-size: 0.8rem;
+    }
+    .App-header > h5 {
+        font-size: 0.8rem;
     }
   }

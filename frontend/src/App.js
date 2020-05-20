@@ -17,6 +17,7 @@ class App extends Component {
   render() {
     return (
     <div className="App">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&display=swap" rel="stylesheet"></link>
       <Header path />
       <Router>
         <Switch>

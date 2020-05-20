@@ -179,8 +179,7 @@ def create_app(test_config=None):
         if ('file' not in request.files) and (data.get('link', '')[0] == ''):
             abort(400)
         link = data.get('link', '')
-        if ((data.get('description', '')[0] == '') or (
-                data.get('date', '')[0] == '')):
+        if ((data.get('description', '')[0] == '')):
             abort(422)
         description = data.get('description', '')
         date = data.get('date', '')
@@ -196,7 +195,7 @@ def create_app(test_config=None):
             sleep(5)
         link = link[0].replace("watch?v=", "embed/")
     # try:
-        date = datetime.strptime(data.get('date')[0], '%Y-%m-%d')
+        date = datetime.now()
         up_video = Video(name=data.get(
             'name')[0], link=link, description=description[0], date=date)
         up_video.subject_id=data.get('subject_id')[0]
