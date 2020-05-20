@@ -1,8 +1,16 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "../stylesheets/ContentDisplay.css";
 
 function DisplayClasses({ classItem }) {
-    return <div className={`my-3 box-shadow texting-styling`}>{classItem.name}</div>;
+    return (
+        <Link
+            to={{ pathname: "/play", state: { id: classItem.id } }}
+            className={`my-3 remove__link__deco d-block hover__cursor__style box-shadow texting-styling`}
+        >
+            {classItem.name}
+        </Link>
+    );
 }
 
 class DisplaySubCategory extends Component {
@@ -61,8 +69,8 @@ class ContentDisplay extends Component {
                 <div className="row justify-content-around">
                     {this.props.categories && this.props.categories.length > 0 ? (
                         this.props.categories.map((category) => (
-                            <div key={category.id} className="col-3">
-                                <h5 className="text-center">{category.name}</h5>
+                            <div key={category.id} className="col-4">
+                                <h5 className="text-center font-weight-bolder">{category.name}</h5>
                                 {category.classes &&
                                     category.classes.length > 0 &&
                                     category.classes.map((classItem) => (
