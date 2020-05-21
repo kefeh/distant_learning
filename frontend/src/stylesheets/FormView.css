@@ -40,11 +40,9 @@
 }
 .form-view__categories-list__add-video > ul{
   flex-direction: row;
-  width: 100%;
   align-items: center;
   border: none;
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
-  overflow-x:scroll; 
 }
 .hide{
   display: none;
@@ -72,14 +70,6 @@ h2 {
 .add-items__form-view > label {
   margin-top: 1rem;
   padding-left: 10%;
-}
-
-#add-video-form{
-  margin: none;
-  margin-right: auto;
-  margin-left: auto;
-  /* padding: 0 20%; */
-  padding-left: 20%;
 }
 
 label span {
@@ -226,6 +216,19 @@ button.ytp-large-play-button svg {
   flex-wrap: wrap;
 }
 
+.parent-holder{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.total_view > ul{
+  border: none;
+}
+.total_view{
+  margin-left: auto;
+  margin-right: auto;
+}
 @media only screen and (max-width: 900px) {
   /* For mobile phones: */
   .video__card{
