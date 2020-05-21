@@ -18,8 +18,8 @@ class Header extends Component {
         </div>
         <div className="App-header">
           <h5 onClick={() => {this.navTo('')}}>Distant Learning</h5>
-          <h5 onClick={() => {this.navTo('/add')}}>Admin Dashboard</h5>
-          <h5 onClick={() => {this.navTo('/play')}}>Videos</h5>
+          {/* <h5 onClick={() => {this.navTo('/add')}}>Admin Dashboard</h5>
+          <h5 onClick={() => {this.navTo('/play')}}>Videos</h5> */}
       </div>
       </div>
     );
