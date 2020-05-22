@@ -128,7 +128,7 @@ class FormView extends Component {
       return;
     }
     if(some_selection==="CATEGORY"){
-      this.getEducations()
+      this.getClass()
       return;
     }
     if(some_selection==="SUB-CATEGORY"){
@@ -136,7 +136,7 @@ class FormView extends Component {
       return;
     }
     if(some_selection==="CLASS"){
-      this.getSubCategories()
+      this.getEducations()
       return;
     }
     if(some_selection==="SUBJECT"){
@@ -144,7 +144,7 @@ class FormView extends Component {
       return;
     }
     if(some_selection==="VIDEO"){
-      this.getSubjects()
+      this.getClass()
       return;
     }
     return;
@@ -170,17 +170,11 @@ class FormView extends Component {
               <li className={`form-view__categories-list-item EDUCATION ${"EDUCATION" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('EDUCATION')}}>
                 Education Type
               </li>
-              <li className={`form-view__categories-list-item CATEGORY ${"CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CATEGORY')}}>
-                Level Or Cycle
-              </li>
-              <li className={`form-view__categories-list-item SUB-CATEGORY ${"SUB-CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SUB-CATEGORY')}}>
-                Stream Of Education
-              </li>
               <li className={`form-view__categories-list-item CLASS ${"CLASS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CLASS')}}>
                 Class
               </li>
-              <li className={`form-view__categories-list-item SUBJECT ${"SUBJECT" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SUBJECT')}}>
-                Subject
+              <li className={`form-view__categories-list-item CATEGORY ${"CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CATEGORY')}}>
+                Level Or Cycle
               </li>
               <li className={`form-view__categories-list-item VIDEO ${"VIDEO" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('VIDEO')}}>
                 Video
@@ -188,7 +182,7 @@ class FormView extends Component {
           </ul>
         </div>
         <div className="parent-holder">
-          <div className="form-view__categories-list form-view__categories-list__add-video total_view" >
+          <div className={`form-view__categories-list form-view__categories-list__add-video total_view ${this.state.selection === "VIDEO"? 'hide':null }`} >
             <ul>
             {this.state.parent && this.state.parent.map((item, ind)=> (
                 <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selectionParent.id || item.id == this.state.selectionParent ? 'active' : null}`} onClick={() => {this.setSelectionParent(item)}}>

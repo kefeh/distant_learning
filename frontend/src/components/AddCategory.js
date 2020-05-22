@@ -10,28 +10,29 @@ class AddCategory extends Component {
     super();
     this.state = {
       name: "",
-      educations: [],
+      classes: [],
       categories: [],
-      education_id: 0,
+      class_id: 0,
     }
   }
 
   componentDidMount(){
-    this.getEducations();
+    this.getClass();
     this.getCategories();
   }
 
 
-  getEducations = () => {
+  getClass = () => {
     $.ajax({
-      url: `/educations`, //TODO: update request URL
+      url: `/class`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ educations: result.data })
+        console.log(result.data)
+        this.setState({ classes: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load educations. Please try your request again')
+        alert('Unable to load classes. Please try your request again')
         return;
       }
     })
@@ -62,7 +63,7 @@ class AddCategory extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: this.state.name,
-        education_id: this.state.education_id,
+        class_id: this.state.class_id,
       }),
       xhrFields: {
         withCredentials: true
@@ -117,10 +118,10 @@ class AddCategory extends Component {
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <label>
-                <span>Education Type</span>
-                <select name="education_id" onChange={this.handleChange}>
-                    <option value={0}>Select an Education Type</option>
-                    {this.state.educations && this.state.educations.map((item, ind) => (
+                <span>Class Type</span>
+                <select name="class_id" onChange={this.handleChange}>
+                    <option value={0}>Select an Class Type</option>
+                    {this.state.classes && this.state.classes.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}
                     </option>

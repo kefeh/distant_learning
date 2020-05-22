@@ -11,17 +11,14 @@ class AddClass extends Component {
     this.state = {
       name: "",
       classes: [],
-      categories: [],
-      category_id: 0,
-      sub_categories: [],
-      sub_category_id: 0,
+      educations: [],
+      education_id: 0,
     }
   }
 
   componentDidMount(){
     this.getClass();
-    this.getCategory();
-    this.getSubCategories();
+    this.getEducation();
   }
 
 
@@ -42,37 +39,21 @@ class AddClass extends Component {
   }
 
 
-  getCategory = () => {
+  getEducation = () => {
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `/educations`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         console.log(result.data)
-        this.setState({ categories: result.data })
+        this.setState({ educations: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load categories. Please try your request again')
+        alert('Unable to load educations. Please try your request again')
         return;
       }
     })
   }
-
-  getSubCategories = () => {
-    $.ajax({
-      url: `/sub_categories`, //TODO: update request URL
-      type: "GET",
-      success: (result) => {
-        this.setState({ sub_categories: result.data })
-        return;
-      },
-      error: (error) => {
-        alert('Unable to load categories. Please try your request again')
-        return;
-      }
-    })
-  }
-
 
   submitSubCategory = (event) => {
     event.preventDefault();
@@ -83,8 +64,7 @@ class AddClass extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: this.state.name,
-        category_id: this.state.category_id!==0?this.state.category_id:'',
-        sub_category_id: this.state.sub_category_id!==0?this.state.sub_category_id:'',
+        education_id: this.state.education_id!==0?this.state.education_id:'',
       }),
       xhrFields: {
         withCredentials: true
@@ -93,7 +73,7 @@ class AddClass extends Component {
       success: (result) => {
         document.getElementById("add-class-form").reset();
         this.getClass();
-        this.setState({sub_category_id:0, category_id:0})
+        this.setState({education_id:0})
         return;
       },
       error: (error) => {
@@ -139,9 +119,9 @@ class AddClass extends Component {
               <span>Class</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
-            <label className={this.state.sub_category_id?'hide':null}>
+            {/* <label className={this.state.education_id?'hide':null}>
                 <span>Level Or Cycle</span>
-                <select name="category_id" onChange={this.handleChange}>
+                <select name="education_id" onChange={this.handleChange}>
                     <option value={0}>Select a Level Or Cycle</option>
                     {this.state.categories && this.state.categories.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
@@ -149,12 +129,12 @@ class AddClass extends Component {
                     </option>
                     ))}
                 </select>
-            </label>
-            <label className={this.state.category_id?'hide':null}>
-                <span>Stream Of Education</span>
-                <select name="sub_category_id" onChange={this.handleChange}>
-                    <option value={0}>Select a Stream Of Education</option>
-                    {this.state.sub_categories && this.state.sub_categories.map((item, ind) => (
+            </label> */}
+            <label>
+                <span> Education Type</span>
+                <select name="education_id" onChange={this.handleChange}>
+                    <option value={0}>Select an Education Type</option>
+                    {this.state.educations && this.state.educations.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}
                     </option>

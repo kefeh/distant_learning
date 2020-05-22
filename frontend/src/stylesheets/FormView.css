@@ -45,6 +45,9 @@
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
   flex-wrap: wrap
 }
+.form-view__categories-list__add-video{
+  width: 80%;
+}
 .hide{
   display: none;
 }

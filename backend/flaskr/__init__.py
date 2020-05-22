@@ -6,7 +6,7 @@ from sqlalchemy import func
 from flask_cors import CORS
 import random
 
-from models import setup_db, System, Category, Education, SubCategory, Classes, Subject, Video
+from models import setup_db, System, Category, Education, Classes, Video
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -233,13 +233,13 @@ def create_app(test_config=None):
             sm_edu = education.format()
             category_lists = sm_edu.get('category_list')
             result.append(sm_edu)
-            classes = sm_edu.get('classes', [])
+            classes = sm_edu.get('class_list', [])
             class_list = []
             for s_class in classes:
                 s_class = s_class.format()
                 s_class.pop('categories')
                 class_list.append(s_class)
-            sm_edu['classes'] = cat_list
+            sm_edu['class_list'] = class_list
         from pprint import pprint
         pprint(educations)
         
@@ -291,7 +291,7 @@ def create_app(test_config=None):
     def get_classes():
         education_id = request.args.get('education_id')
 
-        elif education_id:
+        if education_id:
             classes = Classes.query.filter(Classes.education_id == education_id)
         else:
             classes = Classes.query.all()
@@ -305,7 +305,6 @@ def create_app(test_config=None):
                 cat = cat.format()
                 cat.pop('videos')
                 cat_list.append(cat)
-            some_class.pop('videos')
             some_class['categories'] = cat_list
             result.append(some_class)
 
@@ -359,7 +358,7 @@ def create_app(test_config=None):
             edu = []
             for ed in system.education_list:
                 s_ed = ed.format()
-                s = s_ed.pop('category_list')
+                s = s_ed.pop('class_list')
                 edu.append(s_ed)
             result.append({
                 'name': system.name,

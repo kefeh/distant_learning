@@ -6,7 +6,7 @@ import VideoView from "./VideoView"
 
 import '../stylesheets/FormView.css';
 
-class AddSubject extends Component {
+class AddVideo extends Component {
   constructor(props){
     super();
     this.state = {
@@ -15,31 +15,33 @@ class AddSubject extends Component {
       description: "",
       video: "",
       videos: [],
-      subjects: [],
-      subject_id: 0,
+      classes: [],
+      class_id: 0,
+      categories: [],
+      category_id: 0,
       isUploading: false,
     }
   }
 
   componentDidMount(){
-    this.getSubjects();
+    this.getClasses();
     this.getVideos();
   }
 
 
-  getSubjects = () => {
+  getClasses = () => {
     this.setState({
       isUploading: false,
     })
     $.ajax({
-      url: `/subject`, //TODO: update request URL
+      url: `/class`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ subjects: result.data })
+        this.setState({ classes: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load subjects. Please try your request again')
+        alert('Unable to load classes. Please try your request again')
         return;
       }
     })
@@ -67,7 +69,7 @@ class AddSubject extends Component {
     let formData = new FormData()
     formData.append('file', this.state.video)
     formData.append('name', this.state.name)
-    formData.append('subject_id', this.state.subject_id)
+    formData.append('class_id', this.state.class_id)
     formData.append('link', this.state.link)
     formData.append('description', this.state.description)
     console.log(formData)
@@ -88,7 +90,7 @@ class AddSubject extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to add subjects. Please try your request again')
+        alert('Unable to add classes. Please try your request again')
         return;
       }
     })
@@ -115,7 +117,7 @@ class AddSubject extends Component {
           return;
         },
         error: (error) => {
-          alert('Unable to Delete subjects. Please try your request again')
+          alert('Unable to Delete classes. Please try your request again')
           return;
         }
       })
@@ -147,10 +149,10 @@ class AddSubject extends Component {
               <input type="text" name="link" onChange={this.handleChange}/>
             </label>
             <label>
-                <span>Subject</span>
-                <select name="subject_id" onChange={this.handleChange}>
-                    <option value={0}>Select a subject</option>
-                    {this.state.subjects && this.state.subjects.map((item, ind) => (
+                <span>Class</span>
+                <select name="class_id" onChange={this.handleChange}>
+                    <option value={0}>Select a class</option>
+                    {this.state.classes && this.state.classes.map((item, ind) => (
                     <option key={item['id']} value={item.id}>
                         {item.name}
                     </option>
@@ -167,11 +169,11 @@ class AddSubject extends Component {
           </form>
         </div>
         <VideoView 
-          from_add={this.state.subjects[0]}
+          from_add={this.state.classes[0]}
         />
       </div>
     );
   }
 }
 
-export default AddSubject;
+export default AddVideo;

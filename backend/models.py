@@ -112,7 +112,7 @@ class Category(db.Model):
 
     # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
     # classes = relationship('Classes', cascade="all,delete", backref='categories')
-    videos = relationship('Video', cascade='all.delete', backref='categories')
+    videos = relationship('Video', cascade='all,delete', backref='categories')
 
     def __init__(self, name):
         self.name = name
@@ -132,7 +132,6 @@ class Category(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'sub_categories': self.sub_categories,
             'videos': self.videos
         }
 
@@ -191,6 +190,7 @@ class Classes(db.Model):
     name = Column(String)
 
     categories = relationship('Category', cascade="all,delete", backref='classes')
+    videos = relationship('Video', cascade="all,delete", backref='classes')
 
     # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
     education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'), nullable=True)

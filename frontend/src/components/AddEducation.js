@@ -22,7 +22,7 @@ class AddEducation extends Component {
   }
 
   componentDidMount(){
-    this.setState({ parent: this.props.parent });
+    // this.setState({ parent: this.props.parent });
     this.getEducations();
     this.getSystems();
   }
@@ -30,7 +30,7 @@ class AddEducation extends Component {
 
   getEducations = () => {
     $.ajax({
-      url: `/educations?system_id=${this.props.parent.id}`, //TODO: update request URL
+      url: `/educations`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ educations: result.data })

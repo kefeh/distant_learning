@@ -11,35 +11,32 @@ class VideoView extends Component {
     this.state = {
       selection: null,
       videos: [],
-      subjects: [],
+      classes: [],
     }
   }
 
 
   componentDidMount() {
-    this.getSubjects();
-    // this.state.selection?this.getVideos(this.state.selection):(() => {})();
+    this.getClass();
+    this.state.selection?this.getVideos(this.state.selection):(() => {})();
   }
-  
-  getSubjects = () => {
-    this.setState({
-      isUploading: false,
-    })
+
+  getClass = () => {
     $.ajax({
-      url: `/subject`, //TODO: update request URL
+      url: `/class`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ subjects: result.data, selection: result.data?result.data[0]:null  })
-        typeof this.state.selection === "undefined" ?(()=>{})():this.getVideos()
+        console.log(result.data)
+        this.setState({ classes: result.data, selection: result.data?result.data[0]: {}})
         return;
       },
       error: (error) => {
-        alert('Unable to load subjects. Please try your request again')
+        alert('Unable to load classes. Please try your request again')
         return;
       }
     })
   }
-
+  
   getVideos = (selection) => {
     console.log(selection)
     var selection_id = (typeof selection !== 'undefined')?selection.id:this.state.selection.id
@@ -84,13 +81,12 @@ class VideoView extends Component {
     return (
       <div className={`form-view ${typeof from_add === 'undefined'?null:'form-view__add-video'}`}>
         <div className={`form-view__categories-list ${typeof from_add === 'undefined'?null:'form-view__categories-list__add-video'}`} >
-          <h2>Subjects</h2>
+          <h2>Classes</h2>
           <ul>
-          {this.state.subjects && this.state.subjects.map((item, ind)=> (
+          {this.state.classes && this.state.classes.map((item, ind)=> (
               <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selection.id || item.id == this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection(item)}}>
                 {item.name}
               </li>))}
-              
           </ul>
         </div>
         <div className="form-view__item-view form-view__item-video">
