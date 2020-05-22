@@ -12,51 +12,61 @@ class FormViewController extends Component {
   constructor(){
     super();
     this.state = {
-      visibleAnswer: false
+      visibleAnswer: false,
+      parent: null,
+      selection: null
     }
+  }
+
+  componentDidMount(){
+    this.setState({ parent: this.props.parent, selection:this.props.selection });  
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ parent: nextProps.parent, selection:nextProps.selection });  
   }
 
 
   render() {
-    const { selection } = this.props;
-    console.log(selection)
-    if (selection === 'SYSTEM'){
+    // const { selection, parent } = this.props;
+    // console.log(selection)
+    if (this.state.selection === 'SYSTEM'){
         return (
-            <AddSystem/>
+            <AddSystem parent={this.state.parent}/>
         );
     }
-    if (selection === 'EDUCATION'){
+    if (this.state.selection === 'EDUCATION'){
         return (
-            <AddEducation/>
+            <AddEducation parent={this.props.parent}/>
         );
     }
-    if (selection === 'CATEGORY'){
+    if (this.state.selection === 'CATEGORY'){
         return (
-            <AddCategory/>
+            <AddCategory parent={this.state.parent}/>
         );
     }
-    if (selection === 'SUB-CATEGORY'){
+    // if (this.state.selection === 'SUB-CATEGORY'){
+    //     return (
+    //         <AddSubCategory parent={this.state.parent}/>
+    //     );
+    // }
+    if (this.state.selection === 'CLASS'){
         return (
-            <AddSubCategory/>
+            <AddClass parent={this.state.parent}/>
         );
     }
-    if (selection === 'CLASS'){
+    // if (this.state.selection === 'SUBJECT'){
+    //     return (
+    //         <AddSubject parent={this.state.parent}/>
+    //     );
+    // }
+    if (this.state.selection === 'VIDEO'){
         return (
-            <AddClass/>
-        );
-    }
-    if (selection === 'SUBJECT'){
-        return (
-            <AddSubject/>
-        );
-    }
-    if (selection === 'VIDEO'){
-        return (
-            <AddVideo/>
+            <AddVideo parent={this.state.parent}/>
         );
     }
     return (
-        <AddSystem/>
+        <AddSystem parent={this.state.parent}/>
     );
   }
 }

@@ -84,12 +84,12 @@ def create_app(test_config=None):
     def add_category():
         data = request.json
         if ((data.get('name', '') == '') or (
-                data.get('education_id', '') == '')):
+                data.get('class_id', '') == '')):
             abort(422)
         try:
             category = Category(name=data.get(
                 'name'))
-            category.education_id=data.get('education_id')
+            category.class_id=data.get('class_id')
             category.insert()
         except Exception:
             abort(422)
@@ -124,22 +124,15 @@ def create_app(test_config=None):
     @app.route('/class', methods=['POST'])
     def add_class():
         data = request.json
-        category_id = data.get('category_id', None)
-        sub_category_id = data.get('sub_category_id', None)
+        education_id = data.get('education_id', None)
 
         if ((data.get('name', '') == '')):
             abort(422)
         try:
-            if any((category_id, sub_category_id)) and not(
-                    category_id and sub_category_id):
+            if education_id:
                 classes = Classes(name=data.get(
                     'name'))
-                classes.sub_category_id=int(data.get('sub_category_id')) if data.get(
-                    'sub_category_id') and int(data.get(
-                        'sub_category_id') )> 0 else None
-                classes.category_id=int(data.get('category_id') )if data.get(
-                    'category_id') and int(data.get(
-                        'category_id')) > 0 else None
+                classes.education_id=int(data.get('education_id'))
                 classes.insert()
             else:
                 abort(422)
@@ -198,7 +191,10 @@ def create_app(test_config=None):
         date = datetime.now()
         up_video = Video(name=data.get(
             'name')[0], link=link, description=description[0], date=date)
-        up_video.subject_id=data.get('subject_id')[0]
+        up_video.class_id = data.get('class_id')[0] if data.get('class_id')[0] != '' else None
+        up_video.category_id=data.get('category_id')[0] if data.get('category_id')[0] != '' else None
+        if up_video.class_id == None and up_video.category_id == None:
+            abort(422)
         up_video.insert()
     # except Exception:
     #     abort(422)
@@ -264,33 +260,20 @@ def create_app(test_config=None):
 
     @app.route('/categories', methods=['GET'])
     def get_categories():
-        education_id = request.args.get('education_id')
-        if education_id:
-            categories = Category.query.filter(Category.education_id == education_id)
+        class_id = request.args.get('class_id')
+        if class_id:
+            categories = Category.query.filter(Category.class_id == class_id)
         else:
             categories = Category.query.all()
         result = []
         for category in categories:
             category = category.format()
-            sub_cats = category.get('sub_categories', [])
-            classes = category.get('classes', [])
-            sub_cat_list = []
-            for sub_cat in sub_cats:
+            videos = category.get('videos', [])
+            videos = []
+            for sub_cat in videos:
                 sub_cat = sub_cat.format()
-                sub_cat_list.append(sub_cat)
-                clas_l = []
-                for a_class in sub_cat.get('classes'):
-                    a_class = a_class.format()
-                    a_class.pop('subjects')
-                    clas_l.append(a_class)
-                sub_cat['classes'] = clas_l
-            class_list = []
-            for s_class in classes:
-                s_class = s_class.format()
-                s_class.pop('subjects')
-                class_list.append(s_class)
-            category['sub_categories'] = sub_cat_list
-            category['classes'] = class_list
+                videos.append(sub_cat)
+            category['videos'] = videos
             result.append(category)
         return jsonify({'data': result, 'message': 'success'})
 
@@ -318,13 +301,10 @@ def create_app(test_config=None):
 
     @app.route('/class', methods=['GET'])
     def get_classes():
-        sub_category_id = request.args.get('sub_category_id')
-        category_id = request.args.get('category_id')
+        education_id = request.args.get('education_id')
 
-        if category_id:
-            classes = Classes.query.filter(Classes.category_id == category_id)
-        elif sub_category_id:
-            classes = Classes.query.filter(Classes.sub_category_id == sub_category_id)
+        elif education_id:
+            classes = Classes.query.filter(Classes.education_id == education_id)
         else:
             classes = Classes.query.all()
         result = []

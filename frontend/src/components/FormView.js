@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import FormViewController from "./FormViewController"
 
+import $ from 'jquery';
+
 import '../stylesheets/FormView.css';
 import '../stylesheets/App.css';
 
@@ -10,7 +12,99 @@ class FormView extends Component {
     super();
     this.state = {
       selection: "SYSTEMS",
+      parent: null,
+      selectionParent: null,
     }
+  }
+
+  getSystems = () => {
+    $.ajax({
+      url: `/systems`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getEducations = () => {
+    $.ajax({
+      url: `/educations`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent: result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getCategories = () => {
+    $.ajax({
+      url: `/categories`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load categories. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSubCategories = () => {
+    $.ajax({
+      url: `/sub_categories`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load categories. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getClass = () => {
+    $.ajax({
+      url: `/class`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSubjects = () => {
+    $.ajax({
+      url: `/subject`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load subjects. Please try your request again')
+        return;
+      }
+    })
   }
 
   setActive = () => {
@@ -19,10 +113,48 @@ class FormView extends Component {
   }
 
   setSelection = (some_selection) => {
+    if(some_selection==='SYSTEMS'){
+      this.setState({
+        selection: some_selection,
+        parent: null
+      })
+      return;
+    }
     this.setState({
       selection: some_selection
     })
+    if(some_selection==="EDUCATION"){
+      this.getSystems()
+      return;
+    }
+    if(some_selection==="CATEGORY"){
+      this.getEducations()
+      return;
+    }
+    if(some_selection==="SUB-CATEGORY"){
+      this.getCategories()
+      return;
+    }
+    if(some_selection==="CLASS"){
+      this.getSubCategories()
+      return;
+    }
+    if(some_selection==="SUBJECT"){
+      this.getClass()
+      return;
+    }
+    if(some_selection==="VIDEO"){
+      this.getSubjects()
+      return;
+    }
     return;
+  }
+
+  setSelectionParent = (item) => {
+    this.setState({
+      selectionParent: item
+   })
+   return;
   }
 
   render() {
@@ -55,8 +187,18 @@ class FormView extends Component {
               </li>
           </ul>
         </div>
-        <div className="form-view__item-view">
-          <FormViewController selection={this.state.selection} />
+        <div className="parent-holder">
+          <div className="form-view__categories-list form-view__categories-list__add-video total_view" >
+            <ul>
+            {this.state.parent && this.state.parent.map((item, ind)=> (
+                <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selectionParent.id || item.id == this.state.selectionParent ? 'active' : null}`} onClick={() => {this.setSelectionParent(item)}}>
+                  {item.name}
+                </li>))}
+            </ul>
+          </div>
+          <div className="form-view__item-view">
+            <FormViewController selection={this.state.selection} parent={this.state.selectionParent} />
+          </div>
         </div>
       </div>
     );

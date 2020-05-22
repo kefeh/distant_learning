@@ -13,10 +13,16 @@ class AddEducation extends Component {
       educations: [],
       systems: [],
       system_id: 0,
+      parent: null,
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ parent: nextProps.parent });  
+  }
+
   componentDidMount(){
+    this.setState({ parent: this.props.parent });
     this.getEducations();
     this.getSystems();
   }
@@ -24,7 +30,7 @@ class AddEducation extends Component {
 
   getEducations = () => {
     $.ajax({
-      url: `/educations`, //TODO: update request URL
+      url: `/educations?system_id=${this.props.parent.id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ educations: result.data })
@@ -56,7 +62,7 @@ class AddEducation extends Component {
   submitEducation = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/educations', //TODO: update request URL
+      url: `/educations`, //TODO: update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
