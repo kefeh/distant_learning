@@ -234,23 +234,11 @@ def create_app(test_config=None):
             category_lists = sm_edu.get('category_list')
             result.append(sm_edu)
             classes = sm_edu.get('classes', [])
-            cat_list = []
-            for category in category_lists:
-                category = category.format()
-                t = category.pop('sub_categories')
-                cat_list.append(category)
-                c_list = []
-                for a_class in category.get('classes'):
-                    a_class = a_class.format()
-                    a_class.pop('subjects')
-                    c_list.append(a_class)
-                category['classes'] = c_list
             class_list = []
             for s_class in classes:
                 s_class = s_class.format()
-                s_class.pop('subjects')
+                s_class.pop('categories')
                 class_list.append(s_class)
-            sm_edu['category_list'] = cat_list
             sm_edu['classes'] = cat_list
         from pprint import pprint
         pprint(educations)
@@ -310,7 +298,15 @@ def create_app(test_config=None):
         result = []
         for some_class in classes:
             some_class = some_class.format()
-            some_class.pop('subjects')
+            categories = some_class.get('categories', [])
+            cat_list = []
+            vid_list = []
+            for cat in categories:
+                cat = cat.format()
+                cat.pop('videos')
+                cat_list.append(cat)
+            some_class.pop('videos')
+            some_class['categories'] = cat_list
             result.append(some_class)
 
         return jsonify({'data': result, 'message': 'success'})
@@ -335,10 +331,13 @@ def create_app(test_config=None):
 
     @app.route('/videos', methods=['GET'])
     def get_video():
-        subject_id = request.args.get('subject_id')
+        class_id = request.args.get('class_id')
+        category_id = request.args.get('category_id')
 
-        if subject_id:
-            videos = Video.query.filter(Video.subject_id == subject_id)
+        if category_id:
+            videos = Video.query.filter(Video.category_id == category_id)
+        if class_id:
+            videos = Video.query.filter(Video.class_id == class_id)
         else:
             videos = Video.query.all()
         result = []
