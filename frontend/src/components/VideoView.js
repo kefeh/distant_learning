@@ -15,11 +15,20 @@ class VideoView extends Component {
     }
   }
 
-
-  componentDidMount() {
-    this.getClass();
-    this.state.selection?this.getVideos(this.state.selection):(() => {})();
+  componentWillReceiveProps(nextProps) {
+    console.log('yes')
+    console.log(nextProps.from_add)
+    console.log('no')
+    this.setState({videos: nextProps.from_add}) 
   }
+
+  componentDidMount(){
+    this.getClass();
+    console.log(this.props.from_add)
+    this.props.from_add?this.setState({videos: this.props.from_add}):(
+    this.state.selection?this.getVideos(this.state.selection):(() => {})());
+  }
+
 
   getClass = () => {
     $.ajax({
@@ -45,6 +54,7 @@ class VideoView extends Component {
       type: "GET",
       success: (result) => {
         this.setState({ videos: result.data, selection: selection?selection.id:this.state.selection})
+        // this.props.updateVideos(this.state.videos)
         return;
       },
       error: (error) => {
@@ -80,7 +90,7 @@ class VideoView extends Component {
     const { from_add } = this.props;
     return (
       <div className={`form-view ${typeof from_add === 'undefined'?null:'form-view__add-video'}`}>
-        <div className={`form-view__categories-list ${typeof from_add === 'undefined'?null:'form-view__categories-list__add-video'}`} >
+        <div className={`form-view__categories-list ${typeof from_add === 'undefined'?null:'form-view__categories-list__add-video hide'}`} >
           <h2>Classes</h2>
           <ul>
           {this.state.classes && this.state.classes.map((item, ind)=> (

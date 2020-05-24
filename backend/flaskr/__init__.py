@@ -191,8 +191,8 @@ def create_app(test_config=None):
         date = datetime.now()
         up_video = Video(name=data.get(
             'name')[0], link=link, description=description[0], date=date)
-        up_video.class_id = data.get('class_id')[0] if data.get('class_id')[0] != '' else None
-        up_video.category_id=data.get('category_id')[0] if data.get('category_id')[0] != '' else None
+        up_video.class_id = data.get('class_id')[0] if( data.get('class_id')[0] != '' and  data.get('class_id')[0] != '0') else None
+        up_video.category_id=data.get('category_id')[0] if (data.get('category_id')[0] != '' and data.get('category_id')[0] != '0') else None
         if up_video.class_id == None and up_video.category_id == None:
             abort(422)
         up_video.insert()
@@ -335,7 +335,7 @@ def create_app(test_config=None):
 
         if category_id:
             videos = Video.query.filter(Video.category_id == category_id)
-        if class_id:
+        elif class_id:
             videos = Video.query.filter(Video.class_id == class_id)
         else:
             videos = Video.query.all()

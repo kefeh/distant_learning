@@ -16,9 +16,14 @@ class AddCategory extends Component {
     }
   }
 
+
+  componentWillReceiveProps(nextProps) {
+    this.getCategoriesUpdate(nextProps.parent.id);  
+  }
+
   componentDidMount(){
     this.getClass();
-    this.getCategories();
+    this.getCategoriesUpdate(this.props.parent.id);
   }
 
 
@@ -33,6 +38,21 @@ class AddCategory extends Component {
       },
       error: (error) => {
         alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getCategoriesUpdate = (id) => {
+    $.ajax({
+      url: `/categories?class_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ categories: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load categories. Please try your request again')
         return;
       }
     })
@@ -71,7 +91,7 @@ class AddCategory extends Component {
       crossDomain: true,
       success: (result) => {
         document.getElementById("add-categories-form").reset();
-        this.getCategories();
+        this.getCategoriesUpdate(this.state.class_id);
         return;
       },
       error: (error) => {
@@ -85,13 +105,13 @@ class AddCategory extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
-  deleteAction(id){ 
+  deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
         url: `/categories/${id}`, //TODO: update request URL
         type: "DELETE",
         success: (result) => {
-          this.getCategories();
+          this.getCategoriesUpdate(this.state.class_id);
           return;
         },
         error: (error) => {

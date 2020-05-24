@@ -23,7 +23,10 @@ class FormViewController extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ parent: nextProps.parent, selection:nextProps.selection });  
+    const { selection, parent } = this.props;
+    if (nextProps.parent !== parent) {
+        this.setState({ parent: nextProps.parent, selection:nextProps.selection });
+    }
   }
 
 

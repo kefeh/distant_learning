@@ -5,6 +5,7 @@ import ViewItems from "./ViewItems"
 import VideoView from "./VideoView"
 
 import '../stylesheets/FormView.css';
+import '../stylesheets/FilterStyle.css'
 
 class AddVideo extends Component {
   constructor(props){
@@ -15,26 +16,54 @@ class AddVideo extends Component {
       description: "",
       video: "",
       videos: [],
+      educations: [],
+      education_id: 0,
       classes: [],
       class_id: 0,
       categories: [],
       category_id: 0,
       isUploading: false,
+      categories: []
     }
   }
 
-  componentDidMount(){
-    this.getClasses();
-    this.getVideos();
+  componentWillReceiveProps(nextProps) {
+    this.getVideosUpdateClass(nextProps.parent.id);  
   }
 
 
-  getClasses = () => {
+  componentDidMount(){
+    this.getEducations();
+    this.getClasses(this.state.education_id);
+    this.getVideosUpdateClass(this.state.class_id);
+  }
+
+
+  updateVideos=(videos)=>{
+    this.setState({videos:videos})
+  }
+
+  getEducations = () => {
+    $.ajax({
+      url: `/educations`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ educations: result.data, education_id: result.data?result.data[0].id:0 })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getClasses = (id) => {
     this.setState({
       isUploading: false,
     })
     $.ajax({
-      url: `/class`, //TODO: update request URL
+      url: `/class?education_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ classes: result.data })
@@ -46,6 +75,39 @@ class AddVideo extends Component {
       }
     })
   }
+
+  getVideosUpdateClass = (id) => {
+    
+    $.ajax({
+      url: `/videos?class_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ videos: result.data, isUploading: false })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getVideosUpdateCategory = (id) => {
+    
+    $.ajax({
+      url: `/videos?category_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ videos: result.data, isUploading: false })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
 
   getVideos = () => {
     
@@ -63,6 +125,20 @@ class AddVideo extends Component {
     })
   }
 
+  getClassCategories(id){
+    console.log('in the funtion')
+    console.log(this.state.classes)
+    this.state.classes.forEach((element)=>{
+      console.log(element)
+      console.log(id)
+      if(Number(element.id) === Number(id)){
+        this.setState({
+          categories: element.categories,
+        });
+      }
+    })
+  }
+
 
   submitVideo = (event) => {
     event.preventDefault();
@@ -70,10 +146,9 @@ class AddVideo extends Component {
     formData.append('file', this.state.video)
     formData.append('name', this.state.name)
     formData.append('class_id', this.state.class_id)
+    formData.append('category_id', this.state.category_id)
     formData.append('link', this.state.link)
     formData.append('description', this.state.description)
-    console.log(formData)
-    console.log(this.state.video)
     this.setState({
       isUploading: true,
     })
@@ -86,7 +161,7 @@ class AddVideo extends Component {
       data: formData,
       success: (result) => {
         document.getElementById("add-video-form").reset();
-        this.getVideos();
+        this.getVideosUpdateClass(this.state.class_id);
         return;
       },
       error: (error) => {
@@ -98,6 +173,28 @@ class AddVideo extends Component {
 
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
+  }
+
+  handleCategoryChange = (event) => {
+    this.setState({
+      category_id: event.target.value
+    })
+    this.getVideosUpdateCategory(this.state.category_id)
+  }
+
+  handleClassChange = (event) => {
+    this.setState({
+      class_id: event.target.value,
+    });
+    this.getVideosUpdateClass(event.target.value)
+    this.getClassCategories(event.target.value)
+  }
+
+  handleEducationChange = (event) => {
+    this.getClasses(event.target.value)
+    this.setState({
+      education_id: event.target.value
+    })
   }
 
   onChangeHandler=event=>{
@@ -113,7 +210,7 @@ class AddVideo extends Component {
         url: `/video/${id}`, //TODO: update request URL
         type: "DELETE",
         success: (result) => {
-          this.getVideos();
+          this.getVideosUpdateClass(this.state.class_id);
           return;
         },
         error: (error) => {
@@ -127,6 +224,39 @@ class AddVideo extends Component {
   render() {
     return (
       <div className="add-items">
+        <form className="filter">
+          <span>Filters</span>
+          <label >
+            <select name="education_id" onChange={this.handleEducationChange}>
+                <option value={0}>Select an Education type</option>
+                {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label>
+            <select name="class_id" onChange={this.handleClassChange}>
+                <option value={0}>Select a class</option>
+                {this.state.classes && this.state.classes.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label>
+              <select name="category_id" onChange={this.handleChange}>
+                  <option value={0}>Select a Level Or Cycle</option>
+                  {this.state.categories && this.state.categories.map((item, ind) => (
+                  <option key={item['id']} value={item.id}>
+                      {item.name}
+                  </option>
+                  ))}
+              </select>
+          </label> 
+        </form>
         <div id="add-items__form">
           <h2>Add a new Video</h2>
           <form className="add-items__form-view" id="add-video-form" onSubmit={this.submitVideo}>
@@ -149,17 +279,6 @@ class AddVideo extends Component {
               <input type="text" name="link" onChange={this.handleChange}/>
             </label>
             <label>
-                <span>Class</span>
-                <select name="class_id" onChange={this.handleChange}>
-                    <option value={0}>Select a class</option>
-                    {this.state.classes && this.state.classes.map((item, ind) => (
-                    <option key={item['id']} value={item.id}>
-                        {item.name}
-                    </option>
-                    ))}
-                </select>
-            </label>
-            <label>
               <span>video</span>
               <input type="file" name="video" onChange={this.onChangeHandler}></input>
             </label>
@@ -169,7 +288,8 @@ class AddVideo extends Component {
           </form>
         </div>
         <VideoView 
-          from_add={this.state.classes[0]}
+          from_add={this.state.videos}
+          updateVideos={this.updateVideos}
         />
       </div>
     );

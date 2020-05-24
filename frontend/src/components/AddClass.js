@@ -16,11 +16,14 @@ class AddClass extends Component {
     }
   }
 
-  componentDidMount(){
-    this.getClass();
-    this.getEducation();
+  componentWillReceiveProps(nextProps) {
+    this.getClassUpdate(nextProps.parent.id);  
   }
 
+  componentDidMount(){
+    this.getClassUpdate(this.props.parent.id);
+    this.getEducation();
+  }
 
   getClass = () => {
     $.ajax({
@@ -37,6 +40,24 @@ class AddClass extends Component {
       }
     })
   }
+
+
+  getClassUpdate = (id) => {
+    $.ajax({
+      url: `/class?education_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ classes: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
 
 
   getEducation = () => {
@@ -72,7 +93,7 @@ class AddClass extends Component {
       crossDomain: true,
       success: (result) => {
         document.getElementById("add-class-form").reset();
-        this.getClass();
+        this.getClassUpdate(this.state.education_id);
         this.setState({education_id:0})
         return;
       },
@@ -87,13 +108,13 @@ class AddClass extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
-  deleteAction(id){ 
+  deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
         url: `/class/${id}`, //TODO: update request URL
         type: "DELETE",
         success: (result) => {
-          this.getClass();
+          this.getClassUpdate(this.state.education_id);
           return;
         },
         error: (error) => {
