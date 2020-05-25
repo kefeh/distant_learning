@@ -14,7 +14,8 @@ QUESTIONS_PER_PAGE = 10
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, static_folder="../../frontend/build", static_url_path="")
+    app = Flask(__name__, static_folder="../../frontend/build",
+                static_url_path="")
     setup_db(app)
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -27,13 +28,13 @@ def create_app(test_config=None):
                              'GET, PUT, POST, PATCH, DELETE, OPTIONS')
         return response
 
-
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def index(path):
         if path != "" and os.path.exists(app.static_folder + '/' + path):
             file_name = path.split("/")[-1]
-            dir_name = os.path.join(app.static_folder, "/".join(path.split("/")[:-1]))
+            dir_name = os.path.join(
+                app.static_folder, "/".join(path.split("/")[:-1]))
             return send_from_directory(dir_name, file_name)
         return send_from_directory(app.static_folder, 'index.html')
 
@@ -59,7 +60,6 @@ def create_app(test_config=None):
 
 # Add Education level
 
-
     @app.route('/educations', methods=['POST'])
     def add_education():
         data = request.json
@@ -79,7 +79,6 @@ def create_app(test_config=None):
 
 # Add Category level
 
-
     @app.route('/categories', methods=['POST'])
     def add_category():
         data = request.json
@@ -89,7 +88,7 @@ def create_app(test_config=None):
         try:
             category = Category(name=data.get(
                 'name'))
-            category.class_id=data.get('class_id')
+            category.class_id = data.get('class_id')
             category.insert()
         except Exception:
             abort(422)
@@ -98,7 +97,6 @@ def create_app(test_config=None):
 
 
 # Add Sub Category level
-
 
     @app.route('/sub_categories', methods=['POST'])
     def add_sub_category():
@@ -110,7 +108,7 @@ def create_app(test_config=None):
         try:
             sub_category = SubCategory(name=data.get(
                 'name'))
-            sub_category.category_id=data.get('category_id')
+            sub_category.category_id = data.get('category_id')
             sub_category.insert()
         except Exception:
             abort(422)
@@ -119,7 +117,6 @@ def create_app(test_config=None):
 
 
 # Add Class level
-
 
     @app.route('/class', methods=['POST'])
     def add_class():
@@ -132,7 +129,7 @@ def create_app(test_config=None):
             if education_id:
                 classes = Classes(name=data.get(
                     'name'))
-                classes.education_id=int(data.get('education_id'))
+                classes.education_id = int(data.get('education_id'))
                 classes.insert()
             else:
                 abort(422)
@@ -144,7 +141,6 @@ def create_app(test_config=None):
 
 # Add Category level
 
-
     @app.route('/subject', methods=['POST'])
     def add_subject():
         data = request.json
@@ -154,13 +150,12 @@ def create_app(test_config=None):
         try:
             subject = Subject(name=data.get(
                 'name'))
-            subject.class_id=data.get('class_id')
+            subject.class_id = data.get('class_id')
             subject.insert()
         except Exception:
             abort(422)
 
         return jsonify({'message': 'success', 'id': subject.id})
-
 
     @app.route('/video', methods=['POST'])
     def add_video():
@@ -191,10 +186,18 @@ def create_app(test_config=None):
         date = datetime.now()
         up_video = Video(name=data.get(
             'name')[0], link=link, description=description[0], date=date)
-        up_video.class_id = data.get('class_id')[0] if( data.get('class_id')[0] != '' and  data.get('class_id')[0] != '0') else None
-        up_video.category_id=data.get('category_id')[0] if (data.get('category_id')[0] != '' and data.get('category_id')[0] != '0') else None
+        if(data.get('class_id')[0] != '' and data.get('class_id')[0] != '0'):
+            class_id = int(data.get('class_id')[0])
+            up_class = Classes.query.filter(Classes.id == class_id).one()
+            if up_class.categories and not (data.get('category_id')[
+            0] != '' and data.get('category_id')[0] != '0'):
+                abort(422, description="Please select a level or Cycle")
+        up_video.class_id = data.get('class_id')[0] if(
+            data.get('class_id')[0] != '' and data.get('class_id')[0] != '0') else None
+        up_video.category_id = data.get('category_id')[0] if (data.get('category_id')[
+            0] != '' and data.get('category_id')[0] != '0') else None
         if up_video.class_id == None and up_video.category_id == None:
-            abort(422)
+            abort(422, description="Please select a Class or level/Cycle")
         up_video.insert()
     # except Exception:
     #     abort(422)
@@ -213,18 +216,18 @@ def create_app(test_config=None):
         resp = upload_video(video, file_name, description)
         link = resp
         if link:
-            return jsonify({'url': link, 'message':'success'})
+            return jsonify({'url': link, 'message': 'success'})
         abort(422)
 
 
 # Get endpoints
 
-
     @app.route('/educations', methods=['GET'])
     def get_education():
         system_id = request.args.get('system_id')
         if system_id:
-            educations = Education.query.filter(Education.system_id == system_id)
+            educations = Education.query.filter(
+                Education.system_id == system_id)
         else:
             educations = Education.query.all()
         result = []
@@ -242,9 +245,8 @@ def create_app(test_config=None):
             sm_edu['class_list'] = class_list
         from pprint import pprint
         pprint(educations)
-        
-        return jsonify({'data': result, 'message': 'success'})
 
+        return jsonify({'data': result, 'message': 'success'})
 
     @app.route('/categories', methods=['GET'])
     def get_categories():
@@ -265,12 +267,12 @@ def create_app(test_config=None):
             result.append(category)
         return jsonify({'data': result, 'message': 'success'})
 
-
     @app.route('/sub_categories', methods=['GET'])
     def get_sub_categories():
         category_id = request.args.get('category_id')
         if category_id:
-            categories = SubCategory.query.filter(SubCategory.category_id == category_id)
+            categories = SubCategory.query.filter(
+                SubCategory.category_id == category_id)
         else:
             categories = SubCategory.query.all()
         result = []
@@ -286,13 +288,13 @@ def create_app(test_config=None):
             result.append(category)
         return jsonify({'data': result, 'message': 'success'})
 
-
     @app.route('/class', methods=['GET'])
     def get_classes():
         education_id = request.args.get('education_id')
 
         if education_id:
-            classes = Classes.query.filter(Classes.education_id == education_id)
+            classes = Classes.query.filter(
+                Classes.education_id == education_id)
         else:
             classes = Classes.query.all()
         result = []
@@ -310,7 +312,6 @@ def create_app(test_config=None):
 
         return jsonify({'data': result, 'message': 'success'})
 
-
     @app.route('/subject', methods=['GET'])
     def get_subject():
         class_id = request.args.get('class_id')
@@ -326,7 +327,6 @@ def create_app(test_config=None):
             result.append(some_subject)
 
         return jsonify({'data': result, 'message': 'success'})
-
 
     @app.route('/videos', methods=['GET'])
     def get_video():
@@ -348,7 +348,6 @@ def create_app(test_config=None):
 
         return jsonify({'data': result, 'message': 'success'})
 
-
     @app.route('/systems', methods=['GET'])
     def get_systems():
         systems = System.query.all()
@@ -366,8 +365,7 @@ def create_app(test_config=None):
                 'education_list': edu
             })
 
-        return jsonify({'data':result, 'message': 'success'})
-
+        return jsonify({'data': result, 'message': 'success'})
 
     @app.route('/systems/<int:system_id>', methods=['DELETE'])
     def delete_system(system_id):
@@ -380,7 +378,6 @@ def create_app(test_config=None):
             abort(500)
         return jsonify({'success': True, "deleted": system_id})
 
-    
     @app.route('/educations/<int:education_id>', methods=['DELETE'])
     def delete_education(education_id):
         education = Education.query.get(education_id)
@@ -391,7 +388,6 @@ def create_app(test_config=None):
         except Exception:
             abort(500)
         return jsonify({'success': True, 'deleted': education_id})
-
 
     @app.route('/categories/<int:category_id>', methods=['DELETE'])
     def delete_category(category_id):
@@ -404,7 +400,6 @@ def create_app(test_config=None):
             abort(500)
         return jsonify({'success': True, 'deleted': category_id})
 
-    
     @app.route('/sub_categories/<int:sub_category_id>', methods=['DELETE'])
     def delete_sub_category(sub_category_id):
         sub_category = SubCategory.query.get(sub_category_id)
@@ -414,7 +409,7 @@ def create_app(test_config=None):
             sub_category.delete()
         except Exception:
             abort(500)
-        return jsonify({'success': True, "deleted":sub_category_id})
+        return jsonify({'success': True, "deleted": sub_category_id})
 
     @app.route('/class/<int:class_id>', methods=['DELETE'])
     def delete_class(class_id):
@@ -425,8 +420,7 @@ def create_app(test_config=None):
             classes.delete()
         except Exception:
             abort(500)
-        return jsonify({'success': True, "deleted":class_id})
-
+        return jsonify({'success': True, "deleted": class_id})
 
     @app.route('/subject/<int:subject_id>', methods=['DELETE'])
     def delete_subject(subject_id):
@@ -437,9 +431,8 @@ def create_app(test_config=None):
             subject.delete()
         except Exception:
             abort(500)
-        return jsonify({'success': True, "deleted":subject_id})
+        return jsonify({'success': True, "deleted": subject_id})
 
-    
     @app.route('/video/<int:video_id>', methods=['DELETE'])
     def delete_video(video_id):
         video = Video.query.get(video_id)
@@ -449,7 +442,7 @@ def create_app(test_config=None):
             video.delete()
         except Exception:
             abort(500)
-        return jsonify({'success': True, "deleted":video_id})
+        return jsonify({'success': True, "deleted": video_id})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()
@@ -587,12 +580,11 @@ def create_app(test_config=None):
             }), 404
         return send_from_directory(app.static_folder, 'index.html')
 
-
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
             'error': 422,
-            'message': 'Unprocessable'
+            'message': f'Unprocessable {str(error)}'
         }), 422
 
     @app.errorhandler(400)
