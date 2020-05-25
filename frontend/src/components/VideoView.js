@@ -87,7 +87,8 @@ class VideoView extends Component {
   }
 
   render() {
-    const { from_add } = this.props;
+    const { from_add, delete_hide } = this.props;
+    var hide_edit_delete = typeof delete_hide==="undefined"?false:delete_hide
     return (
       <div className={`form-view ${typeof from_add === 'undefined'?null:'form-view__add-video'}`}>
         <div className={`form-view__categories-list ${typeof from_add === 'undefined'?null:'form-view__categories-list__add-video hide'}`} >
@@ -115,7 +116,7 @@ class VideoView extends Component {
                         <span className="Name">{item.description}</span>
                         <span className="Date">{item.date}</span>
                         </div>
-                    <div className={`Actions ${typeof from_add === 'undefined'?'hide':'show'}`}>
+                    <div className={`Actions ${typeof from_add === 'undefined' || hide_edit_delete?'hide':'show'}`}>
                       <div className="video-icon">
                         <svg className="icon-pencil">
                           <use xlinkHref="./icons/symbol-defs.svg#icon-pencil"></use>

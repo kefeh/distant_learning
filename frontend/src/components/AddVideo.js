@@ -165,7 +165,8 @@ class AddVideo extends Component {
         return;
       },
       error: (error) => {
-        alert('Unable to add classes. Please try your request again')
+        console.log(error)
+        alert(error.responseJSON.message)
         return;
       }
     })
@@ -179,7 +180,7 @@ class AddVideo extends Component {
     this.setState({
       category_id: event.target.value
     })
-    this.getVideosUpdateCategory(this.state.category_id)
+    this.getVideosUpdateCategory( event.target.value)
   }
 
   handleClassChange = (event) => {
@@ -247,7 +248,7 @@ class AddVideo extends Component {
             </select>
           </label>
           <label>
-              <select name="category_id" onChange={this.handleChange}>
+              <select name="category_id" onChange={this.handleCategoryChange}>
                   <option value={0}>Select a Level Or Cycle</option>
                   {this.state.categories && this.state.categories.map((item, ind) => (
                   <option key={item['id']} value={item.id}>
@@ -278,10 +279,10 @@ class AddVideo extends Component {
               <span>Link</span>
               <input type="text" name="link" onChange={this.handleChange}/>
             </label>
-            <label>
+            {/* <label>
               <span>video</span>
               <input type="file" name="video" onChange={this.onChangeHandler}></input>
-            </label>
+            </label> */}
             {this.state.isUploading ? <input type="submit" className="button" value="uploading..." /> 
             :
             <input type="submit" className="button" value="Submit" />}

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "../stylesheets/MainCategoryNav.css";
 import $ from "jquery";
 import ContentDisplay from "./ContentDisplay";
+import VideoView from "./VideoView";
 
 class MainCategoryNav extends Component {
     constructor(props) {
@@ -20,6 +21,8 @@ class MainCategoryNav extends Component {
             },
             selectedItem1: null,
             selectedItem2: null,
+            videos: [],
+            tabVisibility: false,
         };
     }
     componentDidMount() {
@@ -66,14 +69,14 @@ class MainCategoryNav extends Component {
 
     displayTab = (data) => {
         return (
-            <div className="row" style={{ borderBottom: "1px solid white", backgroundColor: "rgba(196, 196, 196, 0.13)" }}>
+            <div className="row nav-item-system__row" style={{ color: "white", backgroundColor: "#468908" }}>
                 {data.map((item) => (
                     <div
                         key={item.id}
                         id={`${item.id}${item.name}`}
                         onClick={() => this.handleTabClick(item, item.education_list)}
-                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
-                            item.id + item.name === this.state.selectedItem1 ? "active" : null
+                        className={`col hover__cursor__style single-tab-hover text-center py-3 nav-item-system font-weight-bolder ${
+                            item.id + item.name === this.state.selectedItem1 ? "nav-item-system__active" : null
                         }`}
                     >
                         {item.name.toUpperCase()}
@@ -87,6 +90,8 @@ class MainCategoryNav extends Component {
         this.setState((prevState) => ({
             ...prevState,
             selectedItem1: data.id + data.name,
+            videos: [],
+            tabVisibility: true,
         }));
         this.showChildData(data, nextData);
     };
@@ -101,17 +106,18 @@ class MainCategoryNav extends Component {
 
     showChildData = (prevData, data) => {
         console.log(data);
-        if (data === this.state.level2Data && this.state.level2Data.length > 0) {
-            this.setState((prevState) => ({
-                ...prevState,
-                level2Data: [],
-                lastLevelData: {
-                    isFetching: false,
-                    data: null,
-                    error: null,
-                },
-            }));
-        } else if (!data) {
+        // if (data === this.state.level2Data && this.state.level2Data.length > 0) {
+        //     this.setState((prevState) => ({
+        //         ...prevState,
+        //         level2Data: [],
+        //         lastLevelData: {
+        //             isFetching: false,
+        //             data: null,
+        //             error: null,
+        //         },
+        //     }));
+        // } else 
+        if (!data) {
             this.fetchLeaveData(prevData);
         } else if (data.length === 0) {
             this.setState(
@@ -130,7 +136,10 @@ class MainCategoryNav extends Component {
                     data: null,
                     error: null,
                 },
-            }));
+            }), ()=>
+            {
+                this.state.level2Data.length > 0 && this.fetchLeaveData(this.state.level2Data[0])
+            });
         }
     };
 
@@ -145,7 +154,7 @@ class MainCategoryNav extends Component {
             }),
             () =>
                 $.ajax({
-                    url: `/categories?education_id=${prevData.id}`, //TODO: update request URL
+                    url: `/class?education_id=${prevData.id}`, //TODO: update request URL
                     type: "GET",
                     success: (result) => {
                         console.log(result.data);
@@ -157,6 +166,7 @@ class MainCategoryNav extends Component {
                                 isFetching: false,
                             },
                         }));
+                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.fetchVideoData(result.data[0].id):(()=>{})()
                         return;
                     },
                     error: (error) => {
@@ -166,6 +176,22 @@ class MainCategoryNav extends Component {
                 })
         );
     };
+
+    fetchVideoData = (class_id, category_id) => {
+        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}`: `/videos?class_id=${class_id}`
+        $.ajax({
+            url: query_url, //TODO: update request URL
+            type: "GET",
+            success: (result) => {
+              this.setState({ videos: result.data})
+              return;
+            },
+            error: (error) => {
+              alert('Unable to load systems. Please try your request again')
+              return;
+            }
+          })
+    }
 
     render() {
         return (
@@ -181,17 +207,17 @@ class MainCategoryNav extends Component {
                         Error occured file fetching data
                     </div>
                 ) : this.state.level1Data.data ? (
-                    <div className="container">
+                    <div className="container-fluid">
                         {this.displayTab(this.state.level1Data.data)}
                         {this.state.level2Data.length > 0 && (
-                            <div className="row">
+                            <div className="row second-tab-row">
                                 {this.state.level2Data.map((item) => (
                                     <div
                                         key={item.id}
                                         id={`${item.id}${item.name}`}
                                         onClick={() => this.handleTab2Click(item, item.education_list)}
-                                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder ${
-                                            item.id + item.name === this.state.selectedItem2 ? "active" : null
+                                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder second-tab ${
+                                            item.id + item.name === this.state.selectedItem2 ? "second-tab__active" : null
                                         }`}
                                     >
                                         {item.name.toUpperCase()}
@@ -210,16 +236,23 @@ class MainCategoryNav extends Component {
                                 <div className="alert alert-danger" role="alert">
                                     Error occured file fetching data
                                 </div>
-                            ) : this.state.lastLevelData.data ? (
-                                <div className="container pb-5">
-                                    <ContentDisplay categories={this.state.lastLevelData.data} />
+                            ) : this.state.lastLevelData.data && this.state.lastLevelData.data.length > 0  ? (
+                                <div className="row">
+                                    <div className="col-2 class-nav">
+                                        <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData}/>
+                                    </div>
+                                    <div className="col-10 video-body">
+                                        <VideoView from_add={this.state.videos} delete_hide={true} />
+                                    </div>
                                 </div>
-                            ) : null}
+                            ) : <div className="col-3 ml-auto mr-auto alert alert-danger" role="alert">
+                            No Data Available
+                        </div>}
                         </div>
                     </div>
                 ) : (
                     <div className="alert alert-danger" role="alert">
-                        Something aint right
+                        Something not right
                     </div>
                 )}
             </div>
