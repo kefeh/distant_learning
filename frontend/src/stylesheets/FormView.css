@@ -81,8 +81,15 @@ label span {
   font-size: 0.8rem;
 }
 .video__card-text span{
+  width: 100%;
+  float: left;
+  text-align: left;
   letter-spacing: .2;
   /* padding: 0.2em; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
 }
 .Date{
   font-size: 0.7em;
@@ -188,15 +195,8 @@ input[type=text], textarea[type=text] {
   position: relative;
 }
 
-.ytp-title-text, .ytp-title-channel-logo, .ytp-overflow-icon {
-  display: none;
-}
-button.ytp-large-play-button {
-  display: none;
-}
-
-button.ytp-large-play-button svg { 
-      display: none;
+.video__card iframe{
+  width: 100%;
 }
 .video__card-text{
   width: 90%;
@@ -221,6 +221,11 @@ button.ytp-large-play-button svg {
   display: flex;
   flex-wrap: wrap;
   justify-content: start;
+}
+
+.video ul{
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .parent-holder{

@@ -18,14 +18,16 @@ class AddEducation extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getEducationsUpdate(nextProps.parent.id);  
+    var system_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+    this.getEducationsUpdate(system_id);  
   }
 
   componentDidMount(){
     console.log('the props')
     console.log(this.props)
     console.log('ends here')
-    this.getEducationsUpdate(this.props.parent.id); 
+    var system_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
+    this.getEducationsUpdate(system_id); 
     this.getSystems();
   }
 

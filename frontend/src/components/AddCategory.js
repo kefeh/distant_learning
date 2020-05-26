@@ -18,12 +18,14 @@ class AddCategory extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    this.getCategoriesUpdate(nextProps.parent.id);  
+    var class_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+    this.getCategoriesUpdate(class_id);  
   }
 
   componentDidMount(){
     this.getClass();
-    this.getCategoriesUpdate(this.props.parent.id);
+    var class_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
+    this.getCategoriesUpdate(class_id);
   }
 
 

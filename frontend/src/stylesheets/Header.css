@@ -49,15 +49,17 @@
 .App-header{
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: .4rem;
+    padding-left: 10%;
+    padding-right: 10%;
     background-color: #468908;
     color: white;
 }
 
 .App-header > h5 {
     cursor: pointer;
-    font-size: .9em;
+    font-size: 1em;
     margin: 0;
 }
 

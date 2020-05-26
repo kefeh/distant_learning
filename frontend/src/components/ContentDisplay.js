@@ -125,7 +125,7 @@ class ContentDisplay extends Component {
         return(
             <div key={key} className="row pl-0">
             <div
-                className={`col-12 hover__cursor__style texting-styling form-view__categories-list-item class-nav__item ${
+                className={`hover__cursor__style texting-styling form-view__categories-list-item class-nav__item ${
                     some_class.id + some_class.name === this.state.selectedBlock ? "active" : ""
                 }`}
                 onClick={() => this.toggleDrop(some_class)}

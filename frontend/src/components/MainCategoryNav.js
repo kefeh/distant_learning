@@ -55,7 +55,7 @@ class MainCategoryNav extends Component {
                                         ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
                                         : null,
                             }),
-                            () => this.showChildData(this.state.level2Data[0], this.state.level2Data[0].education_list)
+                            () => typeof this.state.level2Data[0] !== "undefined"?this.showChildData(this.state.level2Data[0], this.state.level2Data[0].education_list):(()=>{})()
                         );
                         return;
                     },
@@ -237,14 +237,31 @@ class MainCategoryNav extends Component {
                                     Error occured file fetching data
                                 </div>
                             ) : this.state.lastLevelData.data && this.state.lastLevelData.data.length > 0  ? (
-                                <div className="row">
+                                <>
+                                <div className="main-body-content">
+                                    <div className="main-body-menu">
+                                        <input type="checkbox" id="nav-toggle" className="nav-toggle"></input>
+
+                                        <label for="nav-toggle" className="nav-toggle-label">
+                                            <span></span>
+                                        </label>
+                                        <div className="class-nav">
+                                            <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData}/>
+                                        </div>
+                                    </div>
+                                    <div className="video-body">
+                                        <VideoView from_add={this.state.videos} delete_hide={true} />
+                                    </div>
+                                </div>
+                                {/* <div className="row main-body-content">
                                     <div className="col-2 class-nav">
                                         <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData}/>
                                     </div>
                                     <div className="col-10 video-body">
                                         <VideoView from_add={this.state.videos} delete_hide={true} />
                                     </div>
-                                </div>
+                                </div> */}
+                                </>
                             ) : <div className="col-3 ml-auto mr-auto alert alert-danger" role="alert">
                             No Data Available
                         </div>}

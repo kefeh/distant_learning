@@ -14,10 +14,11 @@ class Header extends Component {
         <div className="national-colors"></div>
         <div className='logo'>
           <span className='logo__ministry'>MINISTRY OF SECONDARY EDUCATION</span>
-          <span className='logo__republic'>REPUBLIC OF CAMEROON</span>
+          <span className='logo__republic'>MINISTERE DES ENSEIGNEMENTS SECONDAIRES</span>
         </div>
         <div className="App-header">
-          <h5 onClick={() => {this.navTo('')}}>Distant Learning</h5>
+          <h5 onClick={() => {this.navTo('')}}>Distant Education</h5>
+          <h5 onClick={() => {this.navTo('')}}>Télé-Enseignement</h5>
           {/* <h5 onClick={() => {this.navTo('/add')}}>Admin Dashboard</h5>
           <h5 onClick={() => {this.navTo('/play')}}>Videos</h5> */}
       </div>

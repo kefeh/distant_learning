@@ -113,7 +113,7 @@ class VideoView extends Component {
                         webkitallowfullscreen="webkitallowfullscreen"
                         name="someIframe" />
                     <div className="video__card-text">
-                        <span className="Name">{item.description}</span>
+                        <span className="Name">{item.name}</span>
                         <span className="Date">{item.date}</span>
                         </div>
                     <div className={`Actions ${typeof from_add === 'undefined' || hide_edit_delete?'hide':'show'}`}>

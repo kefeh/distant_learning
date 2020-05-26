@@ -28,7 +28,8 @@ class AddVideo extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getVideosUpdateClass(nextProps.parent.id);  
+    var parent_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+    this.getVideosUpdateClass(parent_id);  
   }
 
 

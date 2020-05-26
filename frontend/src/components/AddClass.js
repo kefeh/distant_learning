@@ -17,11 +17,13 @@ class AddClass extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getClassUpdate(nextProps.parent.id);  
+    var education_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+    this.getClassUpdate(education_id);  
   }
 
   componentDidMount(){
-    this.getClassUpdate(this.props.parent.id);
+    var education_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
+    this.getClassUpdate(education_id);
     this.getEducation();
   }
 

@@ -64,10 +64,13 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
+    width: 95%;
 }
 
 .video-body{
     background-color: rgba(0, 0, 0, 0.03);
+    flex: 1;
 }
 
 .nav-item-system__row{
@@ -111,6 +114,22 @@
     padding-right: 15px;
     padding-left: 15px;
 }
+.main-body-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.main-body-menu{
+    width: 18rem;
+    background-color: white;
+}
+.nav-toggle{
+    display: none;
+}
+
 @media only screen and (max-width: 768px) {
     /* For mobile phones: */
     .Main-holder__nav__link--button {
@@ -118,5 +137,59 @@
     }
     .Main-holder_nav__item {
         margin: 0.06rem 0.01rem;
+    }
+    /* For mobile phones: */
+    .main-body-content{
+        position: relative;
+    }
+    .class-nav{
+        display: none;
+        width: 14rem;
+        height: 100%;
+    }
+    .main-body-menu{
+        width: 18rem;
+        top: -1.5%;
+    }
+    .main-body-menu{
+        position: absolute;
+        z-index: 999;
+        display: flex;
+        flex-direction: row;
+        margin-top: auto;
+        margin-bottom: auto;
+        /* min-height: 30%; */
+    }
+    .nav-toggle:checked ~ .class-nav{
+        display: block;
+    }
+    .nav-toggle{
+        display: none;
+    }
+    .nav-toggle-label{
+        position: sticky;
+        padding: 1rem;
+        cursor: pointer;
+    }
+    .nav-toggle-label span,
+    .nav-toggle-label span::before,
+    .nav-toggle-label span::after{
+        display: block;
+        background: black;
+        position: relative;
+        height: 4px;
+        width: 2em;
+        border-radius: 2em;
+    }
+    .nav-toggle-label span::before,
+    .nav-toggle-label span::after{
+        content: "";
+        position: absolute;
+    }
+    .nav-toggle-label span::before{
+        bottom: 7px;
+    }
+    .nav-toggle-label span::after{
+        top: 7px;
     }
 }
