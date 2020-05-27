@@ -1,29 +1,29 @@
 .national-colors {
-    padding: 1em;
+    padding: 0.5em;
     background-color: #E84641;
     display: block;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(231, 223, 66);
 }
 
 .national-colors::before {
     content: '';
     background: #468908;
-    width: 8rem;
-    padding: 1em;
+    width: 12rem;
+    padding: 2em;
     position: absolute;
     left: 0em;
     top: 0;
 }
 
 .national-colors::after {
-    content: '06 Sept 2020';
-    font-size: 0.6rem;
-    font-weight: bold;
-    text-align: center;
+    content: '';
     background: #ECDF00;
-    width: 5rem;
-    padding: 1em;
-    color: white;
+    width: 12rem;
+    padding: 2em;
     position: absolute;
     right: 0;
     top: 0;
@@ -40,9 +40,9 @@
 
 .logo__ministry,
 .logo__republic {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
-    width: 20%;
+    width: 10%;
     color: #353535;
 }
 
@@ -65,22 +65,27 @@
 
 @media only screen and (max-width: 900px) {
     /* For mobile phones: */
-    .logo__republic{
-        display: none;
-    }
+    .logo__republic,
     .logo__ministry{
-        flex: 1;
-        left: 0;
-        font-size: 1.3rem;
+        font-size: 0.8rem;
         text-align: center;
+        width: 100%;
     }
     .logo{
-        justify-content: space-around;
+        flex-direction: column;
+    }
+    .national-colors > span{
+        font-size: 0.5em;
     }
     .App-header {
         font-size: 0.8rem;
     }
     .App-header > h5 {
         font-size: 0.8rem;
+    }
+    .national-colors::before,
+    .national-colors::after {
+        width: 8rem;
+        padding: 1.25em;
     }
   }

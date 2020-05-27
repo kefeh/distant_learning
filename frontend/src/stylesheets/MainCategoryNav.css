@@ -133,7 +133,7 @@
 @media only screen and (max-width: 768px) {
     /* For mobile phones: */
     .Main-holder__nav__link--button {
-        font-size: 0.6rem;
+        font-size: 0.8rem;
     }
     .Main-holder_nav__item {
         margin: 0.06rem 0.01rem;
@@ -155,9 +155,10 @@
         position: absolute;
         z-index: 999;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         margin-top: auto;
         margin-bottom: auto;
+        top: -2.5rem;
         /* min-height: 30%; */
     }
     .nav-toggle:checked ~ .class-nav{
@@ -191,5 +192,12 @@
     }
     .nav-toggle-label span::after{
         top: 7px;
+    }
+    .class-nav__item {
+        font-size: 0.8em;
+      }
+    .nav-item-system,
+    .second-tab{
+        font-size: 0.8rem;
     }
 }

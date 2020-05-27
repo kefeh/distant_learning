@@ -288,9 +288,6 @@ input[type=text], textarea[type=text] {
     font-weight: bold;
     cursor: pointer;
   }
-  span{
-    font-size: 0.5em;
-  }
   .video ul{
     margin: 0;
   }
