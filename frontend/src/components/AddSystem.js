@@ -35,6 +35,32 @@ class AddSystem extends Component {
     })
   }
 
+  updateChild = (id, name) => {
+    $.ajax({
+      url: '/systems', //TODO: update request URL
+      type: "PUT",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        name: name,
+        id: id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-systems-form").reset();
+        this.getSystems();
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
 
   submitSystem = (event) => {
     event.preventDefault();
@@ -90,6 +116,7 @@ class AddSystem extends Component {
           items={this.state.systems}
           deleteAction = {this.deleteAction}
           getSystems={this.getSystems}
+          updateChild={this.updateChild}
         />
         <div id="add-items__form">
           <h2>Add a New System Of Education</h2>

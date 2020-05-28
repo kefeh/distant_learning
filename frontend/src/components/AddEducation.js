@@ -115,6 +115,32 @@ class AddEducation extends Component {
     this.getEducationsUpdate(event.target.value)
   }
 
+  updateChild = (id, name) => {
+    $.ajax({
+      url: '/educations', //TODO: update request URL
+      type: "PUT",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        name: name,
+        id: id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-systems-form").reset();
+        this.getEducationsUpdate(this.state.system_id);
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
   deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
@@ -151,6 +177,7 @@ class AddEducation extends Component {
           items={this.state.educations}
           deleteAction = {this.deleteAction}
           getEducations={this.getEducations}
+          updateChild={this.updateChild}
         />
         <div id="add-items__form">
           <h2>Add a New Type of Education</h2>

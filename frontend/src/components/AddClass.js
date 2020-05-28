@@ -152,6 +152,32 @@ class AddClass extends Component {
     this.getClassUpdate(event.target.value)
   }
 
+  updateChild = (id, name) => {
+    $.ajax({
+      url: '/class', //TODO: update request URL
+      type: "PUT",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        name: name,
+        id: id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-systems-form").reset();
+        this.getClassUpdate(this.state.education_id);
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
   deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
@@ -198,6 +224,7 @@ class AddClass extends Component {
           items={this.state.classes}
           deleteAction = {this.deleteAction}
           getClass={this.getClass}
+          updateChild={this.updateChild}
         />
         <div id="add-items__form">
           <h2>Add a New Class</h2>

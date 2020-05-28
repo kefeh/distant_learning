@@ -153,6 +153,32 @@ class AddCategory extends Component {
     })
   }
 
+  updateChild = (id, name) => {
+    $.ajax({
+      url: '/categories', //TODO: update request URL
+      type: "PUT",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        name: name,
+        id: id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-systems-form").reset();
+        this.getCategoriesUpdate(this.state.class_id)
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
   }
@@ -231,6 +257,7 @@ class AddCategory extends Component {
           items={this.state.categories}
           deleteAction = {this.deleteAction}
           getCategories={this.getCategories}
+          updateChild={this.updateChild}
         />
         <div id="add-items__form">
           <h2>Add a New Level Or Cycle</h2>

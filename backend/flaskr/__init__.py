@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, update, desc
 from flask_cors import CORS
 import random
 
@@ -57,6 +57,23 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': system.id})
 
+    
+    @app.route('/systems', methods=['PUT'])
+    def update_system():
+        print("updating systems")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+    # try:
+        system = System.query.get(data.get('id'))
+        system.name=data.get('name')
+        system.update()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success', 'id': system.id})
+
 
 # Add Education level
 
@@ -73,6 +90,23 @@ def create_app(test_config=None):
             education.insert()
         except Exception:
             abort(422)
+
+        return jsonify({'message': 'success', 'id': education.id})
+
+
+    @app.route('/educations', methods=['PUT'])
+    def update_educations():
+        print("updating educations")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+    # try:
+        education = Education.query.get(data.get('id'))
+        education.name=data.get('name')
+        education.update()
+    # except Exception:
+    #     abort(422)
 
         return jsonify({'message': 'success', 'id': education.id})
 
@@ -95,6 +129,22 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': category.id})
 
+
+    @app.route('/categories', methods=['PUT'])
+    def update_categories():
+        print("updating categories")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+    # try:
+        category = Category.query.get(data.get('id'))
+        category.name=data.get('name')
+        category.update()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success', 'id': category.id})
 
 # Add Sub Category level
 
@@ -138,6 +188,22 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': classes.id})
 
+
+    @app.route('/class', methods=['PUT'])
+    def update_class():
+        print("updating class")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+    # try:
+        classes = Classes.query.get(data.get('id'))
+        classes.name=data.get('name')
+        classes.update()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success', 'id': classes.id})
 
 # Add Category level
 
@@ -226,10 +292,10 @@ def create_app(test_config=None):
     def get_education():
         system_id = request.args.get('system_id')
         if system_id:
-            educations = Education.query.filter(
+            educations = Education.query.order_by(desc(Education.name)).filter(
                 Education.system_id == system_id)
         else:
-            educations = Education.query.all()
+            educations = Education.query.order_by(desc(Education.name)).all()
         result = []
         # print(educations)
         for education in educations:
@@ -252,9 +318,9 @@ def create_app(test_config=None):
     def get_categories():
         class_id = request.args.get('class_id')
         if class_id:
-            categories = Category.query.filter(Category.class_id == class_id)
+            categories = Category.query.order_by(desc(Category.name)).filter(Category.class_id == class_id)
         else:
-            categories = Category.query.all()
+            categories = Category.query.order_by(desc(Category.name)).all()
         result = []
         for category in categories:
             category = category.format()
@@ -293,10 +359,10 @@ def create_app(test_config=None):
         education_id = request.args.get('education_id')
 
         if education_id:
-            classes = Classes.query.filter(
+            classes = Classes.query.order_by(desc(Classes.name)).filter(
                 Classes.education_id == education_id)
         else:
-            classes = Classes.query.all()
+            classes = Classes.query.order_by(desc(Classes.name)).all()
         result = []
         for some_class in classes:
             some_class = some_class.format()
@@ -317,7 +383,7 @@ def create_app(test_config=None):
         class_id = request.args.get('class_id')
 
         if class_id:
-            subjects = Subject.query.filter(Subject.class_id == class_id)
+            subjects = Subject.query.order_by(desc(Subject.name)).filter(Subject.class_id == class_id)
         else:
             subjects = Subject.query.all()
         result = []
@@ -362,7 +428,7 @@ def create_app(test_config=None):
 
     @app.route('/systems', methods=['GET'])
     def get_systems():
-        systems = System.query.all()
+        systems = System.query.order_by(desc(System.name)).all()
         from pprint import pprint
         result = []
         for system in systems:
