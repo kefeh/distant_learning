@@ -150,7 +150,7 @@ iframe{
   /* border-radius: 0.5rem; */
 }
 
-input[type=submit], input[type=submit], input[type=reset] {
+.add-items__form-view input[type=submit], .add-items__form-view input[type=submit], .add-items__form-view input[type=reset] {
   background-color: #468908;
   border: none;
   color: white;
@@ -164,7 +164,7 @@ input[type=submit], input[type=submit], input[type=reset] {
   transform: translateX(-100%)
 }
 
-input[type=text], textarea[type=text] {
+.add-items__form-view input[type=text], .add-items__form-view input[type=url], .add-items__form-view textarea[type=text] {
   border: 2px solid #468908bd;
   border-radius: 4px;
   padding: 8px 5px;

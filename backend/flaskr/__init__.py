@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from flask_cors import CORS
 import random
 
@@ -328,12 +328,24 @@ def create_app(test_config=None):
 
         return jsonify({'data': result, 'message': 'success'})
 
+    def get_videos_by_education_id(education_id):
+        education = Education.query.get(education_id)
+        video_list = []
+        for a_class in education.class_list:
+            videos = Video.query.filter(Video.class_id == a_class.id).order_by(desc(Video.date))
+            video_list += videos
+        video_list = video_list[:10] if len(video_list) > 10 else video_list
+        return video_list
+
     @app.route('/videos', methods=['GET'])
     def get_video():
         class_id = request.args.get('class_id')
         category_id = request.args.get('category_id')
-
-        if category_id:
+        # adding code that gets all videos based on a particular education id
+        education_id = request.args.get('education_id')
+        if education_id:
+            videos = get_videos_by_education_id(education_id)
+        elif category_id:
             videos = Video.query.filter(Video.category_id == category_id)
         elif class_id:
             videos = Video.query.filter(Video.class_id == class_id)

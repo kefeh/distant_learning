@@ -132,7 +132,7 @@ class VideoView extends Component {
                 </li>))}
             
               <li className={`${this.state.videos.length > 0 ? 'hide' : 'show'}`}>
-                <svg class="icon-file-empty">
+                <svg className="icon-file-empty">
                   <use xlinkHref="./icons/symbol-defs.svg#icon-file-empty"></use>
                 </svg>
               </li>

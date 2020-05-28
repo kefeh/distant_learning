@@ -67,6 +67,25 @@ class MainCategoryNav extends Component {
         );
     }
 
+    getInitialVideos = (selection_id) => {
+        console.log("SOme videos")
+        $.ajax({
+        url: `/videos?education_id=${selection_id}`, //TODO: update request URL
+        type: "GET",
+        success: (result) => {
+            this.setState({ videos: result.data})
+            console.log(result.data)
+            console.log(selection_id)
+            // this.props.updateVideos(this.state.videos)
+            return;
+        },
+        error: (error) => {
+            alert('Unable to load systems. Please try your request again')
+            return;
+        }
+        })
+    }
+
     displayTab = (data) => {
         return (
             <div className="row nav-item-system__row" style={{ color: "white", backgroundColor: "#468908" }}>
@@ -101,6 +120,7 @@ class MainCategoryNav extends Component {
             ...prevState,
             selectedItem2: data.id + data.name,
         }));
+        this.getInitialVideos(data.id)
         this.showChildData(data, nextData);
     };
 
@@ -166,7 +186,8 @@ class MainCategoryNav extends Component {
                                 isFetching: false,
                             },
                         }));
-                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.fetchVideoData(result.data[0].id):(()=>{})()
+                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.getInitialVideos(prevData.id):(()=>{})()
+                        this.getInitialVideos(prevData.id)
                         return;
                     },
                     error: (error) => {
@@ -242,7 +263,7 @@ class MainCategoryNav extends Component {
                                     <div className="main-body-menu">
                                         <input type="checkbox" id="nav-toggle" className="nav-toggle"></input>
 
-                                        <label for="nav-toggle" className="nav-toggle-label">
+                                        <label htmlFor="nav-toggle" className="nav-toggle-label">
                                             <span></span>
                                         </label>
                                         <div className="class-nav">

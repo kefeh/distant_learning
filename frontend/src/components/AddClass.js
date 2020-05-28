@@ -13,6 +13,7 @@ class AddClass extends Component {
       classes: [],
       educations: [],
       education_id: 0,
+      systems: []
     }
   }
 
@@ -25,6 +26,7 @@ class AddClass extends Component {
     var education_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
     this.getClassUpdate(education_id);
     this.getEducation();
+    this.getSystems() 
   }
 
   getClass = () => {
@@ -60,6 +62,35 @@ class AddClass extends Component {
     })
   }
 
+  getEducationsUpdate = (id) => {
+    $.ajax({
+      url: `/educations?system_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ educations: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSystems = () => {
+    $.ajax({
+      url: `/systems`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ systems: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
 
 
   getEducation = () => {
@@ -94,9 +125,9 @@ class AddClass extends Component {
       },
       crossDomain: true,
       success: (result) => {
-        document.getElementById("add-class-form").reset();
+        // document.getElementById("add-class-form").reset();
         this.getClassUpdate(this.state.education_id);
-        this.setState({education_id:0})
+        // this.setState({education_id:0})
         return;
       },
       error: (error) => {
@@ -108,6 +139,17 @@ class AddClass extends Component {
 
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
+  }
+
+  handleSystemChange = (event) => {
+    this.setState({system_id: event.target.value})
+    this.getEducationsUpdate(event.target.value)
+    this.setState({education_id:0})
+  }
+
+  handleEducationChange = (event) => {
+    this.setState({education_id: event.target.value})
+    this.getClassUpdate(event.target.value)
   }
 
   deleteAction = (id) => { 
@@ -130,6 +172,28 @@ class AddClass extends Component {
   render() {
     return (
       <div className="add-items">
+        <form className="filter" id="filter">
+          <label >
+            <select name="system_id" onChange={this.handleSystemChange}>
+                <option value={0}>Select an Sub-System type</option>
+                {this.state.systems && this.state.systems.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label >
+            <select name="education_id" onChange={this.handleEducationChange}>
+                <option value={0}>Select an Education type</option>
+                {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+        </form>
         <ViewItems 
           items={this.state.classes}
           deleteAction = {this.deleteAction}
@@ -153,17 +217,6 @@ class AddClass extends Component {
                     ))}
                 </select>
             </label> */}
-            <label>
-                <span> Education Type</span>
-                <select name="education_id" onChange={this.handleChange}>
-                    <option value={0}>Select an Education Type</option>
-                    {this.state.educations && this.state.educations.map((item, ind) => (
-                    <option key={item['id']} value={item.id}>
-                        {item.name}
-                    </option>
-                    ))}
-                </select>
-            </label>
             <input type="submit" className="button" value="Submit" />
           </form>
         </div>

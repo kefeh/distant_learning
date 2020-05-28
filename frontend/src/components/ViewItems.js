@@ -24,6 +24,12 @@ class ViewItems extends Component {
             {this.items.map((item, ind) => (
               <li key={item['id']} className="view-holder__list-item">
                 <span>{item['name']}</span>
+                <form className="edit-items__form-view" id="edit-video-form" onSubmit={this.submitVideo}>
+                  <label>
+                    <input type="text" name="name" onChange={this.handleChange} required/>
+                  </label>
+                  <input type="submit" className="button" value="Submit" />
+                </form>
                 <img src="./delete.png" className="view-holder__delete" onClick={() => this.props.deleteAction(item.id)}/>
               </li>
             ))}

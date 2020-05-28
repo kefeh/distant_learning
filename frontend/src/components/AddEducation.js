@@ -110,6 +110,11 @@ class AddEducation extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
+  handleSystemChange = (event) => {
+    this.setState({system_id: event.target.value})
+    this.getEducationsUpdate(event.target.value)
+  }
+
   deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
@@ -130,6 +135,18 @@ class AddEducation extends Component {
   render() {
     return (
       <div className="add-items">
+        <form className="filter" id="filter">
+          <label >
+            <select name="system_id" onChange={this.handleSystemChange}>
+                <option value={0}>Select an Sub-System type</option>
+                {this.state.systems && this.state.systems.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+        </form>
         <ViewItems 
           items={this.state.educations}
           deleteAction = {this.deleteAction}
@@ -141,17 +158,6 @@ class AddEducation extends Component {
             <label>
               <span>Education Type</span>
               <input type="text" name="name" onChange={this.handleChange}/>
-            </label>
-            <label>
-                <span>System Of Education</span>
-                <select name="system_id" onChange={this.handleChange}>
-                    <option value={0}>Select a System Of Education</option>
-                    {this.state.systems && this.state.systems.map((item, ind) => (
-                    <option key={item['id']} value={item.id}>
-                        {item.name}
-                    </option>
-                    ))}
-                </select>
             </label>
             <input type="submit" className="button" value="Submit" />
           </form>

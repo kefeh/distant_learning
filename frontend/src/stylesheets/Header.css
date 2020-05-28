@@ -42,8 +42,12 @@
 .logo__republic {
     font-size: 1rem;
     font-weight: bold;
-    width: 10%;
+    width: 100%;
     color: #353535;
+}
+
+.logo__republic{
+    text-align: right;
 }
 
 .App-header{

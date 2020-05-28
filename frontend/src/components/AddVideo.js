@@ -23,7 +23,9 @@ class AddVideo extends Component {
       categories: [],
       category_id: 0,
       isUploading: false,
-      categories: []
+      categories: [],
+      system_id: 0,
+      systems: []
     }
   }
 
@@ -37,11 +39,42 @@ class AddVideo extends Component {
     this.getEducations();
     this.getClasses(this.state.education_id);
     this.getVideosUpdateClass(this.state.class_id);
+    this.getSystems()
   }
 
 
   updateVideos=(videos)=>{
     this.setState({videos:videos})
+  }
+
+  getSystems = () => {
+    $.ajax({
+      url: `/systems`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ systems: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getEducationsUpdate = (id) => {
+    $.ajax({
+      url: `/educations?system_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ educations: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
   }
 
   getEducations = () => {
@@ -186,7 +219,7 @@ class AddVideo extends Component {
 
   handleClassChange = (event) => {
     this.setState({
-      class_id: event.target.value,
+      class_id: event.target.value, category_id: 0
     });
     this.getVideosUpdateClass(event.target.value)
     this.getClassCategories(event.target.value)
@@ -195,8 +228,13 @@ class AddVideo extends Component {
   handleEducationChange = (event) => {
     this.getClasses(event.target.value)
     this.setState({
-      education_id: event.target.value
+      education_id: event.target.value, class_id: 0, category_id: 0
     })
+  }
+
+  handleSystemChange = (event) => {
+    this.setState({system_id: event.target.value})
+    this.getEducationsUpdate(event.target.value)
   }
 
   onChangeHandler=event=>{
@@ -227,7 +265,16 @@ class AddVideo extends Component {
     return (
       <div className="add-items">
         <form className="filter">
-          <span>Filters</span>
+          <label >
+            <select name="system_id" onChange={this.handleSystemChange}>
+                <option value={0}>Select an Sub-System type</option>
+                {this.state.systems && this.state.systems.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
           <label >
             <select name="education_id" onChange={this.handleEducationChange}>
                 <option value={0}>Select an Education type</option>
@@ -239,7 +286,7 @@ class AddVideo extends Component {
             </select>
           </label>
           <label>
-            <select name="class_id" onChange={this.handleClassChange}>
+            <select name="class_id" onChange={this.handleClassChange} required>
                 <option value={0}>Select a class</option>
                 {this.state.classes && this.state.classes.map((item, ind) => (
                 <option key={item['id']} value={item.id}>
@@ -264,7 +311,7 @@ class AddVideo extends Component {
           <form className="add-items__form-view" id="add-video-form" onSubmit={this.submitVideo}>
             <label>
               <span>Name</span>
-              <input type="text" name="name" onChange={this.handleChange}/>
+              <input type="text" name="name" onChange={this.handleChange} required/>
             </label>
             <label>
               <span>Description</span>
@@ -274,11 +321,12 @@ class AddVideo extends Component {
                 className="form-control form-control-lg"
                 name="description"
                 onChange={this.handleChange}
+                required
               />
             </label>
             <label>
               <span>Link</span>
-              <input type="text" name="link" onChange={this.handleChange}/>
+              <input type="url" placeholder="https://www.youtube.com/watch?v=HbAZ6cFxCeY" pattern="https://www.youtube.com/.*" name="link" onChange={this.handleChange} required/>
             </label>
             {/* <label>
               <span>video</span>

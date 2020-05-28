@@ -13,6 +13,9 @@ class AddCategory extends Component {
       classes: [],
       categories: [],
       class_id: 0,
+      educations: [],
+      education_id: 0,
+      systems: []
     }
   }
 
@@ -26,8 +29,40 @@ class AddCategory extends Component {
     this.getClass();
     var class_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
     this.getCategoriesUpdate(class_id);
+    this.getEducationsUpdate('');
+    this.getSystems()
   }
 
+
+  getEducationsUpdate = (id) => {
+    $.ajax({
+      url: `/educations?system_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ educations: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSystems = () => {
+    $.ajax({
+      url: `/systems`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ systems: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
 
   getClass = () => {
     $.ajax({
@@ -75,6 +110,21 @@ class AddCategory extends Component {
     })
   }
 
+  getClassUpdate = (id) => {
+    $.ajax({
+      url: `/class?education_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ classes: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
 
   submitCategory = (event) => {
     event.preventDefault();
@@ -107,6 +157,24 @@ class AddCategory extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
+  handleSystemChange = (event) => {
+    this.setState({system_id: event.target.value})
+    this.getEducationsUpdate(event.target.value)
+  }
+
+  handleEducationChange = (event) => {
+    this.setState({education_id: event.target.value})
+    this.getClassUpdate(event.target.value)
+    this.setState({class_id:0})
+  }
+
+  handleClassChange = (event) => {
+    this.setState({
+      class_id: event.target.value,
+    });
+    this.getCategoriesUpdate(event.target.value)
+  }
+
   deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
@@ -127,6 +195,38 @@ class AddCategory extends Component {
   render() {
     return (
       <div className="add-items">
+        <form className="filter" id="filter">
+          <label >
+            <select name="system_id" onChange={this.handleSystemChange}>
+                <option value={0}>Select an Sub-System type</option>
+                {this.state.systems && this.state.systems.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label >
+            <select name="education_id" onChange={this.handleEducationChange}>
+                <option value={0}>Select an Education type</option>
+                {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label>
+            <select name="class_id" onChange={this.handleClassChange}>
+                <option value={0}>Select a class</option>
+                {this.state.classes && this.state.classes.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+        </form>
         <ViewItems 
           items={this.state.categories}
           deleteAction = {this.deleteAction}
@@ -138,17 +238,6 @@ class AddCategory extends Component {
             <label>
               <span>Level Or Cycle</span>
               <input type="text" name="name" onChange={this.handleChange}/>
-            </label>
-            <label>
-                <span>Class Type</span>
-                <select name="class_id" onChange={this.handleChange}>
-                    <option value={0}>Select an Class Type</option>
-                    {this.state.classes && this.state.classes.map((item, ind) => (
-                    <option key={item['id']} value={item.id}>
-                        {item.name}
-                    </option>
-                    ))}
-                </select>
             </label>
             <input type="submit" className="button" value="Submit" />
           </form>

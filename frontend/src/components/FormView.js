@@ -182,14 +182,6 @@ class FormView extends Component {
           </ul>
         </div>
         <div className="parent-holder">
-          <div className={`form-view__categories-list form-view__categories-list__add-video total_view ${this.state.selection === "VIDEO"? 'hide':null }`} >
-            <ul>
-            {this.state.parent && this.state.parent.map((item, ind)=> (
-                <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selectionParent.id || item.id == this.state.selectionParent ? 'active' : null}`} onClick={() => {this.setSelectionParent(item)}}>
-                  {item.name}
-                </li>))}
-            </ul>
-          </div>
           <div className="form-view__item-view">
             <FormViewController selection={this.state.selection} parent={this.state.selectionParent} />
           </div>
