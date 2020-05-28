@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, desc, update, desc
+from sqlalchemy import func, desc, update, asc
 from flask_cors import CORS
 import random
 
@@ -292,10 +292,10 @@ def create_app(test_config=None):
     def get_education():
         system_id = request.args.get('system_id')
         if system_id:
-            educations = Education.query.order_by(desc(Education.name)).filter(
+            educations = Education.query.order_by(asc(Education.name)).filter(
                 Education.system_id == system_id)
         else:
-            educations = Education.query.order_by(desc(Education.name)).all()
+            educations = Education.query.order_by(asc(Education.name)).all()
         result = []
         # print(educations)
         for education in educations:
@@ -318,9 +318,9 @@ def create_app(test_config=None):
     def get_categories():
         class_id = request.args.get('class_id')
         if class_id:
-            categories = Category.query.order_by(desc(Category.name)).filter(Category.class_id == class_id)
+            categories = Category.query.order_by(asc(Category.name)).filter(Category.class_id == class_id)
         else:
-            categories = Category.query.order_by(desc(Category.name)).all()
+            categories = Category.query.order_by(asc(Category.name)).all()
         result = []
         for category in categories:
             category = category.format()
@@ -359,10 +359,10 @@ def create_app(test_config=None):
         education_id = request.args.get('education_id')
 
         if education_id:
-            classes = Classes.query.order_by(desc(Classes.name)).filter(
+            classes = Classes.query.order_by(asc(Classes.name)).filter(
                 Classes.education_id == education_id)
         else:
-            classes = Classes.query.order_by(desc(Classes.name)).all()
+            classes = Classes.query.order_by(asc(Classes.name)).all()
         result = []
         for some_class in classes:
             some_class = some_class.format()
@@ -383,7 +383,7 @@ def create_app(test_config=None):
         class_id = request.args.get('class_id')
 
         if class_id:
-            subjects = Subject.query.order_by(desc(Subject.name)).filter(Subject.class_id == class_id)
+            subjects = Subject.query.order_by(asc(Subject.name)).filter(Subject.class_id == class_id)
         else:
             subjects = Subject.query.all()
         result = []
@@ -398,7 +398,7 @@ def create_app(test_config=None):
         education = Education.query.get(education_id)
         video_list = []
         for a_class in education.class_list:
-            videos = Video.query.filter(Video.class_id == a_class.id).order_by(desc(Video.date))
+            videos = Video.query.filter(Video.class_id == a_class.id).order_by(asc(Video.date))
             video_list += videos
         video_list = video_list[:10] if len(video_list) > 10 else video_list
         return video_list
@@ -428,7 +428,7 @@ def create_app(test_config=None):
 
     @app.route('/systems', methods=['GET'])
     def get_systems():
-        systems = System.query.order_by(desc(System.name)).all()
+        systems = System.query.order_by(asc(System.name)).all()
         from pprint import pprint
         result = []
         for system in systems:
