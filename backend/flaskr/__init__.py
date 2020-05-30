@@ -190,19 +190,23 @@ def create_app(test_config=None):
     def add_class():
         data = request.json
         education_id = data.get('education_id', None)
+        sub_category_id = data.get('sub_category_id', None)
 
         if ((data.get('name', '') == '')):
             abort(422)
         try:
-            if education_id:
-                classes = Classes(name=data.get(
+            classes = Classes(name=data.get(
                     'name'))
-                classes.education_id = int(data.get('education_id'))
-                classes.insert()
+            if education_id or sub_category_id:
+                if education_id:
+                    classes.education_id = int(data.get('education_id'))
+                if sub_category_id:
+                    classes.sub_category_id = int(data.get('sub_category_id'))
             else:
                 abort(422)
         except Exception:
             abort(422)
+        classes.insert()
 
         return jsonify({'message': 'success', 'id': classes.id})
 
@@ -326,7 +330,14 @@ def create_app(test_config=None):
                 s_class = s_class.format()
                 s_class.pop('categories')
                 class_list.append(s_class)
+            sub_categories = sm_edu.get('sub_categories', [])
+            sub_categories = []
+            for s_category in sub_categories:
+                s_category = s_category.format()
+                s_category.pop('class_list')
+                sub_categories.append(s_category)
             sm_edu['class_list'] = class_list
+            sm_edu['sub_categories'] = sub_categories
         from pprint import pprint
         pprint(educations)
 
@@ -362,11 +373,11 @@ def create_app(test_config=None):
         result = []
         for category in categories:
             category = category.format()
-            classes = category.get('classes', [])
+            classes = category.get('class_list', [])
             class_list = []
             for s_class in classes:
                 s_class = s_class.format()
-                s_class.pop('subjects')
+                s_class.pop('categories')
                 class_list.append(s_class)
             category['classes'] = class_list
             result.append(category)
@@ -375,8 +386,12 @@ def create_app(test_config=None):
     @app.route('/class', methods=['GET'])
     def get_classes():
         education_id = request.args.get('education_id')
+        sub_category_id = request.args.get('sub_category_id')
 
-        if education_id:
+        if sub_category_id:
+            classes = Classes.query.order_by(asc(Classes.name)).filter(
+                Classes.sub_category_id == sub_category_id)
+        elif education_id:
             classes = Classes.query.order_by(asc(Classes.name)).filter(
                 Classes.education_id == education_id)
         else:

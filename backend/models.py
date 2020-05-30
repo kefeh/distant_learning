@@ -174,7 +174,7 @@ class SubCategory(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'classes': self.classes
+            'class_list': self.classes
         }
 
 

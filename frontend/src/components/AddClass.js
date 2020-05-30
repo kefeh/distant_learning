@@ -11,8 +11,10 @@ class AddClass extends Component {
     this.state = {
       name: "",
       classes: [],
+      sub_categories: [],
       educations: [],
       education_id: 0,
+      sub_category_id: 0,
       systems: []
     }
   }
@@ -57,6 +59,22 @@ class AddClass extends Component {
       },
       error: (error) => {
         alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSubCategoryUpdate = (id) => {
+    $.ajax({
+      url: `/sub_categories?education_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ sub_categories: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load sub_categories. Please try your request again')
         return;
       }
     })
@@ -119,6 +137,7 @@ class AddClass extends Component {
       data: JSON.stringify({
         name: this.state.name,
         education_id: this.state.education_id!==0?this.state.education_id:'',
+        sub_category_id: this.state.sub_category_id!==0?this.state.sub_category_id:'',
       }),
       xhrFields: {
         withCredentials: true
@@ -149,6 +168,12 @@ class AddClass extends Component {
 
   handleEducationChange = (event) => {
     this.setState({education_id: event.target.value})
+    this.getSubCategoryUpdate(event.target.value)
+    this.getClassUpdate(event.target.value)
+  }
+
+  handleSubCategoryChange = (event) => {
+    this.setState({sub_category_id: event.target.value})
     this.getClassUpdate(event.target.value)
   }
 
@@ -213,6 +238,16 @@ class AddClass extends Component {
             <select name="education_id" onChange={this.handleEducationChange}>
                 <option value={0}>Select an Education type</option>
                 {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label >
+            <select name="sub_category_id" onChange={this.handleSubCategoryChange}>
+                <option value={0}>Select Sub Education type</option>
+                {this.state.sub_categories && this.state.sub_categories.map((item, ind) => (
                 <option key={item['id']} value={item.id}>
                     {item.name}
                 </option>
