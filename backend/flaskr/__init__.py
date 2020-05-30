@@ -51,6 +51,7 @@ def create_app(test_config=None):
             abort(422)
     # try:
         system = System(name=data.get('name'))
+        system.rank = data.get('rank')
         system.insert()
     # except Exception:
     #     abort(422)
@@ -68,6 +69,7 @@ def create_app(test_config=None):
     # try:
         system = System.query.get(data.get('id'))
         system.name=data.get('name')
+        system.rank=data.get('rank')
         system.update()
     # except Exception:
     #     abort(422)
@@ -87,6 +89,7 @@ def create_app(test_config=None):
             education = Education(name=data.get(
                 'name'))
             education.system_id = data.get('system_id')
+            education.rank = data.get('rank')
             education.insert()
         except Exception:
             abort(422)
@@ -104,6 +107,7 @@ def create_app(test_config=None):
     # try:
         education = Education.query.get(data.get('id'))
         education.name=data.get('name')
+        education.rank=data.get('rank')
         education.update()
     # except Exception:
     #     abort(422)
@@ -123,6 +127,7 @@ def create_app(test_config=None):
             category = Category(name=data.get(
                 'name'))
             category.class_id = data.get('class_id')
+            category.rank = data.get('rank')
             category.insert()
         except Exception:
             abort(422)
@@ -140,6 +145,7 @@ def create_app(test_config=None):
     # try:
         category = Category.query.get(data.get('id'))
         category.name=data.get('name')
+        category.rank=data.get('rank')
         category.update()
     # except Exception:
     #     abort(422)
@@ -159,6 +165,7 @@ def create_app(test_config=None):
             sub_category = SubCategory(name=data.get(
                 'name'))
             sub_category.education_id = data.get('education_id')
+            sub_category.rank = data.get('rank')
             sub_category.insert()
         except Exception:
             abort(422)
@@ -177,6 +184,7 @@ def create_app(test_config=None):
         try:
             sub_category = SubCategory.query.get(data.get('id'))
             sub_category.name = data.get('name')
+            sub_category.rank = data.get('rank')
             sub_category.update()
         except Exception:
             abort(422)
@@ -197,6 +205,7 @@ def create_app(test_config=None):
         try:
             classes = Classes(name=data.get(
                     'name'))
+            classes.rank = data.get('rank')
             if education_id or sub_category_id:
                 if education_id:
                     classes.education_id = int(data.get('education_id'))
@@ -221,6 +230,7 @@ def create_app(test_config=None):
     # try:
         classes = Classes.query.get(data.get('id'))
         classes.name=data.get('name')
+        classes.rank=data.get('rank')
         classes.update()
     # except Exception:
     #     abort(422)
@@ -239,6 +249,7 @@ def create_app(test_config=None):
             subject = Subject(name=data.get(
                 'name'))
             subject.class_id = data.get('class_id')
+            subject.rank = data.get('rank')
             subject.insert()
         except Exception:
             abort(422)
@@ -314,10 +325,10 @@ def create_app(test_config=None):
     def get_education():
         system_id = request.args.get('system_id')
         if system_id:
-            educations = Education.query.order_by(asc(Education.name)).filter(
+            educations = Education.query.order_by(asc(Education.rank)).filter(
                 Education.system_id == system_id)
         else:
-            educations = Education.query.order_by(asc(Education.name)).all()
+            educations = Education.query.order_by(asc(Education.rank)).all()
         result = []
         # print(educations)
         for education in educations:
@@ -347,9 +358,9 @@ def create_app(test_config=None):
     def get_categories():
         class_id = request.args.get('class_id')
         if class_id:
-            categories = Category.query.order_by(asc(Category.name)).filter(Category.class_id == class_id)
+            categories = Category.query.order_by(asc(Category.rank)).filter(Category.class_id == class_id)
         else:
-            categories = Category.query.order_by(asc(Category.name)).all()
+            categories = Category.query.order_by(asc(Category.rank)).all()
         result = []
         for category in categories:
             category = category.format()
@@ -366,10 +377,10 @@ def create_app(test_config=None):
     def get_sub_categories():
         education_id = request.args.get('education_id')
         if education_id:
-            categories = SubCategory.query.filter(
+            categories = SubCategory.query.order_by(asc(SubCategory.rank)).filter(
                 SubCategory.education_id == education_id)
         else:
-            categories = SubCategory.query.all()
+            categories = SubCategory.query.order_by(asc(SubCategory.rank)).all()
         result = []
         for category in categories:
             category = category.format()
@@ -390,13 +401,13 @@ def create_app(test_config=None):
         sub_category_id = request.args.get('sub_category_id')
 
         if sub_category_id:
-            classes = Classes.query.order_by(asc(Classes.name)).filter(
+            classes = Classes.query.order_by(asc(Classes.rank)).filter(
                 Classes.sub_category_id == sub_category_id)
         elif education_id:
-            classes = Classes.query.order_by(asc(Classes.name)).filter(
+            classes = Classes.query.order_by(asc(Classes.rank)).filter(
                 Classes.education_id == education_id)
         else:
-            classes = Classes.query.order_by(asc(Classes.name)).all()
+            classes = Classes.query.order_by(asc(Classes.rank)).all()
         result = []
         for some_class in classes:
             some_class = some_class.format()
@@ -462,7 +473,7 @@ def create_app(test_config=None):
 
     @app.route('/systems', methods=['GET'])
     def get_systems():
-        systems = System.query.order_by(asc(System.name)).all()
+        systems = System.query.order_by(asc(System.rank)).all()
         from pprint import pprint
         result = []
         for system in systems:
@@ -475,6 +486,7 @@ def create_app(test_config=None):
             result.append({
                 'name': system.name,
                 'id': system.id,
+                'rank': system.rank,
                 'education_list': edu
             })
 

@@ -126,6 +126,7 @@ class MainCategoryNav extends Component {
 
     showChildData = (prevData, data) => {
         console.log(data);
+        console.log('system_click')
         // if (data === this.state.level2Data && this.state.level2Data.length > 0) {
         //     this.setState((prevState) => ({
         //         ...prevState,

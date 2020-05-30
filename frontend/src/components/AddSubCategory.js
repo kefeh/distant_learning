@@ -152,7 +152,7 @@ class AddSubCategory extends Component {
     this.getSubCategoryUpdate(event.target.value)
   }
 
-  updateChild = (id, name) => {
+  updateChild = (id, rank, name) => {
     $.ajax({
       url: '/sub_categories', //TODO: update request URL
       type: "PUT",
@@ -160,7 +160,8 @@ class AddSubCategory extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: name,
-        id: id
+        id: id,
+        rank: rank
       }),
       xhrFields: {
         withCredentials: true
@@ -169,6 +170,7 @@ class AddSubCategory extends Component {
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
         this.getSubCategoryUpdate(this.state.education_id);
+        alert('Successfully Updated the Sub-Education')
         return;
       },
       error: (error) => {

@@ -193,7 +193,7 @@ class AddClass extends Component {
     this.getClasSubUpdate(event.target.value)
   }
 
-  updateChild = (id, name) => {
+  updateChild = (id, rank, name) => {
     $.ajax({
       url: '/class', //TODO: update request URL
       type: "PUT",
@@ -201,7 +201,8 @@ class AddClass extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: name,
-        id: id
+        id: id,
+        rank: rank
       }),
       xhrFields: {
         withCredentials: true
@@ -210,6 +211,7 @@ class AddClass extends Component {
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
         this.getClassUpdate(this.state.education_id);
+        alert('Successfully Updated the Class')
         return;
       },
       error: (error) => {

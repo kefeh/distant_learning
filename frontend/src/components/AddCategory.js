@@ -186,7 +186,7 @@ class AddCategory extends Component {
     })
   }
 
-  updateChild = (id, name) => {
+  updateChild = (id, rank, name) => {
     $.ajax({
       url: '/categories', //TODO: update request URL
       type: "PUT",
@@ -194,7 +194,8 @@ class AddCategory extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: name,
-        id: id
+        id: id,
+        rank: rank
       }),
       xhrFields: {
         withCredentials: true
@@ -202,7 +203,8 @@ class AddCategory extends Component {
       crossDomain: true,
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
-        this.getCategoriesUpdate(this.state.class_id)
+        this.getCategoriesUpdate(this.state.class_id);
+        alert('Successfully Updated the Level/Cycle')
         return;
       },
       error: (error) => {

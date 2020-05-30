@@ -10,6 +10,7 @@ class AddSystem extends Component {
     super();
     this.state = {
       name: "",
+      rank: null,
       category: 1,
       systems: []
     }
@@ -35,7 +36,7 @@ class AddSystem extends Component {
     })
   }
 
-  updateChild = (id, name) => {
+  updateChild = (id, rank, name) => {
     $.ajax({
       url: '/systems', //TODO: update request URL
       type: "PUT",
@@ -43,7 +44,8 @@ class AddSystem extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: name,
-        id: id
+        id: id,
+        rank: rank,
       }),
       xhrFields: {
         withCredentials: true
@@ -52,6 +54,7 @@ class AddSystem extends Component {
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
         this.getSystems();
+        alert('Successfully Updated the System')
         return;
       },
       error: (error) => {

@@ -115,7 +115,7 @@ class AddEducation extends Component {
     this.getEducationsUpdate(event.target.value)
   }
 
-  updateChild = (id, name) => {
+  updateChild = (id, rank, name) => {
     $.ajax({
       url: '/educations', //TODO: update request URL
       type: "PUT",
@@ -123,7 +123,8 @@ class AddEducation extends Component {
       contentType: 'application/json',
       data: JSON.stringify({
         name: name,
-        id: id
+        id: id,
+        rank: rank
       }),
       xhrFields: {
         withCredentials: true
@@ -132,6 +133,7 @@ class AddEducation extends Component {
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
         this.getEducationsUpdate(this.state.system_id);
+        alert('Successfully Updated the Education')
         return;
       },
       error: (error) => {

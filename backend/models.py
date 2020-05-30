@@ -36,6 +36,7 @@ class System(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    rank = Column(Integer)
     education_list = relationship("Education", cascade="all,delete", backref="system")
 
     def __init__(self, name):
@@ -56,6 +57,7 @@ class System(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'rank': self.rank,
             'education_list': self.education_list
         }
 
@@ -71,6 +73,7 @@ class Education(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    rank = Column(Integer)
     system_id = Column(Integer, ForeignKey('systems.id', ondelete='cascade'))
 
     class_list = relationship('Classes', cascade="all,delete", backref='education')
@@ -95,6 +98,7 @@ class Education(db.Model):
             'id': self.id,
             'name': self.name,
             'class_list': self.class_list,
+            'rank': self.rank,
             'sub_categories': self.sub_categories
         }
 
@@ -111,6 +115,7 @@ class Category(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    rank = Column(Integer)
     class_id = Column(Integer, ForeignKey('classes.id', ondelete='cascade'))
 
     # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
@@ -135,6 +140,7 @@ class Category(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'rank': self.rank,
             'videos': self.videos
         }
 
@@ -150,6 +156,7 @@ class SubCategory(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    rank = Column(Integer)
 # It can either be a parent of a sub_category or a class
     # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
     classes = relationship('Classes', cascade="all,delete", backref='sub_categories')
@@ -176,6 +183,7 @@ class SubCategory(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'rank': self.rank,
             'class_list': self.classes
         }
 
@@ -191,6 +199,7 @@ class Classes(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    rank = Column(Integer)
 
     categories = relationship('Category', cascade="all,delete", backref='classes')
     videos = relationship('Video', cascade="all,delete", backref='classes')
@@ -216,6 +225,7 @@ class Classes(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'rank': self.rank,
             'categories': self.categories
         }
 
