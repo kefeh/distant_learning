@@ -132,7 +132,7 @@ class FormView extends Component {
       return;
     }
     if(some_selection==="SUB-CATEGORY"){
-      this.getCategories()
+      this.getEducations()
       return;
     }
     if(some_selection==="CLASS"){
@@ -165,10 +165,13 @@ class FormView extends Component {
           <h2>ADD CATEGORY</h2>
           <ul>
               <li className={`form-view__categories-list-item SYSTEMS ${"SYSTEMS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SYSTEMS')}}>
-                System Of Education
+                Sub-System Of Education
               </li>
               <li className={`form-view__categories-list-item EDUCATION ${"EDUCATION" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('EDUCATION')}}>
                 Education Type
+              </li>
+              <li className={`form-view__categories-list-item CLASS ${"SUB-CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('SUB-CATEGORY')}}>
+                Sub-Education Type
               </li>
               <li className={`form-view__categories-list-item CLASS ${"CLASS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('CLASS')}}>
                 Class

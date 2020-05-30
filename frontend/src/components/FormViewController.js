@@ -48,11 +48,11 @@ class FormViewController extends Component {
             <AddCategory parent={this.state.parent}/>
         );
     }
-    // if (this.state.selection === 'SUB-CATEGORY'){
-    //     return (
-    //         <AddSubCategory parent={this.state.parent}/>
-    //     );
-    // }
+    if (this.state.selection === 'SUB-CATEGORY'){
+        return (
+            <AddSubCategory parent={this.state.parent}/>
+        );
+    }
     if (this.state.selection === 'CLASS'){
         return (
             <AddClass parent={this.state.parent}/>
