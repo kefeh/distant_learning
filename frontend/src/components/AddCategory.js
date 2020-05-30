@@ -15,7 +15,9 @@ class AddCategory extends Component {
       class_id: 0,
       educations: [],
       education_id: 0,
-      systems: []
+      systems: [],
+      sub_categories: [],
+      sub_category_id: 0,
     }
   }
 
@@ -39,7 +41,22 @@ class AddCategory extends Component {
       url: `/educations?system_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ educations: result.data })
+        this.setState({ educations: result.data, sub_categories: [], sub_category_id: 0 })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSubCategoryUpdate = (id) => {
+    $.ajax({
+      url: `/sub_categories?education_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ sub_categories: result.data })
         return;
       },
       error: (error) => {
@@ -105,6 +122,22 @@ class AddCategory extends Component {
       },
       error: (error) => {
         alert('Unable to load categories. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getClassSubUpdate = (id) => {
+    $.ajax({
+      url: `/class?sub_category_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ classes: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
         return;
       }
     })
@@ -191,7 +224,14 @@ class AddCategory extends Component {
   handleEducationChange = (event) => {
     this.setState({education_id: event.target.value})
     this.getClassUpdate(event.target.value)
+    this.getSubCategoryUpdate(event.target.value)    
     this.setState({class_id:0})
+  }
+
+  handleSubCategoryChange = (event) => {
+    this.setState({education_id: event.target.value})
+    this.getClassSubUpdate(event.target.value)
+    this.setState({class_id:0, categories:[]})
   }
 
   handleClassChange = (event) => {
@@ -236,6 +276,16 @@ class AddCategory extends Component {
             <select name="education_id" onChange={this.handleEducationChange}>
                 <option value={0}>Select an Education type</option>
                 {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label >
+            <select name="sub_category_id" onChange={this.handleSubCategoryChange}>
+                <option value={0}>Select Sub Education type</option>
+                {this.state.sub_categories && this.state.sub_categories.map((item, ind) => (
                 <option key={item['id']} value={item.id}>
                     {item.name}
                 </option>

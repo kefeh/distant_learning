@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import Column, String, Integer, create_engine, ForeignKey, DateTime
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from sqlalchemy.orm import relationship
 import json
 
@@ -18,6 +19,7 @@ setup_db(app)
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    migrate = Migrate(app, db)
     db.app = app
     db.init_app(app)
     db.create_all()

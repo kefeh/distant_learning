@@ -118,6 +118,7 @@ class FormView extends Component {
         selection: some_selection,
         parent: null
       })
+      this.getSystems()
       return;
     }
     this.setState({

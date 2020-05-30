@@ -6,7 +6,7 @@ from sqlalchemy import func, desc, update, asc
 from flask_cors import CORS
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -169,7 +169,7 @@ def create_app(test_config=None):
     # Add Sub Category level
 
     @app.route('/sub_categories', methods=['PUT'])
-    def add_sub_category():
+    def update_subub_category():
         data = request.json
 
         if ((data.get('name', '') == '') or (data.get('id', '') == '')):
@@ -379,8 +379,9 @@ def create_app(test_config=None):
                 s_class = s_class.format()
                 s_class.pop('categories')
                 class_list.append(s_class)
-            category['classes'] = class_list
+            category['class_list'] = class_list
             result.append(category)
+            print(category)
         return jsonify({'data': result, 'message': 'success'})
 
     @app.route('/class', methods=['GET'])
@@ -469,6 +470,7 @@ def create_app(test_config=None):
             for ed in system.education_list:
                 s_ed = ed.format()
                 s = s_ed.pop('class_list')
+                s = s_ed.pop('sub_categories')
                 edu.append(s_ed)
             result.append({
                 'name': system.name,

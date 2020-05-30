@@ -64,6 +64,22 @@ class AddClass extends Component {
     })
   }
 
+  getClasSubUpdate = (id) => {
+    $.ajax({
+      url: `/class?sub_category_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ classes: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
   getSubCategoryUpdate = (id) => {
     $.ajax({
       url: `/sub_categories?education_id=${id}`, //TODO: update request URL
@@ -145,8 +161,8 @@ class AddClass extends Component {
       crossDomain: true,
       success: (result) => {
         // document.getElementById("add-class-form").reset();
-        this.getClassUpdate(this.state.education_id);
-        // this.setState({education_id:0})
+        this.state.sub_category_id?this.getClasSubUpdate(this.state.sub_category_id):this.getClassUpdate(this.state.education_id);
+        this.setState({sub_category_id:0})
         return;
       },
       error: (error) => {
@@ -163,7 +179,7 @@ class AddClass extends Component {
   handleSystemChange = (event) => {
     this.setState({system_id: event.target.value})
     this.getEducationsUpdate(event.target.value)
-    this.setState({education_id:0})
+    this.setState({education_id:0, sub_category_id:0})
   }
 
   handleEducationChange = (event) => {
@@ -174,7 +190,7 @@ class AddClass extends Component {
 
   handleSubCategoryChange = (event) => {
     this.setState({sub_category_id: event.target.value})
-    this.getClassUpdate(event.target.value)
+    this.getClasSubUpdate(event.target.value)
   }
 
   updateChild = (id, name) => {

@@ -25,6 +25,8 @@ class AddVideo extends Component {
       isUploading: false,
       categories: [],
       system_id: 0,
+      sub_categories: [],
+      sub_category_id: 0,
       systems: []
     }
   }
@@ -105,6 +107,37 @@ class AddVideo extends Component {
       },
       error: (error) => {
         alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getClassSubUpdate = (id) => {
+    $.ajax({
+      url: `/class?sub_category_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ classes: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load classes. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  getSubCategoryUpdate = (id) => {
+    $.ajax({
+      url: `/sub_categories?education_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        this.setState({ sub_categories: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load educations. Please try your request again')
         return;
       }
     })
@@ -227,9 +260,16 @@ class AddVideo extends Component {
 
   handleEducationChange = (event) => {
     this.getClasses(event.target.value)
+    this.getSubCategoryUpdate(event.target.value)  
     this.setState({
-      education_id: event.target.value, class_id: 0, category_id: 0
+      education_id: event.target.value, class_id: 0, sub_category_id:0, category_id: 0
     })
+  }
+
+  handleSubCategoryChange = (event) => {
+    this.setState({education_id: event.target.value})
+    this.getClassSubUpdate(event.target.value)
+    this.setState({class_id:0, categories:[]})
   }
 
   handleSystemChange = (event) => {
@@ -279,6 +319,16 @@ class AddVideo extends Component {
             <select name="education_id" onChange={this.handleEducationChange}>
                 <option value={0}>Select an Education type</option>
                 {this.state.educations && this.state.educations.map((item, ind) => (
+                <option key={item['id']} value={item.id}>
+                    {item.name}
+                </option>
+                ))}
+            </select>
+          </label>
+          <label >
+            <select name="sub_category_id" onChange={this.handleSubCategoryChange}>
+                <option value={0}>Select Sub Education type</option>
+                {this.state.sub_categories && this.state.sub_categories.map((item, ind) => (
                 <option key={item['id']} value={item.id}>
                     {item.name}
                 </option>
