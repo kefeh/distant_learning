@@ -481,7 +481,12 @@ def create_app(test_config=None):
             for ed in system.education_list:
                 s_ed = ed.format()
                 s = s_ed.pop('class_list')
-                s = s_ed.pop('sub_categories')
+                sub_cat = []
+                for item in s_ed['sub_categories']:
+                    t = item.format()
+                    t.pop('class_list')
+                    sub_cat.append(t)
+                s_ed['sub_categories'] = sub_cat
                 edu.append(s_ed)
             result.append({
                 'name': system.name,

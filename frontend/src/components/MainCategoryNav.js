@@ -23,6 +23,9 @@ class MainCategoryNav extends Component {
             selectedItem2: null,
             videos: [],
             tabVisibility: false,
+            subTabVisibility: false,
+            selectedSubCatId: '',
+            selectedSubCatname: '',
         };
     }
     componentDidMount() {
@@ -116,12 +119,58 @@ class MainCategoryNav extends Component {
     };
 
     handleTab2Click = (data, nextData) => {
+        console.log('something is working')
+        console.log(data.sub_categories)
+        var cond = data.sub_categories && data.sub_categories.length > 0?true:false
+        console.log(cond)
         this.setState((prevState) => ({
             ...prevState,
             selectedItem2: data.id + data.name,
+            subTabVisibility: cond,
         }));
         this.getInitialVideos(data.id)
         this.showChildData(data, nextData);
+    };
+
+    handleSubCatClick = (data, parentData) => {
+        this.setState({ selectedSubCatId: data.id + data.name, 
+            selectedSubCatname: data.name,
+            subTabVisibility:false });
+        // this.getInitialVideos(parentData.id)
+        this.fetchClassSubData(data);
+    };
+
+    fetchClassSubData = (prevData) => {
+        this.setState(
+            (prevState) => ({
+                ...prevState,
+                lastLevelData: {
+                    ...prevState.lastLevelData,
+                    isFetching: true,
+                },
+            }),
+            () =>
+                $.ajax({
+                    url: `/class?sub_category_id=${prevData.id}`, //TODO: update request URL
+                    type: "GET",
+                    success: (result) => {
+                        console.log(result.data);
+                        this.setState((prevState) => ({
+                            ...prevState,
+                            lastLevelData: {
+                                ...prevState.lastLevelData,
+                                data: result.data,
+                                isFetching: false,
+                            },
+                        }));
+                        return;
+                    },
+                    error: (error) => {
+                        alert("Unable to load categories. Please try your request again");
+                        return;
+                    },
+                })
+        );
     };
 
     showChildData = (prevData, data) => {
@@ -234,16 +283,33 @@ class MainCategoryNav extends Component {
                         {this.state.level2Data.length > 0 && (
                             <div className="row second-tab-row">
                                 {this.state.level2Data.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        id={`${item.id}${item.name}`}
-                                        onClick={() => this.handleTab2Click(item, item.education_list)}
-                                        className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder second-tab ${
-                                            item.id + item.name === this.state.selectedItem2 ? "second-tab__active" : null
-                                        }`}
-                                    >
-                                        {item.name.toUpperCase()}
-                                    </div>
+                                    <>
+                                        <div
+                                            key={item.id}
+                                            id={`${item.id}${item.name}`}
+                                            className={`col hover__cursor__style single-tab-hover text-center py-3 font-weight-bolder second-tab ${
+                                                item.id + item.name === this.state.selectedItem2 ? "second-tab__active" : null
+                                            }`}
+                                        >
+                                        <span className="educ-name" onClick={() => this.handleTab2Click(item, item.education_list)}>{item.name.toUpperCase()}</span>
+                                        <span className={`sub-cat__sub-name ${ item.id + item.name === this.state.selectedItem2 && item.sub_categories.length > 0 ? "nav-toggle-show" : 'nav-toggle-hide'
+                                            }`}>{this.state.selectedSubCatname.toUpperCase()}</span>
+                                        <div className={`${item.sub_categories.length > 0 && this.state.subTabVisibility ?"nav-toggle-show":'nav-toggle-hide'} sub_cat`}>
+                                        {item.sub_categories.length > 0 && item.sub_categories.map((sub_item) => (
+                                            <div
+                                                key={sub_item.id}
+                                                id={`${sub_item.id}${sub_item.name}`}
+                                                onClick={() => this.handleSubCatClick(sub_item, item)}
+                                                className={`sub_cat__item ${
+                                                    sub_item.id + sub_item.name === this.state.selectedsub_Item2 ? "second-tab__active" : null
+                                                }`}
+                                            >
+                                                <span>{sub_item.name.toUpperCase()}</span>
+                                            </div>
+                                        ))}
+                                        </div>
+                                        </div>
+                                    </>
                                 ))}
                             </div>
                         )}
