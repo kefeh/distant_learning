@@ -162,7 +162,7 @@ class AddClass extends Component {
       success: (result) => {
         // document.getElementById("add-class-form").reset();
         this.state.sub_category_id?this.getClasSubUpdate(this.state.sub_category_id):this.getClassUpdate(this.state.education_id);
-        this.setState({sub_category_id:0})
+        // this.setState({sub_category_id:0})
         return;
       },
       error: (error) => {

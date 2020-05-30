@@ -97,7 +97,7 @@
 }
 
 .category-active {
-    border-right: 5px solid rgba(92, 206, 4, 0.721);
+    border-left: 5px solid rgba(40, 90, 2, 0.564);
     outline: none;
 }
 

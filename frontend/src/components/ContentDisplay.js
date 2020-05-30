@@ -10,7 +10,7 @@ function DisplayCategories({key, classItem, fetchVideoData }) {
             }`}
             onClick={() => getVideosCategory(key, classItem.id, classItem.name, fetchVideoData)}
         >
-            {classItem.name}
+            {classItem.name.toUpperCase()}
         </div>
     );
 }
@@ -130,7 +130,7 @@ class ContentDisplay extends Component {
                 }`}
                 onClick={() => this.toggleDrop(some_class)}
             >
-                <span>{some_class.name}</span>
+                <span>{some_class.name.toUpperCase()}</span>
                 {some_class.categories && some_class.categories.length > 0 &&(<div className="menu-icon">
                 <svg className="icon-circle-down">
                     <use xlinkHref="./icons/symbol-defs.svg#icon-circle-down"></use>

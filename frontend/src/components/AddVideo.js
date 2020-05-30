@@ -160,7 +160,6 @@ class AddVideo extends Component {
   }
 
   getVideosUpdateCategory = (id) => {
-    
     $.ajax({
       url: `/videos?category_id=${id}`, //TODO: update request URL
       type: "GET",
@@ -193,11 +192,7 @@ class AddVideo extends Component {
   }
 
   getClassCategories(id){
-    console.log('in the funtion')
-    console.log(this.state.classes)
     this.state.classes.forEach((element)=>{
-      console.log(element)
-      console.log(id)
       if(Number(element.id) === Number(id)){
         this.setState({
           categories: element.categories,
