@@ -151,15 +151,33 @@ def create_app(test_config=None):
     @app.route('/sub_categories', methods=['POST'])
     def add_sub_category():
         data = request.json
-        category_id = data.get('category_id', None)
+        education_id = data.get('education_id', None)
 
-        if ((data.get('name', '') == '') or (data.get('category_id', '') == '')):
+        if ((data.get('name', '') == '') or (data.get('education_id', '') == '')):
             abort(422)
         try:
             sub_category = SubCategory(name=data.get(
                 'name'))
-            sub_category.category_id = data.get('category_id')
+            sub_category.education_id = data.get('education_id')
             sub_category.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': sub_category.id})
+
+
+    # Add Sub Category level
+
+    @app.route('/sub_categories', methods=['PUT'])
+    def add_sub_category():
+        data = request.json
+
+        if ((data.get('name', '') == '') or (data.get('id', '') == '')):
+            abort(422)
+        try:
+            sub_category = SubCategory.query.get(data.get('id'))
+            sub_category.name = data.get('name')
+            sub_category.update()
         except Exception:
             abort(422)
 
@@ -335,10 +353,10 @@ def create_app(test_config=None):
 
     @app.route('/sub_categories', methods=['GET'])
     def get_sub_categories():
-        category_id = request.args.get('category_id')
-        if category_id:
+        education_id = request.args.get('education_id')
+        if education_id:
             categories = SubCategory.query.filter(
-                SubCategory.category_id == category_id)
+                SubCategory.education_id == education_id)
         else:
             categories = SubCategory.query.all()
         result = []

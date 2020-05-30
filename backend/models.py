@@ -72,7 +72,7 @@ class Education(db.Model):
     system_id = Column(Integer, ForeignKey('systems.id', ondelete='cascade'))
 
     class_list = relationship('Classes', cascade="all,delete", backref='education')
-    # classes = relationship('Classes', backref='education')
+    sub_categories = relationship('SubCategory', cascade="all,delete", backref='education')
 
     def __init__(self, name):
         self.name = name
@@ -92,7 +92,8 @@ class Education(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'class_list': self.class_list
+            'class_list': self.class_list,
+            'sub_categories': self.sub_categories
         }
 
 
@@ -142,39 +143,39 @@ sub_category
 '''
 
 
-# class SubCategory(db.Model):
-#     __tablename__ = 'sub_categories'
+class SubCategory(db.Model):
+    __tablename__ = 'sub_categories'
 
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String)
-# # It can either be a parent of a sub_category or a class
-#     # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
-#     classes = relationship('Classes', cascade="all,delete", backref='sub_categories')
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+# It can either be a parent of a sub_category or a class
+    # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
+    classes = relationship('Classes', cascade="all,delete", backref='sub_categories')
 
-# # the subcategory can be a child of a category or of a sub_category
-#     category_id = Column(Integer, ForeignKey('categories.id', ondelete='cascade'), nullable=True)
-#     # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
+# the subcategory can be a child of a category or of a sub_category
+    education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'))
+    # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
 
-#     def __init__(self, name):
-#         self.name = name
+    def __init__(self, name):
+        self.name = name
 
-#     def insert(self):
-#         db.session.add(self)
-#         db.session.commit()
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
 
-#     def update(self):
-#         db.session.commit()
+    def update(self):
+        db.session.commit()
 
-#     def delete(self):
-#         db.session.delete(self)
-#         db.session.commit()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-#     def format(self):
-#         return {
-#             'id': self.id,
-#             'name': self.name,
-#             'classes': self.classes
-#         }
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'classes': self.classes
+        }
 
 
 '''
@@ -192,9 +193,8 @@ class Classes(db.Model):
     categories = relationship('Category', cascade="all,delete", backref='classes')
     videos = relationship('Video', cascade="all,delete", backref='classes')
 
-    # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
     education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'), nullable=True)
-    # education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'), nullable=True)
+    sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
 
     def __init__(self, name):
         self.name = name
