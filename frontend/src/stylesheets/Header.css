@@ -6,13 +6,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: rgb(231, 223, 66);
+    color: rgb(253, 238, 0);
 }
 
 .national-colors::before {
     content: '';
     background: #468908;
-    width: 12rem;
+    width: 20rem;
     padding: 2em;
     position: absolute;
     left: 0em;
@@ -22,7 +22,7 @@
 .national-colors::after {
     content: '';
     background: #ECDF00;
-    width: 12rem;
+    width: 20rem;
     padding: 2em;
     position: absolute;
     right: 0;

@@ -144,7 +144,7 @@
     transform: translateY(25%);
     background: white;
     border: 2px solid rgb(92, 206, 4);
-    z-index: 999;
+    z-index: 9999;
 }
 .sub_cat::before{
     content: '';
