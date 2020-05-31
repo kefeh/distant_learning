@@ -463,9 +463,13 @@ def create_app(test_config=None):
         else:
             videos = Video.query.all()
         result = []
+        links = []
         for some_video in videos:
             some_video = some_video.format()
+            if some_video.get('link') in links:
+                continue
             from pprint import pprint
+            links.append(some_video.get('link'))
             pprint(some_video)
             result.append(some_video)
 

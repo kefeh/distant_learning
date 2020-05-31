@@ -26,13 +26,13 @@ def upgrade():
     op.add_column('sub_categories', sa.Column('rank', sa.Integer(), nullable=True))
     op.add_column('systems', sa.Column('rank', sa.Integer(), nullable=True))
 
-    # op.execute(CreateSequence(Sequence('table_id_seq')))
-    op.alter_column("systems", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
-    op.alter_column("educations", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
-    op.alter_column("sub_categories", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
-    op.alter_column("classes", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
-    op.alter_column("categories", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
-    # ### end Alembic commands ###
+    # # op.execute(CreateSequence(Sequence('table_id_seq')))
+    # op.alter_column("systems", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
+    # op.alter_column("educations", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
+    # op.alter_column("sub_categories", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
+    # op.alter_column("classes", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
+    # op.alter_column("categories", "rank", server_default=sa.text("nextval('table_id_seq'::regclass)"))
+    # # ### end Alembic commands ###
 
 
 def downgrade():
