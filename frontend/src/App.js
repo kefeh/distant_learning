@@ -11,6 +11,7 @@ import FormView from './components/FormView';
 import MainView from './components/MainView';
 import Header from './components/Header';
 import VideoView from './components/VideoView';
+import Login from './components/Login';
 
 
 class App extends Component {
@@ -23,7 +24,7 @@ class App extends Component {
         <Switch>
           <Route path="/" exact component={MainView} />
           <Route path="/add" component={FormView} />
-          <Route path="/play" component={VideoView} />
+          <Route path="/login" component={Login} />
           <Route component={MainView} />
         </Switch>
       </Router>

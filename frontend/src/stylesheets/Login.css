@@ -1,0 +1,32 @@
+.login-items {
+    margin: 10% auto;
+    width: 30%;
+    padding-bottom: 10%;
+}
+
+input[type='text'], input[type='password']{
+    width: 100%;
+    border: none;
+    background-color: #46890828;
+    padding: 0.5em 1rem;
+    font-size: 0.9rem;
+}
+
+input[type='submit']{
+    background-color: #468908;
+    color: white;
+    outline: none;
+    border: none;
+    font-size: 0.9rem;
+    padding: 0.5em;
+    margin-top: 5%;
+}
+
+input[type='checkbox']{
+    vertical-align: text-bottom;
+    margin-right: 0.5rem;
+}
+
+.login-items__form-view{
+    margin-top: 8%;
+}
