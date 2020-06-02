@@ -1,8 +1,8 @@
 // import React, { Component } from 'react';
 import $ from 'jquery';
-import React, { Component } from 'react/addons';
-import ReactMixin from 'react-mixin';
-import Auth from '../services/AuthService'
+import React, { Component } from 'react';
+// import ReactMixin from 'react-mixin';
+// import Auth from '../services/AuthService'
 
 import '../stylesheets/Login.css';
 

@@ -26,3 +26,11 @@
     padding: 6px 0;
     font-size: 1.1rem;
 }
+
+.class-iten-text{
+    text-transform: capitalize;
+}
+
+.sub-class-nav{
+    width: 95%;
+}

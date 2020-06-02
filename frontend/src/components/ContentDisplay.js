@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import "../stylesheets/ContentDisplay.css";
 
 function DisplayCategories({key, classItem, fetchVideoData }) {
@@ -10,7 +9,7 @@ function DisplayCategories({key, classItem, fetchVideoData }) {
             }`}
             onClick={() => getVideosCategory(key, classItem.id, classItem.name, fetchVideoData)}
         >
-            {classItem.name.toUpperCase()}
+            <span className="class-iten-text">{classItem.name}</span>
         </div>
     );
 }
@@ -130,7 +129,7 @@ class ContentDisplay extends Component {
                 }`}
                 onClick={() => this.toggleDrop(some_class)}
             >
-                <span>{some_class.name.toUpperCase()}</span>
+                <span className="class-iten-text">{some_class.name}</span>
                 {some_class.categories && some_class.categories.length > 0 &&(<div className="menu-icon">
                 <svg className="icon-circle-down">
                     <use xlinkHref="./icons/symbol-defs.svg#icon-circle-down"></use>
