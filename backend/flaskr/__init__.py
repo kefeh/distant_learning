@@ -4,9 +4,10 @@ from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, desc, update, asc
 from flask_cors import CORS
+from datetime import datetime
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -630,45 +631,97 @@ def create_app(test_config=None):
 
     #     return result
 
-    # @app.route('/questions', methods=['GET'])
-    # def get_questions():
-    #     page = request.args.get('page', 1, type=int)
+    @app.route('/questions', methods=['GET'])
+    def get_questions():
 
-    #     result = question_get_return(page)
+        video_id = request.args.get('video_id', int)
 
-    #     if len(result) == 0:
-    #         abort(400)
+        if not video_id:
+            abort(422)
+    
+        result = Question.query.filter(Question.video_id == video_id).order_by(asc(Question.date)).all()
 
-    #     return jsonify(result)
+        result_list = []
+        for question in result:
+            question = question.format()
+            answer_list =  []
+            for ans in question.pop('answers'):
+                ans = ans.format()
+                answer_list.append(ans)
+            question['answers'] = answer_list
+            result_list.append(question)
 
-    # @app.route('/questions/<int:question_id>', methods=['DELETE'])
-    # def delete_question(question_id):
-    #     question = Question.query.get(question_id)
-    #     if not question:
-    #         abort(404)
-    #     try:
-    #         question.delete()
-    #     except Exception:
-    #         abort(500)
-    #     return jsonify({'message': "Delete Successful"})
+        print(result_list)
 
-    # @app.route('/questions', methods=['POST'])
-    # def add_question():
-    #     data = request.json
-    #     if ((data.get('question') == '') or (data.get('answer') == '') or
-    #             (data.get('category') == '') or
-    #             (data.get('difficulty') == '')):
-    #         abort(422)
-    #     try:
-    #         question = Question(
-    #             question=data.get('question', ''), answer=data.get(
-    #                 'answer'), category=data.get(
-    #                     'category'), difficulty=data.get('difficulty'))
-    #         question.insert()
-    #     except Exception:
-    #         abort(422)
+        return jsonify({'data': result_list, 'message': 'success'})
 
-    #     return jsonify({'message': 'success'})
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    def delete_question(question_id):
+        question = Question.query.get(question_id)
+        if not question:
+            abort(404)
+        try:
+            question.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'message': "Delete Successful"})
+
+    @app.route('/questions', methods=['POST'])
+    def add_question():
+        data = request.json
+        if (data.get('question') == '') or (data.get('video_id') == ''):
+            abort(422)
+    # try:
+        date = datetime.now()
+        question = Question(question=data.get('question', ''), date=date, video_id=data.get('video_id'))
+        question.insert()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success'})
+
+
+    @app.route('/answers', methods=['GET'])
+    def get_answers():
+
+        question_id = request.args.get('question_id', int)
+
+        if not question_id:
+            abort(422)
+    
+        result = Answer.query.order_by(asc(Answer.date)).all()
+
+        result_list = []
+        for answer in result:
+            answer = answer.format()
+            result_list.append(answer)
+
+        return jsonify({'data': result_list, 'message': 'success'})
+
+    @app.route('/answers/<int:answer_id>', methods=['DELETE'])
+    def delete_answer(answer_id):
+        answer = Answer.query.get(answer_id)
+        if not answer:
+            abort(404)
+        try:
+            answer.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'message': "Delete Successful"})
+
+    @app.route('/answers', methods=['POST'])
+    def add_answer():
+        data = request.json
+        if (data.get('answer') == '') or (data.get('question_id') == ''):
+            abort(422)
+    # try:
+        date = datetime.now()
+        answer = Answer(answer=data.get('answer', ''), date=date, question_id=data.get('question_id'))
+        answer.insert()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success'})
 
     # @app.route('/questions/search', methods=['POST'])
     # def search_question():

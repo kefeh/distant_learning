@@ -4,7 +4,7 @@ import "../stylesheets/ContentDisplay.css";
 function DisplayCategories({key, classItem, fetchVideoData }) {
     return (
         <div
-            className={`remove__link__deco d-block hover__cursor__style form-view__categories-list-item class-nav__item ${
+            className={`remove__link__deco d-block hover__cursor__style form-view__categories-list-item class-nav__item sub-class-nav ${
                 classItem.name+classItem.id+key === active_category ? "category-active" : ""
             }`}
             onClick={() => getVideosCategory(key, classItem.id, classItem.name, fetchVideoData)}

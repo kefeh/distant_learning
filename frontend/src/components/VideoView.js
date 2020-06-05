@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 
 import '../stylesheets/FormView.css';
+import '../stylesheets/VideoView.css';
 import '../stylesheets/App.css';
 
 class VideoView extends Component {
@@ -12,6 +13,15 @@ class VideoView extends Component {
       selection: null,
       videos: [],
       classes: [],
+      active_video: "",
+      active_video_link: "",
+      question: "",
+      questions: [],
+      active_video_id: '',
+      question_id: '',
+      answer: '',
+      active_question_id: '',
+      toggle: false
     }
   }
 
@@ -19,7 +29,7 @@ class VideoView extends Component {
     console.log('yes')
     console.log(nextProps.from_add)
     console.log('no')
-    this.setState({videos: nextProps.from_add}) 
+    this.setState({videos: nextProps.from_add})
   }
 
   componentDidMount(){
@@ -27,8 +37,20 @@ class VideoView extends Component {
     console.log(this.props.from_add)
     this.props.from_add?this.setState({videos: this.props.from_add}):(
     this.state.selection?this.getVideos(this.state.selection):(() => {})());
+    $(document)
+    .one('focus.autoExpand', 'textarea.autoExpand', function(){
+        var savedValue = this.value;
+        this.value = '';
+        this.baseScrollHeight = this.scrollHeight;
+        this.value = savedValue;
+    })
+    .on('input.autoExpand', 'textarea.autoExpand', function(){
+        var minRows = this.getAttribute('data-min-rows')|0, rows;
+        this.rows = minRows;
+        rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 16);
+        this.rows = minRows + rows;
+    });
   }
-
 
   getClass = () => {
     $.ajax({
@@ -54,11 +76,86 @@ class VideoView extends Component {
       type: "GET",
       success: (result) => {
         this.setState({ videos: result.data, selection: selection?selection.id:this.state.selection})
+        console.log('Getting the questions')
+        this.getQuestion(result.data[0].id)
+        console.log('After Getting the questions')
         // this.props.updateVideos(this.state.videos)
         return;
       },
       error: (error) => {
         alert('Unable to load systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
+
+  getQuestion = (id) => {
+    $.ajax({
+      url: `/questions?video_id=${id}`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        console.log(result.data)
+        this.setState({ questions: result.data })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load questions. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  submitQuestion = (event) => {
+    event.preventDefault();
+    $.ajax({
+      url: '/questions', //TODO: update request URL
+      type: "POST",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        question: this.state.question,
+        video_id: this.state.active_video.id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-questions-form").reset();
+        this.getQuestion(this.state.active_video.id);
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
+        return;
+      }
+    })
+  }
+
+  submitAnswer = (event) => {
+    event.preventDefault();
+    $.ajax({
+      url: '/answers', //TODO: update request URL
+      type: "POST",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        answer: this.state.answer,
+        question_id: this.state.question_id
+      }),
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: (result) => {
+        // document.getElementById("add-questions-form").reset();
+        this.getQuestion(this.state.active_video.id);
+        this.setState({question_id: '', answer: ''})
+        return;
+      },
+      error: (error) => {
+        alert('Unable to add systems. Please try your request again')
         return;
       }
     })
@@ -86,6 +183,28 @@ class VideoView extends Component {
     }
   }
 
+  handleQuestionChange = (event) => {
+    this.setState({question: event.target.value})
+  }
+
+  handleChange = (id, event) => {
+    this.setState({answer: event.target.value, question_id: id})
+  }
+
+  setViewAnswers = (question) => {
+    var toggle = this.state.active_question_id ===  `${question.id + question.date}`? !this.state.toggle : true
+    this.setState({active_question_id: `${question.id + question.date}`, toggle: toggle})
+  }
+
+  setViewVideo = (video) => {
+    this.setState({active_video_id: video.id, active_video: video})
+    this.getQuestion(video.id)
+  }
+
+  unsetViewVideo = () => {
+    this.setState({active_video_id: '', active_video: ''})
+  }
+
   render() {
     const { from_add, delete_hide } = this.props;
     var hide_edit_delete = typeof delete_hide==="undefined"?false:delete_hide
@@ -103,8 +222,8 @@ class VideoView extends Component {
         <div className="form-view__item-view form-view__item-video">
           <div className="video">
             <ul>
-            {this.state.videos && this.state.videos.map((item, ind)=> (
-              <li key={item.id} className="video__list">
+            {this.state.videos && !this.state.active_video && this.state.videos.map((item, ind)=> (
+              <li key={item.id} className="video__list" onClick={() => {this.setViewVideo(item)}}>
                   <div className="video__card">
                     <iframe title={item.name} src={item.link} allowfullscreen="allowFullScreen"
                         mozallowfullscreen="mozallowfullscreen" 
@@ -137,6 +256,56 @@ class VideoView extends Component {
                 </svg>
               </li>
             </ul>
+            {this.state.videos.length > 0 && this.state.active_video &&
+            <div className="video__card-big">
+              <div className={`${'show'}`} onClick={() => {this.unsetViewVideo()}}>
+                <svg className="icon-cancel-circle">
+                  <use xlinkHref="./icons/symbol-defs.svg#icon-cancel-circle"></use>
+                </svg>
+              </div>
+              <iframe title={this.state.active_video.name} src={this.state.active_video.link} allowfullscreen="allowFullScreen"
+                mozallowfullscreen="mozallowfullscreen" 
+                msallowfullscreen="msallowfullscreen" 
+                oallowfullscreen="oallowfullscreen" 
+                webkitallowfullscreen="webkitallowfullscreen"
+                id="myIframe"
+                ref={this.handleIframeHeight} />
+              <form className="video-question__add" onSubmit={this.submitQuestion}>
+                <label>
+                  <textarea class='autoExpand' rows='1' type="text" name="name" placeHolder="Enter a Public question" onChange={this.handleQuestionChange}/>
+                </label>
+                <input type="submit" className="button" value="Submit" />
+              </form>
+              <div className="questions">
+                <ul className="questions__list">
+                  <span className="questions__title" >Questions</span>
+                  {this.state.questions && this.state.questions.length > 0 && this.state.questions.map((item, ind)=> (
+                  <li className="questions__list-item">
+                    <span className="questions-date">{item.date}</span>
+                    <p className="questions__list-item-name">{item.question}</p>
+                    <span className="questions-list-item-indicator" onClick={() => {this.setViewAnswers(item)}}>view {item.answers.length} answers</span>
+                      
+                      {this.state.active_question_id === `${item.id + item.date}` && this.state.toggle &&
+                      <ul className="questions__list-item-answers">
+                        <li className="questions-list-item-answers-item">
+                        <form className="video-answer-add" onSubmit={this.submitAnswer}>
+                            <textarea rows='1' type="text" name="name" placeHolder="Write an answer" onChange={this.handleChange.bind(this, item['id'])}/>
+                            <input type="submit" className="button" value="Submit" />
+                        </form>
+                        </li>
+                        {item.answers.length > 0 && item.answers.map((ans_item, ind)=> (
+                          <li className="questions-list-item-answers-item">
+                            <span className="questions-date">{ans_item.date}</span>
+                            <p>{ans_item.answer}</p>
+                          </li>
+                        ))}
+                      </ul>}
+                    
+                  </li>))
+                  }
+                </ul>
+              </div>
+            </div>}
           </div>
         </div>
       </div>

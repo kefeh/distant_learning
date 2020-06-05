@@ -29,7 +29,7 @@ class ViewItems extends Component {
     console.log('updating')
     console.log(id)
     console.log(event.target.value)
-    name = typeof this.state.item_name == "undefined" || this.state.item_name == ""?name: this.state.item_name;
+    name = typeof this.state.item_name == "undefined" || this.state.item_name === ""?name: this.state.item_name;
     console.log(name)
     console.log(this.state.item_name)
     this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
@@ -68,7 +68,7 @@ class ViewItems extends Component {
                   </label>
                   <input type="submit" className="button" value="update" />
                 </form>
-                <img src="./delete.png" className="view-holder__delete" onClick={() => this.props.deleteAction(item.id)}/>
+                <img src="./delete.png" alt="delete" className="view-holder__delete" onClick={() => this.props.deleteAction(item.id)}/>
               </li>
             ))}
           </ul>

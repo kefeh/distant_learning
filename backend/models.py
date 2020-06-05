@@ -286,6 +286,8 @@ class Video(db.Model):
     category_id = Column(Integer, ForeignKey('categories.id', ondelete='cascade'), nullable=True)
     class_id = Column(Integer, ForeignKey('classes.id', ondelete='cascade'), nullable=True)
 
+    questions = relationship('Question', cascade="all,delete", backref='video')
+
     def __init__(self, name, link, description, date):
         self.name = name
         self.link = link
@@ -310,4 +312,79 @@ class Video(db.Model):
             'link': self.link,
             'description': self.description,
             'date': self.date.strftime('%Y/%m/%d')
+        }
+
+
+class Question(db.Model):
+    __tablename__ = 'questions'
+
+    id = Column(Integer, primary_key=True)
+    question = Column(String)
+    date = Column(DateTime)
+    
+    answers = relationship('Answer', cascade="all,delete", backref='question')
+    video_id = Column(Integer, ForeignKey('videos.id', ondelete='cascade'))
+
+    def __init__(self, question, date, video_id):
+        self.question = question
+        self.date = date
+        self.video_id = video_id
+
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'question': self.question,
+            'date': self.date.strftime('%Y-%m-%d %H:%M'),
+            'video_id': self.video_id,
+            'answers': self.answers
+        }
+
+
+class Answer(db.Model):
+    __tablename__ = 'answers'
+
+    id = Column(Integer, primary_key=True)
+    answer = Column(String)
+    date = Column(DateTime)
+
+    question_id = Column(Integer, ForeignKey('questions.id', ondelete='cascade'))
+
+    def __init__(self, answer, date, question_id):
+        self.answer = answer
+        self.date = date
+        self.question_id = question_id
+
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'answer': self.answer,
+            'date': self.date.strftime('%Y-%m-%d %H:%M'),
+            'question_id': self.question_id
+            # TODO: try to get the number of hours, day, weeks, months and years
         }
