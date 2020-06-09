@@ -1,14 +1,20 @@
 import os
-from sqlalchemy import Column, String, Integer, create_engine, ForeignKey, DateTime
+from sqlalchemy import Column, String, Integer, create_engine, ForeignKey, DateTime, Boolean
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy.orm import relationship
+from datetime import datetime, timedelta
+import jwt
 import json
 
 database_name = "distantLearn"
 database_path = "postgres:///{}".format(database_name)
 
 db = SQLAlchemy()
+
+"""Production configuration."""
+SECRET_KEY = 'minesec_distance_learning'
+BCRYPT_LOG_ROUNDS = 13
 
 '''
 setup_db(app)
@@ -30,6 +36,77 @@ system
 
 '''
 
+class User(db.Model):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    admin = Column(Boolean, nullable=False, default=False)
+    registered_on = Column(DateTime, nullable=False)
+
+    def __init__(self, email, password, admin=False):
+        self.email = email
+        # self.password = bcrypt.generate_password_hash(
+        #     password, BCRYPT_LOG_ROUNDS).decode()
+        self.password = password
+        self.registered_on = datetime.now()
+        self.admin = admin
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'admin': self.admin,
+            'registered_on': self.registered_on
+        }
+
+    def encode_auth_token(self, user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.utcnow() + timedelta(days=0, seconds=5),
+                'iat': datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                SECRET_KEY,
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(auth_token, SECRET_KEY, algorithms=['HS256'])
+            print(payload)
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
+
+
 
 class System(db.Model):
     __tablename__ = 'systems'
@@ -37,7 +114,8 @@ class System(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     rank = Column(Integer)
-    education_list = relationship("Education", cascade="all,delete", backref="system")
+    education_list = relationship(
+        "Education", cascade="all,delete", backref="system")
 
     def __init__(self, name):
         self.name = name
@@ -76,8 +154,10 @@ class Education(db.Model):
     rank = Column(Integer)
     system_id = Column(Integer, ForeignKey('systems.id', ondelete='cascade'))
 
-    class_list = relationship('Classes', cascade="all,delete", backref='education')
-    sub_categories = relationship('SubCategory', cascade="all,delete", backref='education')
+    class_list = relationship(
+        'Classes', cascade="all,delete", backref='education')
+    sub_categories = relationship(
+        'SubCategory', cascade="all,delete", backref='education')
 
     def __init__(self, name):
         self.name = name
@@ -101,7 +181,6 @@ class Education(db.Model):
             'rank': self.rank,
             'sub_categories': self.sub_categories
         }
-
 
 
 '''
@@ -159,10 +238,12 @@ class SubCategory(db.Model):
     rank = Column(Integer)
 # It can either be a parent of a sub_category or a class
     # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
-    classes = relationship('Classes', cascade="all,delete", backref='sub_categories')
+    classes = relationship(
+        'Classes', cascade="all,delete", backref='sub_categories')
 
 # the subcategory can be a child of a category or of a sub_category
-    education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'))
+    education_id = Column(Integer, ForeignKey(
+        'educations.id', ondelete='cascade'))
     # sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
 
     def __init__(self, name):
@@ -201,11 +282,14 @@ class Classes(db.Model):
     name = Column(String)
     rank = Column(Integer)
 
-    categories = relationship('Category', cascade="all,delete", backref='classes')
+    categories = relationship(
+        'Category', cascade="all,delete", backref='classes')
     videos = relationship('Video', cascade="all,delete", backref='classes')
 
-    education_id = Column(Integer, ForeignKey('educations.id', ondelete='cascade'), nullable=True)
-    sub_category_id = Column(Integer, ForeignKey('sub_categories.id', ondelete='cascade'), nullable=True)
+    education_id = Column(Integer, ForeignKey(
+        'educations.id', ondelete='cascade'), nullable=True)
+    sub_category_id = Column(Integer, ForeignKey(
+        'sub_categories.id', ondelete='cascade'), nullable=True)
 
     def __init__(self, name):
         self.name = name
@@ -283,8 +367,10 @@ class Video(db.Model):
     description = Column(String)
     date = Column(DateTime)
 
-    category_id = Column(Integer, ForeignKey('categories.id', ondelete='cascade'), nullable=True)
-    class_id = Column(Integer, ForeignKey('classes.id', ondelete='cascade'), nullable=True)
+    category_id = Column(Integer, ForeignKey(
+        'categories.id', ondelete='cascade'), nullable=True)
+    class_id = Column(Integer, ForeignKey(
+        'classes.id', ondelete='cascade'), nullable=True)
 
     questions = relationship('Question', cascade="all,delete", backref='video')
 
@@ -321,7 +407,7 @@ class Question(db.Model):
     id = Column(Integer, primary_key=True)
     question = Column(String)
     date = Column(DateTime)
-    
+
     answers = relationship('Answer', cascade="all,delete", backref='question')
     video_id = Column(Integer, ForeignKey('videos.id', ondelete='cascade'))
 
@@ -360,7 +446,8 @@ class Answer(db.Model):
     answer = Column(String)
     date = Column(DateTime)
 
-    question_id = Column(Integer, ForeignKey('questions.id', ondelete='cascade'))
+    question_id = Column(Integer, ForeignKey(
+        'questions.id', ondelete='cascade'))
 
     def __init__(self, answer, date, question_id):
         self.answer = answer

@@ -5,19 +5,22 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, desc, update, asc
 from flask_cors import CORS
 from datetime import datetime
+from flask_bcrypt import Bcrypt
 import random
 
 from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
-
+SECRET_KEY = 'minesec_distance_learning'
+BCRYPT_LOG_ROUNDS = 13
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, static_folder="../../frontend/build",
                 static_url_path="")
     setup_db(app)
+    bcrypt = Bcrypt(app)
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
