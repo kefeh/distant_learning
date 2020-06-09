@@ -55,6 +55,53 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(isinstance(auth_token, bytes))
         self.assertTrue(User.decode_auth_token(auth_token) == user.id)
 
+    def test_registration(self):
+        """ Test for user registration """
+        user = User.query.filter_by(email='registerjoe@gmail.com').first()
+        if user:
+            user.delete()
+        response = self.client().post(
+            '/register',
+            json={
+                "email":'registerjoe@gmail.com',
+                "password":'098765'
+            },
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully registered.')
+        self.assertTrue(data['auth_token'])
+        self.assertTrue(response.content_type == 'application/json')
+        self.assertEqual(response.status_code, 201)
+
+    def test_registered_with_already_registered_user(self):
+        """ Test registration with already registered email"""
+        user = User.query.filter_by(email='registerjoe@gmail.com').first()
+        if not user:
+            user = User(
+                email='registerjoe@gmail.com',
+                password='098765'
+            )
+            user.insert()
+        response = self.client().post(
+            '/register',
+            json={
+                "email":'registerjoe@gmail.com',
+                "password":'098765'
+            },
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(
+            data['message'] == 'User already exists. Please Log in.')
+        self.assertTrue(response.content_type == 'application/json')
+        self.assertEqual(response.status_code, 202)
+        
+
+
+
 
 
 # Make the tests conveniently executable

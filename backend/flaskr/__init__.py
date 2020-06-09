@@ -8,12 +8,13 @@ from datetime import datetime
 from flask_bcrypt import Bcrypt
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
 SECRET_KEY = 'minesec_distance_learning'
 BCRYPT_LOG_ROUNDS = 13
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -44,6 +45,50 @@ def create_app(test_config=None):
 
 
 # Add endpoints
+# Register User
+
+
+    @app.route('/register', methods=['POST'])
+    def register_user():
+        print("Registering a user")
+        data = request.json
+        if ((data.get('email') == '') or (data.get('password') == '')):
+            abort(422)
+        user = User.query.filter_by(email=data.get('email')).first()
+        if not user:
+            try:
+                user = User(
+                    email=data.get('email'),
+                    password=bcrypt.generate_password_hash(
+                        data.get('password'), BCRYPT_LOG_ROUNDS).decode()
+                )
+
+                # insert the user
+                user.insert()
+                # generate the auth token
+                auth_token = user.encode_auth_token(user.id)
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Successfully registered.',
+                    'auth_token': auth_token.decode()
+                }
+                return jsonify(responseObject), 201
+            except Exception as e:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Some error occurred. Please try again.'
+                }
+                return jsonify(responseObject), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'User already exists. Please Log in.',
+            }
+            return jsonify(responseObject), 202
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success', 'id': system.id})
 
 # add system
     @app.route('/systems', methods=['POST'])
@@ -62,7 +107,6 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': system.id})
 
-    
     @app.route('/systems', methods=['PUT'])
     def update_system():
         print("updating systems")
@@ -72,8 +116,8 @@ def create_app(test_config=None):
             abort(422)
     # try:
         system = System.query.get(data.get('id'))
-        system.name=data.get('name')
-        system.rank=data.get('rank')
+        system.name = data.get('name')
+        system.rank = data.get('rank')
         system.update()
     # except Exception:
     #     abort(422)
@@ -100,7 +144,6 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': education.id})
 
-
     @app.route('/educations', methods=['PUT'])
     def update_educations():
         print("updating educations")
@@ -110,8 +153,8 @@ def create_app(test_config=None):
             abort(422)
     # try:
         education = Education.query.get(data.get('id'))
-        education.name=data.get('name')
-        education.rank=data.get('rank')
+        education.name = data.get('name')
+        education.rank = data.get('rank')
         education.update()
     # except Exception:
     #     abort(422)
@@ -138,7 +181,6 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': category.id})
 
-
     @app.route('/categories', methods=['PUT'])
     def update_categories():
         print("updating categories")
@@ -148,8 +190,8 @@ def create_app(test_config=None):
             abort(422)
     # try:
         category = Category.query.get(data.get('id'))
-        category.name=data.get('name')
-        category.rank=data.get('rank')
+        category.name = data.get('name')
+        category.rank = data.get('rank')
         category.update()
     # except Exception:
     #     abort(422)
@@ -175,7 +217,6 @@ def create_app(test_config=None):
             abort(422)
 
         return jsonify({'message': 'success', 'id': sub_category.id})
-
 
     # Add Sub Category level
 
@@ -208,7 +249,7 @@ def create_app(test_config=None):
             abort(422)
         try:
             classes = Classes(name=data.get(
-                    'name'))
+                'name'))
             classes.rank = data.get('rank')
             if education_id or sub_category_id:
                 if education_id:
@@ -223,7 +264,6 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': classes.id})
 
-
     @app.route('/class', methods=['PUT'])
     def update_class():
         print("updating class")
@@ -233,8 +273,8 @@ def create_app(test_config=None):
             abort(422)
     # try:
         classes = Classes.query.get(data.get('id'))
-        classes.name=data.get('name')
-        classes.rank=data.get('rank')
+        classes.name = data.get('name')
+        classes.rank = data.get('rank')
         classes.update()
     # except Exception:
     #     abort(422)
@@ -293,7 +333,7 @@ def create_app(test_config=None):
             class_id = int(data.get('class_id')[0])
             up_class = Classes.query.filter(Classes.id == class_id).one()
             if up_class.categories and not (data.get('category_id')[
-            0] != '' and data.get('category_id')[0] != '0'):
+                    0] != '' and data.get('category_id')[0] != '0'):
                 abort(422, description="Please select a level or Cycle")
         up_video.class_id = data.get('class_id')[0] if(
             data.get('class_id')[0] != '' and data.get('class_id')[0] != '0') else None
@@ -362,7 +402,8 @@ def create_app(test_config=None):
     def get_categories():
         class_id = request.args.get('class_id')
         if class_id:
-            categories = Category.query.order_by(asc(Category.rank)).filter(Category.class_id == class_id)
+            categories = Category.query.order_by(
+                asc(Category.rank)).filter(Category.class_id == class_id)
         else:
             categories = Category.query.order_by(asc(Category.rank)).all()
         result = []
@@ -384,7 +425,8 @@ def create_app(test_config=None):
             categories = SubCategory.query.order_by(asc(SubCategory.rank)).filter(
                 SubCategory.education_id == education_id)
         else:
-            categories = SubCategory.query.order_by(asc(SubCategory.rank)).all()
+            categories = SubCategory.query.order_by(
+                asc(SubCategory.rank)).all()
         result = []
         for category in categories:
             category = category.format()
@@ -432,7 +474,8 @@ def create_app(test_config=None):
         class_id = request.args.get('class_id')
 
         if class_id:
-            subjects = Subject.query.order_by(asc(Subject.name)).filter(Subject.class_id == class_id)
+            subjects = Subject.query.order_by(
+                asc(Subject.name)).filter(Subject.class_id == class_id)
         else:
             subjects = Subject.query.all()
         result = []
@@ -447,7 +490,8 @@ def create_app(test_config=None):
         education = Education.query.get(education_id)
         video_list = []
         for a_class in education.class_list:
-            videos = Video.query.filter(Video.class_id == a_class.id).order_by(asc(Video.date))
+            videos = Video.query.filter(
+                Video.class_id == a_class.id).order_by(asc(Video.date))
             video_list += videos
         video_list = video_list[:10] if len(video_list) > 10 else video_list
         return video_list
@@ -641,13 +685,14 @@ def create_app(test_config=None):
 
         if not video_id:
             abort(422)
-    
-        result = Question.query.filter(Question.video_id == video_id).order_by(asc(Question.date)).all()
+
+        result = Question.query.filter(
+            Question.video_id == video_id).order_by(asc(Question.date)).all()
 
         result_list = []
         for question in result:
             question = question.format()
-            answer_list =  []
+            answer_list = []
             for ans in question.pop('answers'):
                 ans = ans.format()
                 answer_list.append(ans)
@@ -676,13 +721,13 @@ def create_app(test_config=None):
             abort(422)
     # try:
         date = datetime.now()
-        question = Question(question=data.get('question', ''), date=date, video_id=data.get('video_id'))
+        question = Question(question=data.get('question', ''),
+                            date=date, video_id=data.get('video_id'))
         question.insert()
     # except Exception:
     #     abort(422)
 
         return jsonify({'message': 'success'})
-
 
     @app.route('/answers', methods=['GET'])
     def get_answers():
@@ -691,7 +736,7 @@ def create_app(test_config=None):
 
         if not question_id:
             abort(422)
-    
+
         result = Answer.query.order_by(asc(Answer.date)).all()
 
         result_list = []
@@ -719,7 +764,8 @@ def create_app(test_config=None):
             abort(422)
     # try:
         date = datetime.now()
-        answer = Answer(answer=data.get('answer', ''), date=date, question_id=data.get('question_id'))
+        answer = Answer(answer=data.get('answer', ''), date=date,
+                        question_id=data.get('question_id'))
         answer.insert()
     # except Exception:
     #     abort(422)

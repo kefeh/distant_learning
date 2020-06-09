@@ -216,8 +216,7 @@ Errors are returned as JSON objects in the following format:
 ## Testing
 To run the tests, run
 ```
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
+sudo -u postgres dropdb distantLearn_test
+sudo -u postgres createdb distantLearn_test
 python test_flaskr.py
 ```

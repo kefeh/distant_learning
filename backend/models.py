@@ -99,7 +99,6 @@ class User(db.Model):
         """
         try:
             payload = jwt.decode(auth_token, SECRET_KEY, algorithms=['HS256'])
-            print(payload)
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
