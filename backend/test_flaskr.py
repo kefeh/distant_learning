@@ -98,7 +98,91 @@ class TriviaTestCase(unittest.TestCase):
             data['message'] == 'User already exists. Please Log in.')
         self.assertTrue(response.content_type == 'application/json')
         self.assertEqual(response.status_code, 202)
-        
+
+
+    def test_registered_user_login(self):
+        """ Test for login of registered-user login """
+        # user registration
+        user = User.query.filter_by(email='registerjoe@gmail.com').first()
+        if not user:
+            response = self.client().post(
+                '/register',
+                json={
+                    "email":'registerjoe@gmail.com',
+                    "password":'098765'
+                },
+                content_type='application/json'
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'success')
+            self.assertTrue(data['message'] == 'Successfully registered.')
+            self.assertTrue(data['auth_token'])
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertEqual(response.status_code, 201)
+        # registered user login
+        response = self.client().post(
+            '/login',
+            json={
+                "email":'registerjoe@gmail.com',
+                "password":'098765'
+            },
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully logged in.')
+        self.assertTrue(data['auth_token'])
+        self.assertTrue(response.content_type == 'application/json')
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_non_registered_user_login(self):
+        """ Test for login of non-registered user """
+        response = self.client().post(
+            '/login',
+            json={
+                "email":'not-registerjoe@gmail.com',
+                "password":'098765'
+            },
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'User does not exist.')
+        self.assertTrue(response.content_type == 'application/json')
+        self.assertEqual(response.status_code, 404)
+
+
+    def test_user_status(self):
+        """ Test for user status """
+        user = User.query.filter_by(email='statusjoe@gmail.com').first()
+        if user:
+            user.delete()
+        resp_register = self.client().post(
+            '/register',
+            json={
+                "email":'statusjoe@gmail.com',
+                "password":'123456'
+            },
+            content_type='application/json'
+        )
+
+        response = self.client().get(
+            '/status',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'] is not None)
+        self.assertTrue(data['data']['email'] == 'statusjoe@gmail.com')
+        self.assertTrue(data['data']['admin'] is 'true' or 'false')
+        self.assertEqual(response.status_code, 200)
+
 
 
 

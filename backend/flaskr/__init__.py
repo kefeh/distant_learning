@@ -47,7 +47,6 @@ def create_app(test_config=None):
 # Add endpoints
 # Register User
 
-
     @app.route('/register', methods=['POST'])
     def register_user():
         print("Registering a user")
@@ -74,11 +73,7 @@ def create_app(test_config=None):
                 }
                 return jsonify(responseObject), 201
             except Exception as e:
-                responseObject = {
-                    'status': 'fail',
-                    'message': 'Some error occurred. Please try again.'
-                }
-                return jsonify(responseObject), 401
+                abort(401)
         else:
             responseObject = {
                 'status': 'fail',
@@ -90,7 +85,80 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': system.id})
 
+    @app.route('/login', methods=['POST'])
+    def login_user():
+        print("Login a user")
+        data = request.json
+        if ((data.get('email') == '') or (data.get('password') == '')):
+            abort(422)
+        user = User.query.filter_by(email=data.get('email')).first()
+        if not user:
+            return jsonify({
+                'status': 'fail',
+                'message': 'User does not exist.'
+            }), 404
+
+        if not bcrypt.check_password_hash(
+                user.password, data.get('password')
+            ):
+            abort(401)
+
+        try:
+            # fetch the user data
+            auth_token = user.encode_auth_token(user.id)
+            if auth_token:
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Successfully logged in.',
+                    'auth_token': auth_token.decode()
+                }
+                return jsonify(responseObject), 200
+        except Exception as e:
+            print(e)
+            responseObject = {
+                'status': 'fail',
+                'message': 'Try again'
+            }
+            return jsonify(responseObject), 500
+
+
+    @app.route('/status', methods=['GET'])
+    def user_token_status():
+        print("User status")
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                user = User.query.filter_by(id=resp).first()
+                responseObject = {
+                    'status': 'success',
+                    'data': {
+                        'user_id': user.id,
+                        'email': user.email,
+                        'admin': user.admin,
+                        'registered_on': user.registered_on
+                    }
+                }
+                return jsonify(responseObject), 200
+            responseObject = {
+                'status': 'fail',
+                'message': resp
+            }
+            return jsonify(responseObject), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return jsonify(responseObject), 401
+
+
 # add system
+
     @app.route('/systems', methods=['POST'])
     def add_system():
         print("adding systems")
@@ -126,6 +194,7 @@ def create_app(test_config=None):
 
 
 # Add Education level
+
 
     @app.route('/educations', methods=['POST'])
     def add_education():
@@ -163,6 +232,7 @@ def create_app(test_config=None):
 
 
 # Add Category level
+
 
     @app.route('/categories', methods=['POST'])
     def add_category():
@@ -238,6 +308,7 @@ def create_app(test_config=None):
 
 
 # Add Class level
+
 
     @app.route('/class', methods=['POST'])
     def add_class():
@@ -364,6 +435,7 @@ def create_app(test_config=None):
 
 
 # Get endpoints
+
 
     @app.route('/educations', methods=['GET'])
     def get_education():
@@ -811,7 +883,7 @@ def create_app(test_config=None):
     def not_found(error):
         if request.path.startswith("/api/"):
             return jsonify({
-                'error': 404,
+                'error': 'fail',
                 'message': 'Not Found'
             }), 404
         return send_from_directory(app.static_folder, 'index.html')
@@ -819,16 +891,23 @@ def create_app(test_config=None):
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
-            'error': 422,
+            'error': 'fail',
             'message': f'Unprocessable {str(error)}'
         }), 422
 
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
-            'error': 400,
+            'error': 'fail',
             'message': 'Bad Request'
         }), 400
+
+    @app.errorhandler(401)
+    def unauthorized(error):
+        return jsonify({
+            'status': 'fail',
+            'message': 'Your password is not correct.'
+        }), 401
 
     @app.errorhandler(500)
     def sever_error(error):
