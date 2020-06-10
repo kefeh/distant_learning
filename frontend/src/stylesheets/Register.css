@@ -1,4 +1,4 @@
-.login-items {
+.Register-items {
     margin: 10% auto;
     width: 30%;
     padding-bottom: 10%;
@@ -12,7 +12,7 @@ input[type='text'], input[type='password']{
     font-size: 0.9rem;
 }
 
-input[type='submit'].login-button{
+input[type='submit'].register-button{
     background-color: #468908;
     color: white;
     outline: none;
@@ -28,6 +28,6 @@ input[type='checkbox']{
     margin-right: 0.5rem;
 }
 
-.login-items__form-view{
+.Register-items__form-view{
     margin-top: 8%;
 }

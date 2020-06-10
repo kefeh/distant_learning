@@ -10,8 +10,9 @@ import './stylesheets/App.css';
 import FormView from './components/FormView';
 import MainView from './components/MainView';
 import Header from './components/Header';
-import VideoView from './components/VideoView';
+import Register from './components/Register';
 import Login from './components/Login';
+import Logout from "./components/Logout"
 
 
 class App extends Component {
@@ -25,6 +26,8 @@ class App extends Component {
           <Route path="/" exact component={MainView} />
           <Route path="/add" component={FormView} />
           <Route path="/login" component={Login} />
+          <Route path="/logout" component={Logout} />
+          <Route path="/Register" component={Register} />
           <Route component={MainView} />
         </Switch>
       </Router>

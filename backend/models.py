@@ -80,7 +80,7 @@ class User(db.Model):
         """
         try:
             payload = {
-                'exp': datetime.utcnow() + timedelta(days=0, seconds=5),
+                'exp': datetime.utcnow() + timedelta(hours=3, seconds=5),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
@@ -107,7 +107,7 @@ class User(db.Model):
             else:
                 return payload['sub']
         except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
+            return 'Session expired. Please log in again.'
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 

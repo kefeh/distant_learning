@@ -25,6 +25,7 @@ class Header extends Component {
           {/* <h5 onClick={() => {this.navTo('/add')}}>Admin Dashboard</h5>
           <h5 onClick={() => {this.navTo('/play')}}>Videos</h5> */}
       </div>
+      <h5 onClick={() => {this.navTo('/logout')}}>logout</h5>
       </div>
     );
   }
