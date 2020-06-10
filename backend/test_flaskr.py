@@ -33,6 +33,21 @@ class TriviaTestCase(unittest.TestCase):
     def tearDown(self):
         """Executed after reach test"""
         pass
+    
+    @staticmethod
+    def register_user(self, email, password, delete_user=True):
+        if delete_user:
+            user = User.query.filter_by(email=email).first()
+            if user:
+                user.delete()
+        return self.client().post(
+            '/register',
+            json={
+                "email": email,
+                "password": password
+            },
+            content_type='application/json'
+        )
 
     def test_encode_auth_token(self):
         bcrypt = Bcrypt(self.app)
@@ -58,19 +73,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(User.decode_auth_token(
             auth_token.decode("utf-8")) == user.id)
 
+
     def test_registration(self):
         """ Test for user registration """
-        user = User.query.filter_by(email='registerjoe@gmail.com').first()
-        if user:
-            user.delete()
-        response = self.client().post(
-            '/register',
-            json={
-                "email": 'registerjoe@gmail.com',
-                "password": '098765'
-            },
-            content_type='application/json'
-        )
+        response = self.register_user(self, 'registerjoe@gmail.com', '098765')
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['message'] == 'Successfully registered.')
@@ -87,14 +93,7 @@ class TriviaTestCase(unittest.TestCase):
                 password='098765'
             )
             user.insert()
-        response = self.client().post(
-            '/register',
-            json={
-                "email": 'registerjoe@gmail.com',
-                "password": '098765'
-            },
-            content_type='application/json'
-        )
+        response = self.register_user(self, 'registerjoe@gmail.com', '098765', delete_user=False)
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(
@@ -107,14 +106,7 @@ class TriviaTestCase(unittest.TestCase):
         # user registration
         user = User.query.filter_by(email='registerjoe@gmail.com').first()
         if not user:
-            response = self.client().post(
-                '/register',
-                json={
-                    "email": 'registerjoe@gmail.com',
-                    "password": '098765'
-                },
-                content_type='application/json'
-            )
+            response = self.register_user(self, 'registerjoe@gmail.com', '098765', delete_user=False)
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'success')
             self.assertTrue(data['message'] == 'Successfully registered.')
@@ -155,18 +147,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_user_status(self):
         """ Test for user status """
-        user = User.query.filter_by(email='statusjoe@gmail.com').first()
-        if user:
-            user.delete()
-        resp_register = self.client().post(
-            '/register',
-            json={
-                "email": 'statusjoe@gmail.com',
-                "password": '123456'
-            },
-            content_type='application/json'
-        )
-
+        resp_register = self.register_user(self, 'statusjoe@gmail.com', '123456')
         response = self.client().get(
             '/status',
             headers=dict(
@@ -186,17 +167,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_valid_logout(self):
         """ Test for logout before token expires """
         # user registration
-        user = User.query.filter_by(email='logoutjoe@gmail.com').first()
-        if user:
-            user.delete()
-        resp_register = self.client().post(
-            '/register',
-            json={
-                "email": 'logoutjoe@gmail.com',
-                "password": '123456'
-            },
-            content_type='application/json',
-        )
+        resp_register = self.register_user(self, 'logoutjoe@gmail.com', '123456')
         data_register = json.loads(resp_register.data.decode())
         self.assertTrue(data_register['status'] == 'success')
         self.assertTrue(
@@ -236,17 +207,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_invalid_logout(self):
         """ Test for logout before token expires """
         # user registration
-        user = User.query.filter_by(email='logoutjoe@gmail.com').first()
-        if user:
-            user.delete()
-        resp_register = self.client().post(
-            '/register',
-            json={
-                "email": 'logoutjoe@gmail.com',
-                "password": '123456'
-            },
-            content_type='application/json',
-        )
+        resp_register = self.register_user(self, 'logoutjoe@gmail.com', '123456')
         data_register = json.loads(resp_register.data.decode())
         self.assertTrue(data_register['status'] == 'success')
         self.assertTrue(
@@ -288,17 +249,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_valid_blacklisted_token_logout(self):
         """ Test for logout after a valid token gets blacklisted """
         # user registration
-        user = User.query.filter_by(email='blacklistedjoe@gmail.com').first()
-        if user:
-            user.delete()
-        resp_register = self.client().post(
-            '/register',
-            json={
-                "email": 'blacklistedjoe@gmail.com',
-                "password": '123456'
-            },
-            content_type='application/json',
-        )
+        resp_register = self.register_user(self, 'blacklistedjoe@gmail.com', '123456')
         data_register = json.loads(resp_register.data.decode())
         self.assertTrue(data_register['status'] == 'success')
         self.assertTrue(
@@ -338,6 +289,27 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] ==
                         'Token blacklisted. Please log in again.')
+        self.assertEqual(response.status_code, 401)
+
+
+    def test_valid_blacklisted_token_user(self):
+        """ Test for user status with a blacklisted valid token """
+        resp_register = self.register_user(self, 'blacklistedjoe@gmail.com', '123456')
+        # blacklist a valid token
+        blacklist_token = BlacklistToken(
+            token=json.loads(resp_register.data.decode())['auth_token'])
+        blacklist_token.insert()
+        response = self.client().get(
+            '/status',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
         self.assertEqual(response.status_code, 401)
 
 
