@@ -40,11 +40,13 @@ class User(db.Model):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     password = Column(String, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
     registered_on = Column(DateTime, nullable=False)
 
-    def __init__(self, email, password, admin=False):
+    def __init__(self, email, name, password, admin=False):
+        self.name = name
         self.email = email
         # self.password = bcrypt.generate_password_hash(
         #     password, BCRYPT_LOG_ROUNDS).decode()

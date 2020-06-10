@@ -57,9 +57,11 @@ def create_app(test_config=None):
         if not user:
             try:
                 user = User(
+                    name=data.get('name'),
                     email=data.get('email'),
                     password=bcrypt.generate_password_hash(
-                        data.get('password'), BCRYPT_LOG_ROUNDS).decode()
+                        data.get('password'), BCRYPT_LOG_ROUNDS).decode(),
+                    admin = True if data.get('admin') else False
                 )
 
                 # insert the user

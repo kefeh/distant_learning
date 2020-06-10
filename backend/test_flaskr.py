@@ -19,7 +19,7 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "distantLearn"
+        self.database_name = "distantLearn_test"
         self.database_path = "postgres:///{}".format(self.database_name)
         setup_db(self.app, self.database_path)
 
@@ -43,6 +43,7 @@ class TriviaTestCase(unittest.TestCase):
         return self.client().post(
             '/register',
             json={
+                "name": "default Test user",
                 "email": email,
                 "password": password
             },
@@ -52,6 +53,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_encode_auth_token(self):
         bcrypt = Bcrypt(self.app)
         user = User(
+            name="Default test user",
             email='test@test.com',
             password=bcrypt.generate_password_hash(
                 'test', BCRYPT_LOG_ROUNDS).decode()
@@ -63,6 +65,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_decode_auth_token(self):
         bcrypt = Bcrypt(self.app)
         user = User(
+            name="Default test user",
             email='test@test.com',
             password=bcrypt.generate_password_hash(
                 'test', BCRYPT_LOG_ROUNDS).decode()
@@ -89,6 +92,7 @@ class TriviaTestCase(unittest.TestCase):
         user = User.query.filter_by(email='registerjoe@gmail.com').first()
         if not user:
             user = User(
+                name="Default test user",
                 email='registerjoe@gmail.com',
                 password='098765'
             )
