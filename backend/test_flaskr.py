@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flaskr import create_app
 from models import setup_db, User
 from flask_bcrypt import Bcrypt
+import time
 
 SECRET_KEY = 'minesec_distance_learning'
 BCRYPT_LOG_ROUNDS = 13
@@ -184,8 +185,108 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+    def test_valid_logout(self):
+        """ Test for logout before token expires """
+        # user registration
+        user = User.query.filter_by(email='logoutjoe@gmail.com').first()
+        if user:
+            user.delete()
+        resp_register = self.client().post(
+            '/register',
+            json={
+                "email":'logoutjoe@gmail.com',
+                "password":'123456'
+            },
+            content_type='application/json',
+        )
+        data_register = json.loads(resp_register.data.decode())
+        self.assertTrue(data_register['status'] == 'success')
+        self.assertTrue(
+            data_register['message'] == 'Successfully registered.')
+        self.assertTrue(data_register['auth_token'])
+        self.assertTrue(resp_register.content_type == 'application/json')
+        self.assertEqual(resp_register.status_code, 201)
+        # user login
+        resp_login = self.client().post(
+            '/login',
+            json={
+                "email":'logoutjoe@gmail.com',
+                "password":'123456'
+            },
+            content_type='application/json'
+        )
+        data_login = json.loads(resp_login.data.decode())
+        self.assertTrue(data_login['status'] == 'success')
+        self.assertTrue(data_login['message'] == 'Successfully logged in.')
+        self.assertTrue(data_login['auth_token'])
+        self.assertTrue(resp_login.content_type == 'application/json')
+        self.assertEqual(resp_login.status_code, 200)
+        # valid token logout
+        response = self.client().post(
+            '/logout',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_login.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['message'] == 'Successfully logged out.')
+        self.assertEqual(response.status_code, 200)
 
 
+    def test_invalid_logout(self):
+        """ Test for logout before token expires """
+        # user registration
+        user = User.query.filter_by(email='logoutjoe@gmail.com').first()
+        if user:
+            user.delete()
+        resp_register = self.client().post(
+            '/register',
+            json={
+                "email":'logoutjoe@gmail.com',
+                "password":'123456'
+            },
+            content_type='application/json',
+        )
+        data_register = json.loads(resp_register.data.decode())
+        self.assertTrue(data_register['status'] == 'success')
+        self.assertTrue(
+            data_register['message'] == 'Successfully registered.')
+        self.assertTrue(data_register['auth_token'])
+        self.assertTrue(resp_register.content_type == 'application/json')
+        self.assertEqual(resp_register.status_code, 201)
+        # user login
+        resp_login = self.client().post(
+            '/login',
+            json={
+                "email":'logoutjoe@gmail.com',
+                "password":'123456'
+            },
+            content_type='application/json'
+        )
+        data_login = json.loads(resp_login.data.decode())
+        self.assertTrue(data_login['status'] == 'success')
+        self.assertTrue(data_login['message'] == 'Successfully logged in.')
+        self.assertTrue(data_login['auth_token'])
+        self.assertTrue(resp_login.content_type == 'application/json')
+        self.assertEqual(resp_login.status_code, 200)
+        # invalid token logout
+        time.sleep(6)
+        response = self.client().post(
+            '/logout',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_login.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(
+            data['message'] == 'Signature expired. Please log in again.')
+        self.assertEqual(response.status_code, 401)
 
 
 # Make the tests conveniently executable

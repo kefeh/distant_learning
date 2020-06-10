@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_bcrypt import Bcrypt
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken
 from video_util import upload_video
 
 QUESTIONS_PER_PAGE = 10
@@ -155,6 +155,47 @@ def create_app(test_config=None):
                 'message': 'Provide a valid auth token.'
             }
             return jsonify(responseObject), 401
+
+
+    @app.route('/logout', methods=['POST'])
+    def logout_user():
+        print("User status")
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                # mark the token as blacklisted
+                blacklist_token = BlacklistToken(token=auth_token)
+                try:
+                    # insert the token
+                    blacklist_token.insert()
+                    responseObject = {
+                        'status': 'success',
+                        'message': 'Successfully logged out.'
+                    }
+                    return jsonify(responseObject), 200
+                except Exception as e:
+                    responseObject = {
+                        'status': 'fail',
+                        'message': e
+                    }
+                    return jsonify(responseObject), 200
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': resp
+                }
+                return jsonify(responseObject), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return jsonify(responseObject), 403
 
 
 # add system
