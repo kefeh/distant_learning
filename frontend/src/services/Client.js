@@ -39,38 +39,36 @@ class Client {
     }
 
     isLoggedIn = () => {
-        var registered_time = null;
+        var response = null;
         if (!localStorage.getItem(LOCAL_STORAGE_KEY)){
             return false
         }else{
-            $.ajax({
+            response = $.ajax({
                 url: '/status',
-                type: "POST",
+                type: "GET",
                 dataType: 'json',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEY)}`,
                 },
                 contentType: 'application/json',
-                data: JSON.stringify({}),
                 xhrFields: {
                   withCredentials: true
                 },
                 crossDomain: true,
                 success: (result) => {
-                    registered_time = result.registered_on
-                  return;
+                    console.log(result)
+                  return result;
                 },
                 error: (error) => {
                   alert(error.responseJSON.message)
-                  return;
+                  return error;
                 }
             })
-        }
-        console.log(registered_time)
-        if(registered_time){
-            return true
-        }else{
-            return false
+            if(response['data'] !== 'undefined'){
+              return true
+            }else{
+              return false
+            }
         }
     }
 }

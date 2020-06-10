@@ -25,6 +25,14 @@ class Login extends Component {
     this.setState({[event.target.name]: event.target.value})
     }
 
+    redirectPath = () => {
+      const locationState = this.props.location.state;
+      const pathname = (
+      locationState && locationState.from && locationState.from.pathname
+      );
+      return pathname || '/';
+      };
+
     submitLogin = (event) => {
         this.setState({ loginInProgress: true });
         event.preventDefault();
@@ -58,7 +66,7 @@ class Login extends Component {
     render() {
       if (this.state.shouldRedirect) {
         return (
-          <Redirect to='/' />
+          <Redirect to={this.redirectPath()}/>
           );
         } else {
         return (
