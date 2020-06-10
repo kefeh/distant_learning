@@ -311,6 +311,22 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
         self.assertEqual(response.status_code, 401)
+    
+    def test_user_status_malformed_bearer_token(self):
+        """ Test for user status with malformed bearer token"""
+        resp_register = self.register_user(self, 'joe@gmail.com', '123456')
+        response = self.client().get(
+            '/status',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Bearer token malformed.')
+        self.assertEqual(response.status_code, 401)
 
 
 # Make the tests conveniently executable
