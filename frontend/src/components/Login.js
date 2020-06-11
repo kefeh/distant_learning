@@ -7,7 +7,7 @@ import client from '../services/Client'
 // import Auth from '../services/AuthService'
 
 import '../stylesheets/Login.css';
-import '../stylesheets/Loading.css'
+import '../stylesheets/Loading.css';
 
 class Login extends Component {
     constructor(props){
@@ -75,7 +75,7 @@ class Login extends Component {
                     <h2 id="login-header">Login Here</h2>
                     <form className="login-items__form-view" id="login-form" onSubmit={this.submitLogin}>
                         <label className='email'>
-                            <input type="text" placeholder="email" name="email" onChange={this.handleChange} required/>
+                            <input type="email" placeholder="email" name="email" onChange={this.handleChange} required/>
                         </label>
                         <label className='password'>
                             <input type="password" name="password" placeholder="Password" onChange={this.handleChange} required/>

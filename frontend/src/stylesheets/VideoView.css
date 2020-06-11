@@ -17,10 +17,10 @@
     margin-top: 1rem;
 }
 
-input[type="submit"]{
+/* input[type="submit"]{
     width: 15%;
     margin-top: 2% !important;
-}
+} */
 
 .questions__list{
     display: flex;

@@ -25,7 +25,7 @@ class App extends Component {
       <Router>
         <Switch>
           <Route path="/" exact component={MainView} />
-          <PrivateRoute path="/add" component={FormView} />
+          <PrivateRoute path="/dashboard" component={FormView} />
           <Route path="/login" component={Login} />
           <Route path="/logout" component={Logout} />
           <PrivateRoute path="/Register" component={Register} />

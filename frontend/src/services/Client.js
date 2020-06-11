@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 let LOCAL_STORAGE_KEY = "token_key";
+let LOCAL_STORAGE_LOGIN_DATA = "login_data"
 
 class Client {
 
@@ -38,12 +39,11 @@ class Client {
         this.removeToken();
     }
 
-    isLoggedIn = () => {
-        var response = null;
+    getStatus = () => {
         if (!localStorage.getItem(LOCAL_STORAGE_KEY)){
             return false
         }else{
-            response = $.ajax({
+            $.ajax({
                 url: '/status',
                 type: "GET",
                 dataType: 'json',
@@ -56,20 +56,23 @@ class Client {
                 },
                 crossDomain: true,
                 success: (result) => {
-                    console.log(result)
+                  localStorage.setItem(LOCAL_STORAGE_LOGIN_DATA, result);
                   return result;
                 },
                 error: (error) => {
                   alert(error.responseJSON.message)
+                  localStorage.removeItem(LOCAL_STORAGE_LOGIN_DATA)
                   return error;
                 }
-            })
-            if(response['data'] !== 'undefined'){
-              return true
-            }else{
-              return false
-            }
+            });
+
         }
+    }
+
+    isLoggedIn = () => {
+      this.getStatus()
+      console.log(localStorage.getItem(LOCAL_STORAGE_LOGIN_DATA))
+      return localStorage.getItem(LOCAL_STORAGE_LOGIN_DATA)?true:false;
     }
 }
 

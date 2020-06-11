@@ -1,7 +1,7 @@
 // import React, { Component } from 'react';
 import $ from 'jquery';
 import React, { Component } from 'react';
-import client from '../services/Client'
+import client from '../services/Client';
 // import ReactMixin from 'react-mixin';
 // import Auth from '../services/AuthService'
 
@@ -73,7 +73,7 @@ class Register extends Component {
                     <h2 id="Register-header">Register Here</h2>
                     <form className="Register-items__form-view" id="Register-form" onSubmit={this.submitRegister}>
                         <label className='email'>
-                            <input type="text" placeholder="email" name="email" onChange={this.handleChange} required/>
+                            <input type="email" placeholder="email" name="email" onChange={this.handleChange} required/>
                         </label>
                         <label className='name'>
                             <input type="text" placeholder="name" name="name" onChange={this.handleChange} required/>

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
+import client from '../services/Client';
 import FormViewController from "./FormViewController"
+import { Link } from 'react-router-dom'
 
 import $ from 'jquery';
 
@@ -186,6 +188,14 @@ class FormView extends Component {
           </ul>
         </div>
         <div className="parent-holder">
+          <div className="login-route">
+          {client.isLoggedIn() ? (
+              <Link className='ui item' to='/logout'>
+              Logout
+              </Link>
+            ) : (<></>)
+            }
+          </div>
           <div className="form-view__item-view">
             <FormViewController selection={this.state.selection} parent={this.state.selectionParent} />
           </div>

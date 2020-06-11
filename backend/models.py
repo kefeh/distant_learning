@@ -80,7 +80,7 @@ class User(db.Model):
         """
         try:
             payload = {
-                'exp': datetime.utcnow() + timedelta(hours=3, seconds=5),
+                'exp': datetime.utcnow() + timedelta(hours=3),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
