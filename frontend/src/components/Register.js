@@ -1,10 +1,12 @@
 // import React, { Component } from 'react';
 import $ from 'jquery';
 import React, { Component } from 'react';
+import client from '../services/Client'
 // import ReactMixin from 'react-mixin';
 // import Auth from '../services/AuthService'
 
 import '../stylesheets/Register.css';
+import '../stylesheets/Loading.css';
 
 class Register extends Component {
     constructor(props){
@@ -15,7 +17,7 @@ class Register extends Component {
           password: "",
           admin: "",
           token: "",
-          loginInProgress: false,
+          registerInProgress: false,
           shouldRedirect: false,
         }
       }
@@ -25,7 +27,7 @@ class Register extends Component {
     }
 
     submitRegister = (event) => {
-        this.setState({ loginInProgress: true });
+        this.setState({ registerInProgress: true });
         event.preventDefault();
         console.log(`${this.state.email + this.state.password + this.state.admin}`)
         $.ajax({
@@ -44,13 +46,21 @@ class Register extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            this.setState({token: result.auth_token, shouldRedirect: true})
+            client.setToken(result.auth_token)
             alert(result.message)
+            this.setState({
+              admin: "",
+              registerInProgress: false,
+            })
             document.getElementById("Register-form").reset();
             return;
           },
           error: (error) => {
             alert(error.responseJSON.message)
+            this.setState({
+              admin: "",
+              registerInProgress: false,
+            })
             return;
           }
         })
@@ -71,11 +81,17 @@ class Register extends Component {
                         <label className='password'>
                             <input type="password" name="password" placeholder="Password" onChange={this.handleChange} required/>
                         </label>
-                        <label className='remember'>
-                            <input type="checkbox" name="remember" onChange={this.handleChange}/>
+                        <label className='admin'>
+                            <input type="checkbox" name="admin" onChange={this.handleChange}/>
                             <span>Admin</span>
                         </label>
+                        {
+                        this.state.registerInProgress ? (
+                        <div className='loader' />
+                        ) : (
                         <input type="submit" className="register-button" value="Register" />
+                        )
+                        }
                     </form>
                 </div>
             </div>
