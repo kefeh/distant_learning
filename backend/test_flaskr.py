@@ -35,18 +35,24 @@ class TriviaTestCase(unittest.TestCase):
         pass
     
     @staticmethod
-    def register_user(self, email, password, delete_user=True):
+    def register_user(self, email, password, delete_user=True, admin=False):
         if delete_user:
             user = User.query.filter_by(email=email).first()
             if user:
                 user.delete()
-        return self.client().post(
-            '/register',
-            json={
+        data = {
+                "name": "default Test user",
+                "email": email,
+                "password": password,
+                "admin": admin
+            } if admin else {
                 "name": "default Test user",
                 "email": email,
                 "password": password
-            },
+            }
+        return self.client().post(
+            '/register',
+            json=data,
             content_type='application/json'
         )
 
@@ -168,6 +174,38 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['data']['admin'] is 'true' or 'false')
         self.assertEqual(response.status_code, 200)
 
+    def test_get_users(self):
+        resp_register = self.register_user(self, 'statusjoe@gmail.com', '123456', admin=True)
+        response = self.client().get(
+            '/users',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'] is not None)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_users_fail_not_admin(self):
+        resp_register = self.register_user(self, 'statusjoe@gmail.com', '123456', admin=False)
+        response = self.client().get(
+            '/users',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            )
+        )
+        data = json.loads(response.data.decode())
+        print(data)
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == "You Don't have permission to access this resource!")
+        self.assertEqual(response.status_code, 401)
+
+
     def test_valid_logout(self):
         """ Test for logout before token expires """
         # user registration
@@ -247,7 +285,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(response.data.decode())
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(
-            data['message'] == 'Signature expired. Please log in again.')
+            data['message'] == 'Session expired. Please log in again.')
         self.assertEqual(response.status_code, 401)
 
     def test_valid_blacklisted_token_logout(self):
