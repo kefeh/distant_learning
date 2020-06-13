@@ -150,6 +150,10 @@ class FormView extends Component {
       this.getClass()
       return;
     }
+    if(some_selection==="TEACHERS"){
+      this.getEducations()
+      return;
+    }
     return;
   }
 
@@ -184,6 +188,11 @@ class FormView extends Component {
               </li>
               <li className={`form-view__categories-list-item VIDEO ${"VIDEO" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('VIDEO')}}>
                 Video
+              </li>
+          </ul>
+          <ul>
+              <li className={`form-view__categories-list-item TEACHERS ${"TEACHERS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('TEACHERS')}}>
+                Manage Teachers
               </li>
           </ul>
         </div>

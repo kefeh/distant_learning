@@ -1,16 +1,18 @@
 import $ from 'jquery';
 
-let LOCAL_STORAGE_KEY = "token_key";
-let LOCAL_STORAGE_LOGIN_DATA = "login_data"
 
 class Client {
 
+    LOCAL_STORAGE_KEY = "token_key";
+    LOCAL_STORAGE_LOGIN_DATA = "login_data"
+
     setToken = (token) => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, token);
+        localStorage.setItem(this.LOCAL_STORAGE_KEY, token);
     }
 
     removeToken = () => {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+        localStorage.removeItem(this.LOCAL_STORAGE_LOGIN_DATA)
     }
 
     logout = () => {
@@ -19,7 +21,7 @@ class Client {
             type: "POST",
             dataType: 'json',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEY)}`,
+                'Authorization': `Bearer ${localStorage.getItem(this.LOCAL_STORAGE_KEY)}`,
             },
             contentType: 'application/json',
             data: JSON.stringify({}),
@@ -40,7 +42,7 @@ class Client {
     }
 
     getStatus = () => {
-        if (!localStorage.getItem(LOCAL_STORAGE_KEY)){
+        if (!localStorage.getItem(this.LOCAL_STORAGE_KEY)){
             return false
         }else{
             $.ajax({
@@ -48,7 +50,7 @@ class Client {
                 type: "GET",
                 dataType: 'json',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEY)}`,
+                    'Authorization': `Bearer ${localStorage.getItem(this.LOCAL_STORAGE_KEY)}`,
                 },
                 contentType: 'application/json',
                 xhrFields: {
@@ -56,12 +58,12 @@ class Client {
                 },
                 crossDomain: true,
                 success: (result) => {
-                  localStorage.setItem(LOCAL_STORAGE_LOGIN_DATA, result);
+                  localStorage.setItem(this.LOCAL_STORAGE_LOGIN_DATA, result);
                   return result;
                 },
                 error: (error) => {
+                  localStorage.removeItem(this.LOCAL_STORAGE_LOGIN_DATA)
                   alert(error.responseJSON.message)
-                  localStorage.removeItem(LOCAL_STORAGE_LOGIN_DATA)
                   return error;
                 }
             });
@@ -71,8 +73,8 @@ class Client {
 
     isLoggedIn = () => {
       this.getStatus()
-      console.log(localStorage.getItem(LOCAL_STORAGE_LOGIN_DATA))
-      return localStorage.getItem(LOCAL_STORAGE_LOGIN_DATA)?true:false;
+      console.log(localStorage.getItem(this.LOCAL_STORAGE_LOGIN_DATA))
+      return localStorage.getItem(this.LOCAL_STORAGE_LOGIN_DATA)?true:false;
     }
 }
 

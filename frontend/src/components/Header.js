@@ -1,7 +1,5 @@
  import React, { Component } from 'react';
-import logo from '../logo.svg';
 import '../stylesheets/Header.css';
-import client from '../services/Client';
 
 class Header extends Component {
 

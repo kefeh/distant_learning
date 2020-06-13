@@ -28,7 +28,7 @@ class App extends Component {
           <PrivateRoute path="/dashboard" component={FormView} />
           <Route path="/login" component={Login} />
           <Route path="/logout" component={Logout} />
-          <PrivateRoute path="/Register" component={Register} />
+          {/* <PrivateRoute path="/Register" component={Register} /> */}
           <Route component={MainView} />
         </Switch>
       </Router>

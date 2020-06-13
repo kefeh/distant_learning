@@ -1,0 +1,47 @@
+.view-user-holder{
+    padding: 2rem;
+}
+
+li.view-user-holder__list-item{
+    display: flex;
+    flex-direction: row;
+}
+form.edit-user__form-view{
+    display: flex;
+    flex-direction: row;
+}
+.view-user-holder__delete{
+    width: 3%;
+    height: 3%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+@media only screen and (max-width: 768px) {
+
+    li.view-user-holder__list-item{
+        display: flex;
+        flex-direction: row;
+        padding-bottom: 1rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.3);
+    }
+    label{
+        width: 100%;
+        margin-right: 2rem;
+    }
+    form.edit-user__form-view{
+        display: flex;
+        flex-direction: column;
+    }
+    .view-user-holder__delete{
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+    input[type=text], input[type=submit]{
+        font-size: 0.8rem;
+        flex: 1;
+    }
+    input[type=submit] {
+        padding: 0.4em 0.8em !important;
+    }
+}

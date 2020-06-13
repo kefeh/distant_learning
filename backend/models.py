@@ -70,6 +70,7 @@ class User(db.Model):
             'id': self.id,
             'email': self.email,
             'admin': self.admin,
+            'name': self.name,
             'registered_on': self.registered_on
         }
 
@@ -80,7 +81,7 @@ class User(db.Model):
         """
         try:
             payload = {
-                'exp': datetime.utcnow() + timedelta(seconds=3),
+                'exp': datetime.utcnow() + timedelta(hours=3),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }

@@ -5,8 +5,8 @@ import AddEducation from './AddEducation'
 import AddCategory from './AddCategory'
 import AddSubCategory from './AddSubCategory'
 import AddClass from './AddClass'
-import AddSubject from './AddSubject'
 import AddVideo from './AddVideo'
+import ManageTeachers from './ManageTeachers'
 
 class FormViewController extends Component {
   constructor(){
@@ -23,7 +23,7 @@ class FormViewController extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { selection, parent } = this.props;
+    const { parent } = this.props;
     if (nextProps.parent !== parent) {
         this.setState({ parent: nextProps.parent, selection:nextProps.selection });
     }
@@ -66,6 +66,11 @@ class FormViewController extends Component {
     if (this.state.selection === 'VIDEO'){
         return (
             <AddVideo parent={this.state.parent}/>
+        );
+    }
+    if (this.state.selection === 'TEACHERS'){
+        return (
+            <ManageTeachers parent={this.state.parent}/>
         );
     }
     return (

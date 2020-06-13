@@ -5,6 +5,7 @@ import $ from 'jquery';
 import '../stylesheets/FormView.css';
 import '../stylesheets/VideoView.css';
 import '../stylesheets/App.css';
+import client from '../services/Client';
 
 class VideoView extends Component {
   constructor(props){
@@ -35,6 +36,8 @@ class VideoView extends Component {
   componentDidMount(){
     this.getClass();
     console.log(this.props.from_add)
+    console.log("something")
+    console.log(client.isLoggedIn())
     this.props.from_add?this.setState({videos: this.props.from_add}):(
     this.state.selection?this.getVideos(this.state.selection):(() => {})());
     $(document)
@@ -182,7 +185,41 @@ class VideoView extends Component {
       })
     }
   }
+  deleteQuestion(id){ 
+      if(window.confirm('are you sure you want to delete the Question?')) {
+        $.ajax({
+          url: `/questions/${id}`, //TODO: update request URL
+          type: "DELETE",
+          success: (result) => {
+            this.getQuestion(this.state.active_video.id);
+            return;
+          },
+          error: (error) => {
+            alert('Unable to Delete Question. Please try your request again')
+            return;
+          }
+        })
+      }
+    }
 
+    deleteAnswer(id){ 
+      if(window.confirm('are you sure you want to delete the Answer?')) {
+        $.ajax({
+          url: `/answers/${id}`, //TODO: update request URL
+          type: "DELETE",
+          success: (result) => {
+            this.getQuestion(this.state.active_video.id);
+            this.setState({question_id: '', answer: ''})
+            return;
+          },
+          error: (error) => {
+            alert('Unable to Delete Question. Please try your request again')
+            return;
+          }
+        })
+      }
+    }
+    
   handleQuestionChange = (event) => {
     this.setState({question: event.target.value})
   }
@@ -214,7 +251,7 @@ class VideoView extends Component {
           <h2>Classes</h2>
           <ul>
           {this.state.classes && this.state.classes.map((item, ind)=> (
-              <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selection.id || item.id == this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection(item)}}>
+              <li key={item.id} className={`form-view__categories-list-item ${item.id === this.state.selection.id || item.id === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection(item)}}>
                 {item.name}
               </li>))}
           </ul>
@@ -272,9 +309,9 @@ class VideoView extends Component {
                 ref={this.handleIframeHeight} />
               <form className="video-question__add" onSubmit={this.submitQuestion}>
                 <label>
-                  <textarea class='autoExpand' rows='1' type="text" name="name" placeHolder="Enter a Public question" onChange={this.handleQuestionChange}/>
+                  <textarea class='autoExpand' rows='1' type="text" name="name" placeHolder="Ask a Question" onChange={this.handleQuestionChange}/>
                 </label>
-                <input type="submit" className="button" value="Submit" />
+                <input type="submit" className="question_button" value="Submit" />
               </form>
               <div className="questions">
                 <ul className="questions__list">
@@ -284,19 +321,34 @@ class VideoView extends Component {
                     <span className="questions-date">{item.date}</span>
                     <p className="questions__list-item-name">{item.question}</p>
                     <span className="questions-list-item-indicator" onClick={() => {this.setViewAnswers(item)}}>view {item.answers.length} answers</span>
-                      
+                    {client.isLoggedIn() ? (
+                      <div onClick={() => {this.deleteQuestion(item.id)}}>
+                        <svg className="icon-bin icon-bin-question">
+                          <use xlinkHref="./icons/symbol-defs.svg#icon-bin"></use>
+                        </svg>
+                      </div>
+                      ) : (<></>)
+                    }
                       {this.state.active_question_id === `${item.id + item.date}` && this.state.toggle &&
                       <ul className="questions__list-item-answers">
                         <li className="questions-list-item-answers-item">
                         <form className="video-answer-add" onSubmit={this.submitAnswer}>
                             <textarea rows='1' type="text" name="name" placeHolder="Write an answer" onChange={this.handleChange.bind(this, item['id'])}/>
-                            <input type="submit" className="button" value="Submit" />
+                            <input type="submit" className="question_button" value="Submit" />
                         </form>
                         </li>
                         {item.answers.length > 0 && item.answers.map((ans_item, ind)=> (
                           <li className="questions-list-item-answers-item">
                             <span className="questions-date">{ans_item.date}</span>
                             <p>{ans_item.answer}</p>
+                            {client.isLoggedIn() ? (
+                              <div onClick={() => {this.deleteAnswer(ans_item.id)}}>
+                                <svg className="icon-bin icon-bin-question">
+                                  <use xlinkHref="./icons/symbol-defs.svg#icon-bin"></use>
+                                </svg>
+                              </div>
+                              ) : (<></>)
+                            }
                           </li>
                         ))}
                       </ul>}
