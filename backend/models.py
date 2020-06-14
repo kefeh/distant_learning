@@ -45,6 +45,8 @@ class User(db.Model):
     admin = Column(Boolean, nullable=False, default=False)
     registered_on = Column(DateTime, nullable=False)
 
+    timetable = relationship('TimeTable', cascade="all,delete", backref='users')
+
     def __init__(self, email, name, password, admin=False):
         self.name = name
         self.email = email
@@ -242,6 +244,7 @@ class Category(db.Model):
 
     # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
     # classes = relationship('Classes', cascade="all,delete", backref='categories')
+    timetable = relationship('TimeTable', cascade="all,delete", backref='categories')
     videos = relationship('Video', cascade='all,delete', backref='categories')
 
     def __init__(self, name):
@@ -328,6 +331,7 @@ class Classes(db.Model):
     categories = relationship(
         'Category', cascade="all,delete", backref='classes')
     videos = relationship('Video', cascade="all,delete", backref='classes')
+    timetable = relationship('TimeTable', cascade="all,delete", backref='classes')
 
     education_id = Column(Integer, ForeignKey(
         'educations.id', ondelete='cascade'), nullable=True)
@@ -517,4 +521,73 @@ class Answer(db.Model):
             'date': self.date.strftime('%Y-%m-%d %H:%M'),
             'question_id': self.question_id
             # TODO: try to get the number of hours, day, weeks, months and years
+        }
+class TimeTable(db.Model):
+    __tablename__ = 'timetable'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    time = Column(DateTime)
+    accepted = Column(Boolean)
+    teacher_id = Column(Integer, ForeignKey(
+        'users.id', ondelete='cascade'), nullable=True)
+    class_id = Column(Integer, ForeignKey(
+        'classes.id', ondelete='cascade'), nullable=True)
+    category_id = Column(Integer, ForeignKey(
+        'categories.id', ondelete='cascade'), nullable=True)
+
+    def __init__(self, name, time, teacher_id, class_id, category_id, accepted=False):
+        self.name = name
+        self.time = time
+        self.accepted = accepted
+        self.teacher_id = teacher_id
+        self.class_id = class_id
+        self.category_id = category_id
+
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+    
+    def format(self):
+        return {
+            'name': self.name,
+            'accepted': self.accepted,
+            'time': self.time,
+            'teacher': self.users.name
+        }
+
+
+class Number(db.Model):
+    __tablename__= 'number'
+
+    number = Column(Integer, primary_key=True)
+
+    def __init__(self, number):
+        self.number = number
+
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+    
+    def format(self):
+        return {
+            'number': self.number
         }

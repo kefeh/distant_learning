@@ -204,6 +204,21 @@ def create_app(test_config=None):
             result.append(user)
         return jsonify({'data': result, 'status': 'success'})
 
+
+    @app.route('/users/<int:user_id>', methods=['DELETE'])
+    @requires_auth
+    @requires_admin
+    def delete_users(user_id):
+        print("User Delete")
+        user = User.query.get(user_id)
+        if not user:
+            abort(404)
+        try:
+            user.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted": user_id})
+
 # add system
 
     @app.route('/systems', methods=['POST'])
@@ -833,18 +848,40 @@ def create_app(test_config=None):
             abort(500)
         return jsonify({'message': "Delete Successful"})
 
+
+
+    def sms_notif(message):
+        from twilio.rest import Client
+
+        # Your Account Sid and Auth Token from twilio.com/console
+        # DANGER! This is insecure. See http://twil.io/secure
+        account_sid = 'AC60a17f8d85005353a7012cac4e749ae6'
+        auth_token = 'e4721530aaf8ce3eec025255586bf827'
+        client = Client(account_sid, auth_token)
+
+        message = client.messages.create(
+                                    body=message,
+                                    from_='+12058097816',
+                                    to='+237679904987'
+                                )
+        print('successfully sent the message')
+
     @app.route('/questions', methods=['POST'])
     def add_question():
         data = request.json
         if (data.get('question') == '') or (data.get('video_id') == ''):
             abort(422)
-    # try:
-        date = datetime.now()
-        question = Question(question=data.get('question', ''),
-                            date=date, video_id=data.get('video_id'))
-        question.insert()
-    # except Exception:
-    #     abort(422)
+
+        video = Video.query.get(data.get('video_id'))
+        message = f"video:{video.name} has question:{data.get('question', '')}"
+        try:
+            date = datetime.now()
+            question = Question(question=data.get('question', ''),
+                                date=date, video_id=data.get('video_id'))
+            question.insert()
+        except Exception:
+            abort(422)
+        sms_notif(message)
 
         return jsonify({'message': 'success'})
 
@@ -886,6 +923,50 @@ def create_app(test_config=None):
         answer = Answer(answer=data.get('answer', ''), date=date,
                         question_id=data.get('question_id'))
         answer.insert()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success'})
+
+
+    @app.route('/number', methods=['GET'])
+    def get_number():
+
+        question_id = request.args.get('question_id', int)
+
+        if not question_id:
+            abort(422)
+
+        result = Number.query.get().one_or_none()
+
+        if result:
+            result = result.format()
+            result['message'] = 'success'
+        else:
+            result['message'] = 'fail'
+
+        return jsonify(result)
+
+    @app.route('/number/<int:number_id>', methods=['DELETE'])
+    def delete_number(number_id):
+        number = Number.query.get(number_id)
+        if not number:
+            abort(404)
+        try:
+            number.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'message': "Delete Successful"})
+
+    @app.route('/number', methods=['POST'])
+    def add_nuber():
+        data = request.json
+        if (data.get('number') == '') or (data.get('question_id') == ''):
+            abort(422)
+    # try:
+        date = datetime.now()
+        number = Number(number=data.get('number', ''))
+        number.insert()
     # except Exception:
     #     abort(422)
 

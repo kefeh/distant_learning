@@ -55,6 +55,39 @@ class UserView extends Component {
         })
       }
 
+      deleteUsers = (id) => {
+        if(window.confirm('are you sure you want to delete the User?')) {
+          this.setState({ fetchingInProgress: true });
+          $.ajax({
+            url: `/users/${id}`, //TODO: update request URL
+            type: "DELETE",
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem(client.LOCAL_STORAGE_KEY)}`,
+              },
+            xhrFields: {
+              withCredentials: true
+            },
+            crossDomain: true,
+            success: (result) => {
+              console.log(result)
+              this.getUsers()
+              this.setState({
+                fetchingInProgress: false,
+              })
+              return;
+            },
+            error: (error) => {
+              console.log(error)
+              alert(error.responseJSON.message)
+              this.setState({
+                fetchingInProgress: false,
+              })
+              return;
+            }
+          })
+        }
+      }
+
     
       handleChange = (id, rank, event) => {
         // console.log('updating')
@@ -98,22 +131,16 @@ class UserView extends Component {
                     <li key={item['id']} className="view-user-holder__list-item">
                         <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.submitUpdate}>
                         <div> {item['email']}</div>
+                        <div> {item['registered_on']}</div>
                         <label>
                             <input type="text" placeholder={item['name']} name="item_name" onChange={this.handleChange.bind(this, item['id'], item['rank'])} />
                         </label>
                         <label >
-                            <select name="rank_id" onChange={this.handleRankChange.bind(this, item['id'], item['name'])}>
-                                <option value={0}>{item['rank']}</option>
-                                {this.items && this.items.map((item, ind) => (
-                                <option key={`${item['name']+item['id']}`} value={ind+1}>
-                                    {ind+1}
-                                </option>
-                                ))}
-                            </select>
+                          <input type="checkbox" defaultChecked={item['admin']} name="item_name" onChange={this.handleChange.bind(this, item['id'], item['rank'])} />
                         </label>
                         <input type="submit" className="button" value="update" />
                         </form>
-                        <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.props.deleteAction(item.id)}/>
+                        <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deleteUsers(item.id)}/>
                     </li>
                     ))}
                 </ul>
