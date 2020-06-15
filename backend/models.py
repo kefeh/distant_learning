@@ -526,6 +526,7 @@ class TimeTable(db.Model):
     __tablename__ = 'timetable'
 
     id = Column(Integer, primary_key=True)
+    link = Column(String)
     name = Column(String)
     time = Column(DateTime)
     accepted = Column(Boolean)
@@ -536,7 +537,8 @@ class TimeTable(db.Model):
     category_id = Column(Integer, ForeignKey(
         'categories.id', ondelete='cascade'), nullable=True)
 
-    def __init__(self, name, time, teacher_id, class_id, category_id, accepted=False):
+    def __init__(self, name, time, link, teacher_id, class_id, category_id, accepted=False):
+        self.link = link
         self.name = name
         self.time = time
         self.accepted = accepted
@@ -559,10 +561,11 @@ class TimeTable(db.Model):
     
     def format(self):
         return {
+            'link': self.link,
             'name': self.name,
             'accepted': self.accepted,
             'time': self.time,
-            'teacher': self.users.name
+            'teacher': self.users.name if self.users else 'No name'
         }
 
 

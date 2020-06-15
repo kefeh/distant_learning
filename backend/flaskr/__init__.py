@@ -4,17 +4,18 @@ from flask import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, desc, update, asc
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable
 from video_util import upload_video
 from auth import requires_auth, requires_admin
 
 QUESTIONS_PER_PAGE = 10
 SECRET_KEY = 'minesec_distance_learning'
 BCRYPT_LOG_ROUNDS = 13
+timetable_time_format = "%Y-%m-%d %H:%M"
 
 
 def create_app(test_config=None):
@@ -48,6 +49,7 @@ def create_app(test_config=None):
 # Add endpoints
 # Register User
 
+
     @app.route('/register', methods=['POST'])
     def register_user():
         print("Registering a user")
@@ -62,7 +64,7 @@ def create_app(test_config=None):
                     email=data.get('email'),
                     password=bcrypt.generate_password_hash(
                         data.get('password'), BCRYPT_LOG_ROUNDS).decode(),
-                    admin = True if data.get('admin') else False
+                    admin=True if data.get('admin') else False
                 )
 
                 # insert the user
@@ -102,8 +104,8 @@ def create_app(test_config=None):
             }), 404
 
         if not bcrypt.check_password_hash(
-                user.password, data.get('password')
-            ):
+            user.password, data.get('password')
+        ):
             abort(401)
 
         try:
@@ -123,7 +125,6 @@ def create_app(test_config=None):
                 'message': 'Try again'
             }
             return jsonify(responseObject), 500
-
 
     @app.route('/status', methods=['GET'])
     def user_token_status():
@@ -166,7 +167,6 @@ def create_app(test_config=None):
             }
             return jsonify(responseObject), 401
 
-
     @app.route('/logout', methods=['POST'])
     @requires_auth
     def logout_user():
@@ -190,7 +190,6 @@ def create_app(test_config=None):
             }
             return jsonify(responseObject), 200
 
-
     @app.route('/users', methods=['GET'])
     @requires_auth
     @requires_admin
@@ -203,7 +202,6 @@ def create_app(test_config=None):
             user = user.format()
             result.append(user)
         return jsonify({'data': result, 'status': 'success'})
-
 
     @app.route('/users/<int:user_id>', methods=['DELETE'])
     @requires_auth
@@ -257,7 +255,6 @@ def create_app(test_config=None):
 
 # Add Education level
 
-
     @app.route('/educations', methods=['POST'])
     def add_education():
         data = request.json
@@ -294,7 +291,6 @@ def create_app(test_config=None):
 
 
 # Add Category level
-
 
     @app.route('/categories', methods=['POST'])
     def add_category():
@@ -370,7 +366,6 @@ def create_app(test_config=None):
 
 
 # Add Class level
-
 
     @app.route('/class', methods=['POST'])
     def add_class():
@@ -497,7 +492,6 @@ def create_app(test_config=None):
 
 
 # Get endpoints
-
 
     @app.route('/educations', methods=['GET'])
     def get_education():
@@ -650,9 +644,7 @@ def create_app(test_config=None):
             some_video = some_video.format()
             if some_video.get('link') in links:
                 continue
-            from pprint import pprint
             links.append(some_video.get('link'))
-            pprint(some_video)
             result.append(some_video)
 
         return jsonify({'data': result, 'message': 'success'})
@@ -660,7 +652,6 @@ def create_app(test_config=None):
     @app.route('/systems', methods=['GET'])
     def get_systems():
         systems = System.query.order_by(asc(System.rank)).all()
-        from pprint import pprint
         result = []
         for system in systems:
             edu = []
@@ -848,8 +839,6 @@ def create_app(test_config=None):
             abort(500)
         return jsonify({'message': "Delete Successful"})
 
-
-
     def sms_notif(message):
         from twilio.rest import Client
 
@@ -860,10 +849,10 @@ def create_app(test_config=None):
         client = Client(account_sid, auth_token)
 
         message = client.messages.create(
-                                    body=message,
-                                    from_='+12058097816',
-                                    to='+237679904987'
-                                )
+            body=message,
+            from_='+12058097816',
+            to='+237679904987'
+        )
         print('successfully sent the message')
 
     @app.route('/questions', methods=['POST'])
@@ -928,7 +917,6 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success'})
 
-
     @app.route('/number', methods=['GET'])
     def get_number():
 
@@ -972,6 +960,93 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success'})
 
+    @app.route('/timetable', methods=['POST'])
+    def add_timetable():
+        data = request.json
+        if (data.get('name') == '') or (data.get('link') == '')\
+                or (data.get('time') == ''):
+            abort(422)
+        date = datetime.strptime(data.get('time'), "%Y-%m-%d %H:%M")
+        name = data.get('name')
+        link = data.get('link')
+        class_id = data.get('class_id')
+        teacher_id = data.get('teacher_id')
+        category_id = data.get('category_id')
+        try:
+            timetable = TimeTable(name=name, link=link, time=date,
+                                  teacher_id=teacher_id, class_id=class_id, category_id=category_id)
+            timetable.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'status': 'success', 'id': timetable.id})
+
+    @app.route('/timetable', methods=['GET'])
+    def get_timetable():
+        params = request.args
+        class_id = params.get('class_id', type=int, default=None)
+        category_id = params.get('category_id', type=int, default=None)
+        teacher_id = params.get('teacher_id', type=int, default=None)
+        accepted = params.get('accepted', type=bool, default=None)
+        print(params.get('date', type=str, default=None))
+        # date = datetime.strptime(params.get('date', str), timetable_time_format) if params.get('date', str) else None
+
+        if teacher_id and class_id and category_id and accepted:
+            timetable = TimeTable.query.filter(
+                TimeTable.teacher_id == teacher_id, TimeTable.category_id == category_id, TimeTable.accepted == accepted)
+        elif teacher_id and class_id and accepted and not category_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.teacher_id == teacher_id, TimeTable.class_id == class_id, TimeTable.accepted == accepted)
+        elif teacher_id and class_id and not accepted and not category_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.teacher_id == teacher_id, TimeTable.class_id == class_id)
+        elif teacher_id and category_id and not accepted and not class_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.teacher_id == teacher_id, TimeTable.category_id == category_id)
+        elif accepted and category_id and not teacher_id and not class_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.accepted == accepted, TimeTable.category_id == category_id)
+        elif accepted and class_id and not teacher_id and not category_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.accepted == accepted, TimeTable.class_id == class_id)
+        elif category_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.category_id == category_id)
+        elif class_id:
+            timetable = TimeTable.query.filter(TimeTable.class_id == class_id)
+        elif teacher_id:
+            timetable = TimeTable.query.filter(
+                TimeTable.teacher_id == teacher_id)
+        else:
+            abort(422)
+        timetable = timetable.filter(Timetable.time >= date, TimeTable.time <= date + timedelta(hours=23, minutes=59))
+
+        result = []
+        for a_timetable in timetable:
+            result.append(a_timetable.format())
+
+        return jsonify({
+            'data': result,
+            'status': 'success',
+        })
+
+    @app.route('/timetable/accept', methods=['PUT'])
+    def accept_timetable():
+        data = request.json
+        if (data.get('id') == '') or (data.get('teacher_id') == ''):
+            abort(422)
+        timetable = TimeTable.query.filter(TimeTable.id == data.get(
+            'id'), TimeTable.teacher_id == data.get('teacher_id')).first()
+
+        try:
+            timetable.accepted = True if not timetable.accepted else False
+            timetable.update()
+        except Exception:
+            abort(422)
+
+        return jsonify({'status': 'success'})
+
+
     # @app.route('/questions/search', methods=['POST'])
     # def search_question():
     #     search_term = request.json.get('searchTerm', '')
@@ -1011,7 +1086,7 @@ def create_app(test_config=None):
     def not_found(error):
         if request.path.startswith("/api/"):
             return jsonify({
-                'error': 'fail',
+                'status': 'fail',
                 'message': 'Not Found'
             }), 404
         return send_from_directory(app.static_folder, 'index.html')
@@ -1019,14 +1094,14 @@ def create_app(test_config=None):
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
-            'error': 'fail',
+            'status': 'fail',
             'message': f'Unprocessable {str(error)}'
         }), 422
 
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
-            'error': 'fail',
+            'status': 'fail',
             'message': 'Bad Request'
         }), 400
 
@@ -1040,7 +1115,7 @@ def create_app(test_config=None):
     @app.errorhandler(500)
     def sever_error(error):
         return jsonify({
-            'error': 500,
+            'status': 'fail',
             'message': 'Sever Error'
         }), 500
 

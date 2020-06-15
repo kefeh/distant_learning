@@ -4,7 +4,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
-from models import setup_db, User, BlacklistToken
+from models import setup_db, User, BlacklistToken, Classes
 from flask_bcrypt import Bcrypt
 import time
 
@@ -370,6 +370,210 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['message'] == 'Bearer token malformed.')
         self.assertEqual(response.status_code, 401)
 
+
+    def test_add_timetable(self):
+        """ Test for Add Timetable"""
+        resp_register = self.register_user(self, 'testteacher@gmail.com', '123456')
+        a_class = Classes(
+            name="Default test class",
+        )
+        a_class.insert()
+        user = User.query.filter(User.email == 'testteacher@gmail.com').first()
+        response = self.client().post(
+            '/timetable',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            json={
+                "name": 'Mathematics Trigonometry',
+                "time": '2020-06-17 15:00',
+                "teacher_id": user.id,
+                "class_id": a_class.id,
+                "link": 'somezoomlink.com'
+            },
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        print(data)
+        self.assertTrue(data['status'] == 'success')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_timetable_class_id(self):
+        """ Test for get Timetable with class id"""
+        resp_register = self.register_user(self, 'testteacher@gmail.com', '123456')
+        a_class = Classes(
+            name="Default test class",
+        )
+        a_class.insert()
+        some_class = Classes.query.filter(Classes.name=="Default test class").first()
+        user = User.query.filter(User.email ==  'testteacher@gmail.com').first()
+        response1 = self.client().post(
+            '/login',
+            json={
+                "email": 'testteacher@gmail.com',
+                "password": '123456'
+            },
+            content_type='application/json'
+        )
+        response3 = self.client().post(
+            '/timetable',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            json={
+                "name": 'Mathematics Trigonometry',
+                "time": '2020-06-17 15:00',
+                "teacher_id": user.id,
+                "class_id": some_class.id,
+                "link": 'somezoomlink.com'
+            },
+            content_type='application/json'
+        )
+        response = self.client().get(
+            '/timetable?class_id={}'.format(some_class.id),
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(len(data['data']) >= 1)
+        self.assertEqual(response.status_code, 200)
+
+    def test_failed_get_timetable_class_id(self):
+        """ Test for failed get timetable with class id"""
+        resp_register = self.register_user(self, 'testteacher@gmail.com', '123456')
+        user = User.query.filter(User.email == 'testteacher@gmail.com').first()
+        response1 = self.client().post(
+            '/login',
+            json={
+                "email": 'testteacher@gmail.com',
+                "password": '123456'
+            },
+            content_type='application/json'
+        )
+        response = self.client().get(
+            '/timetable?class_id={}'.format(1000),
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(len(data['data']) == 0)
+        # self.assertEqual(response.status_code, 200)
+
+    def test_get_timetable_user_id(self):
+        """ Test for get timetable with user id"""
+        resp_register = self.register_user(self, 'testteacher@gmail.com', '123456')
+        user = User.query.filter(User.email == 'testteacher@gmail.com').first()
+        response1 = self.client().post(
+            '/login',
+            json={
+                "email": 'testteacher@gmail.com',
+                "password": '123456'
+            },
+            content_type='application/json'
+        )
+        response2 = self.client().post(
+            '/timetable',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            json={
+                "name": 'Mathematics Trigonometry',
+                "time": '2020-06-17 15:00',
+                "teacher_id": user.id,
+                # "class_id": a_class.id,
+                "link": 'somezoomlink.com'
+            },
+            content_type='application/json'
+        )
+        response = self.client().get(
+            '/timetable?teacher_id={}'.format(user.id),
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(len(data['data']) >= 1)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_timetable_class_id_and_accepted(self):
+        """ Test for get Timetable with class id and accepted"""
+        resp_register = self.register_user(self, 'testteacher@gmail.com', '123456')
+        a_class = Classes(
+            name="Default test class",
+        )
+        a_class.insert()
+        some_class = Classes.query.filter(Classes.name=="Default test class").first()
+        user = User.query.filter(User.email ==  'testteacher@gmail.com').first()
+        response1 = self.client().post(
+            '/login',
+            json={
+                "email": 'testteacher@gmail.com',
+                "password": '123456'
+            },
+            content_type='application/json'
+        )
+        response3 = self.client().post(
+            '/timetable',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            json={
+                "name": 'Mathematics Trigonometry',
+                "time": '2020-06-17 15:00',
+                "teacher_id": user.id,
+                "class_id": some_class.id,
+                "link": 'somezoomlink.com'
+            },
+            content_type='application/json'
+        )
+        print(json.loads(response3.data.decode()))
+        response4 = self.client().put(
+            '/timetable/accept',
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            json={
+                "teacher_id": user.id,
+                "id": json.loads(response3.data.decode())['id'],
+            },
+            )
+        response = self.client().get(
+            '/timetable?class_id={}&accepted={}'.format(some_class.id, True),
+            headers=dict(
+                Authorization='Bearer' + json.loads(
+                    resp_register.data.decode()
+                )['auth_token']
+            ),
+            content_type='application/json'
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(len(data['data']) >= 1)
+        self.assertEqual(response.status_code, 200)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
