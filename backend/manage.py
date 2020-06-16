@@ -12,7 +12,7 @@ bcrypt = Bcrypt(app)
 def createAdmin():
     user = User(
         name="Admin",
-        email='admin@minesec-distantlearning.com',
+        email='admin@minesec-distancelearning.cm',
         password=bcrypt.generate_password_hash(
             'educ2020distminesec', BCRYPT_LOG_ROUNDS).decode()
     )
