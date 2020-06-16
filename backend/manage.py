@@ -10,13 +10,19 @@ app = create_app()
 bcrypt = Bcrypt(app)
 
 def createAdmin():
-    user = User(
-        name="Admin",
-        email='admin@minesec-distancelearning.cm',
-        password=bcrypt.generate_password_hash(
-            'educ2020distminesec', BCRYPT_LOG_ROUNDS).decode()
-    )
-    user.insert()
+    user = User.query.filter_by(email='admin@minesec-distancelearning.cm').first()
+    if user:
+        user.admin = True
+        user.update()
+    else:
+        user = User(
+            name="Admin",
+            email='admin@minesec-distancelearning.cm',
+            password=bcrypt.generate_password_hash(
+                'educ2020distminesec', BCRYPT_LOG_ROUNDS).decode(),
+            admin=True
+        )
+        user.insert()
 
     print("successfully inserted")
     print(user.id)
