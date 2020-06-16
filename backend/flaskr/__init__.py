@@ -964,18 +964,22 @@ def create_app(test_config=None):
     def add_timetable():
         data = request.json
         if (data.get('name') == '') or (data.get('link') == '')\
-                or (data.get('time') == '') or (data.get('teacher_id') == ''):
+                or (data.get('time') == '') or (data.get('teacher_id') == '')\
+                    or (data.get('start_time') == '') or (data.get('end_time') == ''):
             abort(422)
         date = datetime.strptime(data.get('time'), "%Y-%m-%d %H:%M")
         name = data.get('name')
         link = data.get('link')
         class_id = data.get('class_id')
         teacher_id = data.get('teacher_id')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
         print(data.get('category_id'))
         category_id = data.get('category_id') if data.get('category') else None
     # try:
         timetable = TimeTable(name=name, link=link, time=date,
-                                teacher_id=teacher_id, class_id=class_id, category_id=category_id)
+                                teacher_id=teacher_id, class_id=class_id,
+                                category_id=category_id, start_time=start_time, end_time=end_time)
         timetable.insert()
     # except Exception:
     #     abort(422)
@@ -1028,7 +1032,7 @@ def create_app(test_config=None):
         result = []
         for a_timetable in timetable:
             result.append(a_timetable.format())
-
+        print(result)
         return jsonify({
             'data': result,
             'status': 'success',

@@ -35,8 +35,10 @@ class AddTimeTable extends Component {
           sub_categories: [],
           sub_category_id: 0,
           systems: [],
-          date: '',
+          date: new Date(),
           selected_date: '',
+          start_time: '',
+          end_time: '',
         }
       }
 
@@ -198,7 +200,7 @@ class AddTimeTable extends Component {
     
       submitTimeTable = (event) => {
         event.preventDefault();
-        var full_date = `${this.state.selected_date} ${this.state.time}`
+        var full_date = `${this.state.selected_date} 00:02`
         console.log(full_date)
         $.ajax({
             url: '/timetable', //TODO: update request URL
@@ -214,7 +216,9 @@ class AddTimeTable extends Component {
               category_id: this.state.category_id,
               link: this.state.link,
               teacher_id: this.state.teacher_id,
-              time: full_date
+              time: full_date,
+              start_time: this.state.start_time,
+              end_time: this.state.end_time
             }),
             xhrFields: {
               withCredentials: true
@@ -285,7 +289,8 @@ class AddTimeTable extends Component {
 
       handleSelect = (event) => {
         this.setState({
-            selected_date: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()}`
+            selected_date: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()}`,
+            date: event
         })
         // console.log(this.state.item_rank)
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
@@ -384,6 +389,7 @@ class AddTimeTable extends Component {
                     </div>
                     </form>
                     <DatePicker
+                        placeholderText="Click to choose a date"
                         selected={this.state.date}
                         onSelect={this.handleSelect} //when day is clicked
                         onChange={this.handleDateChange} //only when value has changed
@@ -396,7 +402,10 @@ class AddTimeTable extends Component {
                     <input type="url" placeholder="https://zoom.com/id=HbAZ6cFxCeY"  name="link" onChange={this.handleChange} required/>
                     </label>
                     <label>
-                        <input type="text" name="time" placeholder="HH:MM" onChange={this.handleChange} required/>
+                        <input type="text" name="start_time" placeholder="starts at(HH:MM)" onChange={this.handleChange} required/>
+                    </label>
+                    <label>
+                        <input type="text" name="end_time" placeholder="ends at(HH:MM)" onChange={this.handleChange} required/>
                     </label>
                     {this.state.isUploading ? <input type="submit" className="button" value="uploading..." /> 
                     :

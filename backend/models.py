@@ -530,6 +530,8 @@ class TimeTable(db.Model):
     name = Column(String)
     time = Column(DateTime)
     accepted = Column(Boolean)
+    start_time = Column(String)
+    end_time = Column(String)
     teacher_id = Column(Integer, ForeignKey(
         'users.id', ondelete='cascade'), nullable=True)
     class_id = Column(Integer, ForeignKey(
@@ -537,14 +539,16 @@ class TimeTable(db.Model):
     category_id = Column(Integer, ForeignKey(
         'categories.id', ondelete='cascade'), nullable=True)
 
-    def __init__(self, name, time, link, teacher_id, class_id, category_id, accepted=False):
+    def __init__(self, name, time, link, teacher_id, class_id, category_id, start_time, end_time, accepted=False):
         self.link = link
         self.name = name
         self.time = time
         self.accepted = accepted
         self.teacher_id = teacher_id
         self.class_id = class_id
-        self.category_id = category_id
+        self.category_id = category_id,
+        self.start_time = start_time,
+        self.end_time = end_time
 
         db.session.commit()
 
@@ -565,7 +569,9 @@ class TimeTable(db.Model):
             'link': self.link,
             'name': self.name,
             'accepted': self.accepted,
-            'time': self.time,
+            'time': self.time.strftime("%Y-%m-%d"),
+            'start_time': self.start_time,
+            'end_time': self.end_time,
             'teacher': self.users.name if self.users else 'No name'
         }
 

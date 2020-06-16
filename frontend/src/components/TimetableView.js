@@ -245,17 +245,19 @@ class TimetableView extends Component {
                 <h2></h2>
                 <ul >
                 {!client.isLoggedIn() ? (
-                    <li className="Rtable Rtable--3cols table-title">
-                      <div className="Rtable-cell table-title-item"> Name</div>
-                      <div className="Rtable-cell table-title-item"> When</div>
-                      <div className="Rtable-cell table-title-item"> Where</div>
+                    <li className="Rtable Rtable--4cols table-title">
+                      <div className="Rtable-cell table-title-item"> Name / Nom</div>
+                      <div className="Rtable-cell table-title-item"> Time / Temps</div>
+                      <div className="Rtable-cell table-title-item"> When / Quand</div>
+                      <div className="Rtable-cell table-title-item"> Where / Où</div>
                     </li>):<></>}
                     {this.state.timetables.length > 0 && this.state.timetables.map((item, ind) => (
-                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--3cols">
+                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--4cols">
                         <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
                         <div className="Rtable-cell table-item"> {item['name']}</div>
+                        <div className="Rtable-cell table-item"> {`${item['start_time']} to ${item['end_time']}`}</div>
                         <div className="Rtable-cell table-item"> {item['time']}</div>
-                        <div className="Rtable-cell table-item"> <a href={item['link']}>Click here to join revision class</a></div>
+                        <div className="Rtable-cell table-item"> <a href={item['link']}>Click here / cliquez ici</a></div>
                         {client.isLoggedIn() ? (
                           item["accepted"]? (<input style={{backgroundColor: "red"}} type="submit" className="button" value="decline" />):
                           (<input type="submit" className="button" value='accept' />)):<></>}

@@ -359,7 +359,7 @@ class MainCategoryNav extends Component {
                                         {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
-                                        revision timetable</div>):
+                                        revision/révision</div>):
                                         <div><svg className="icon-arrow-left2 icon-arrow-left2-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
                                         </svg>
