@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 import Register from './Register'
 import UserView from './UserView'
+import AddTimeTable from './AddTimeTable'
 
 class ManageTeachers extends Component {
     constructor(props){
@@ -20,8 +21,11 @@ class ManageTeachers extends Component {
       }
     render() {
         return (
-            // <Register/>
-            <UserView/>
+            <div>
+              <Register/>
+              <UserView/>
+              <AddTimeTable/>
+            </div>
         )
     }
 }

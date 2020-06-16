@@ -441,7 +441,7 @@ def create_app(test_config=None):
         if ((data.get('description', '')[0] == '')):
             abort(422)
         description = data.get('description', '')
-        date = data.get('date', '')
+        date = data.get('time', '')
         if 'file' in request.files:
             video = request.files['file']
             if video.filename == '':
@@ -964,20 +964,21 @@ def create_app(test_config=None):
     def add_timetable():
         data = request.json
         if (data.get('name') == '') or (data.get('link') == '')\
-                or (data.get('time') == ''):
+                or (data.get('time') == '') or (data.get('teacher_id') == ''):
             abort(422)
         date = datetime.strptime(data.get('time'), "%Y-%m-%d %H:%M")
         name = data.get('name')
         link = data.get('link')
         class_id = data.get('class_id')
         teacher_id = data.get('teacher_id')
-        category_id = data.get('category_id')
-        try:
-            timetable = TimeTable(name=name, link=link, time=date,
-                                  teacher_id=teacher_id, class_id=class_id, category_id=category_id)
-            timetable.insert()
-        except Exception:
-            abort(422)
+        print(data.get('category_id'))
+        category_id = data.get('category_id') if data.get('category') else None
+    # try:
+        timetable = TimeTable(name=name, link=link, time=date,
+                                teacher_id=teacher_id, class_id=class_id, category_id=category_id)
+        timetable.insert()
+    # except Exception:
+    #     abort(422)
 
         return jsonify({'status': 'success', 'id': timetable.id})
 
@@ -988,9 +989,12 @@ def create_app(test_config=None):
         category_id = params.get('category_id', type=int, default=None)
         teacher_id = params.get('teacher_id', type=int, default=None)
         accepted = params.get('accepted', type=bool, default=None)
-        print(params.get('date', type=str, default=None))
-        # date = datetime.strptime(params.get('date', str), timetable_time_format) if params.get('date', str) else None
+        print(params.get('time', type=str, default=None))
+        date = datetime.strptime(params.get('time', type=str), timetable_time_format) if params.get('time', type=str) else None
 
+        if teacher_id:
+            teacher = User.query.get(teacher_id)
+            teacher_id = None if teacher.format()['admin'] else teacher_id
         if teacher_id and class_id and category_id and accepted:
             timetable = TimeTable.query.filter(
                 TimeTable.teacher_id == teacher_id, TimeTable.category_id == category_id, TimeTable.accepted == accepted)
@@ -1019,7 +1023,7 @@ def create_app(test_config=None):
                 TimeTable.teacher_id == teacher_id)
         else:
             abort(422)
-        timetable = timetable.filter(Timetable.time >= date, TimeTable.time <= date + timedelta(hours=23, minutes=59))
+        timetable = timetable.filter(TimeTable.time >= date, TimeTable.time <= date + timedelta(hours=23, minutes=59))
 
         result = []
         for a_timetable in timetable:
@@ -1031,12 +1035,13 @@ def create_app(test_config=None):
         })
 
     @app.route('/timetable/accept', methods=['PUT'])
+    @requires_auth
     def accept_timetable():
         data = request.json
-        if (data.get('id') == '') or (data.get('teacher_id') == ''):
+        if (data.get('id') == ''):
             abort(422)
         timetable = TimeTable.query.filter(TimeTable.id == data.get(
-            'id'), TimeTable.teacher_id == data.get('teacher_id')).first()
+            'id')).first()
 
         try:
             timetable.accepted = True if not timetable.accepted else False
@@ -1045,6 +1050,20 @@ def create_app(test_config=None):
             abort(422)
 
         return jsonify({'status': 'success'})
+
+
+    @app.route('/timetable/<int:timetable_id>', methods=['DELETE'])
+    @requires_auth
+    @requires_admin
+    def delete_timetable(timetable_id):
+        timetable = TimeTable.query.get(timetable_id)
+        if not timetable:
+            abort(404)
+        try:
+            timetable.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'message': "Delete Successful"})
 
 
     # @app.route('/questions/search', methods=['POST'])

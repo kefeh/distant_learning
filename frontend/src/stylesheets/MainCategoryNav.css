@@ -171,6 +171,23 @@
     width: 100%;
 }
 
+.timetable-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 999;
+}
+
+.icon-calendar, .icon-arrow-left2{
+    width: 1.5em;
+    height: 1.5em;
+    fill: #E84641;
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 768px) {
     /* For mobile phones: */
     .Main-holder__nav__link--button {
@@ -240,5 +257,8 @@
     .nav-item-system,
     .second-tab{
         font-size: 0.8rem;
+    }
+    .timetable-button{
+        top: -2.5%;
     }
 }

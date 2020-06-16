@@ -1,21 +1,22 @@
 import React, { Component } from "react";
 import "../stylesheets/ContentDisplay.css";
 
-function DisplayCategories({key, classItem, fetchVideoData }) {
+function DisplayCategories({key, classItem, fetchVideoData, setTimetableInfo }) {
     return (
         <div
             className={`remove__link__deco d-block hover__cursor__style form-view__categories-list-item class-nav__item sub-class-nav ${
                 classItem.name+classItem.id+key === active_category ? "category-active" : ""
             }`}
-            onClick={() => getVideosCategory(key, classItem.id, classItem.name, fetchVideoData)}
+            onClick={() => getVideosCategory(key, classItem.id, classItem.name, fetchVideoData, setTimetableInfo)}
         >
             <span className="class-iten-text">{classItem.name}</span>
         </div>
     );
 }
 var active_category = ''
-function getVideosCategory(class_id, category_id, category_name, fetchVideoData) {
+function getVideosCategory(class_id, category_id, category_name, fetchVideoData, setTimetableInfo) {
     fetchVideoData(class_id, category_id)
+    setTimetableInfo(class_id, category_id)
     active_category = category_name+category_id+class_id;
 }
 
@@ -107,6 +108,7 @@ class ContentDisplay extends Component {
         }else{
             active_category = ''
             this.props.fetchVideoData(child.id)
+            this.props.setTimetableInfo(child.id)
             if (child.id + child.name === this.state.selectedBlock) {
                 this.setState((prevState) => ({
                     ...prevState,
@@ -120,7 +122,7 @@ class ContentDisplay extends Component {
             }
         }}
 
-    displayClasses = (key, some_class, fetchVideoData) => {
+    displayClasses = (key, some_class, fetchVideoData, setTimetableInfo) => {
         return(
             <div key={key} className="row pl-0">
             <div
@@ -143,7 +145,7 @@ class ContentDisplay extends Component {
                     }`}
                 >
                     {some_class.categories.map((classItem) => (
-                        <DisplayCategories key={classItem.id} classItem={classItem} fetchVideoData={this.props.fetchVideoData} />
+                        <DisplayCategories key={classItem.id} classItem={classItem} fetchVideoData={this.props.fetchVideoData} setTimetableInfo={this.props.setTimetableInfo}/>
                     ))}
                 </div>
             )}
@@ -157,7 +159,7 @@ class ContentDisplay extends Component {
                 {this.props.classes &&
                     this.props.classes.length > 0 &&
                     (this.props.classes.map((some_class) => (
-                       this.displayClasses(some_class.id, some_class, this.props.fetchVideoData)
+                       this.displayClasses(some_class.id, some_class, this.props.fetchVideoData, this.props.setTimetableInfo)
                     )))}
             </>
         );

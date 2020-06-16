@@ -17,6 +17,39 @@ form.edit-user__form-view{
     margin-bottom: auto;
 }
 
+/* Tables
+================================== */
+.Rtable {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin: 0 0 3em 0;
+    padding: 0;
+  }
+.Rtable-cell {
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 100%;  
+    /* // Default to full width */
+    padding: 0.4em 0.8em;
+    overflow: hidden; 
+    /* // Or flex might break */
+    list-style: none;
+    border: solid 0.1px white;
+    background: fade(slategrey,20%);
+    text-align: left;
+}
+
+/* .Rtable-cell > h1, > h2, > h3, > h4, > h5, > h6 { margin: 0; } */
+
+/* Table column sizing
+================================== */
+.Rtable--2cols > .Rtable-cell  { width: 50%; }
+.Rtable--3cols > .Rtable-cell  { width: 33.33%; }
+.Rtable--4cols > .Rtable-cell  { width: 25%; }
+.Rtable--5cols > .Rtable-cell  { width: 20%; }
+.Rtable--6cols > .Rtable-cell  { width: 16.6%; }
+
 @media only screen and (max-width: 768px) {
 
     li.view-user-holder__list-item{

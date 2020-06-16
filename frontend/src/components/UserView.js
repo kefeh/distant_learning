@@ -128,17 +128,17 @@ class UserView extends Component {
                 <h2></h2>
                 <ul >
                     {this.state.users.map((item, ind) => (
-                    <li key={item['id']} className="view-user-holder__list-item">
-                        <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.submitUpdate}>
-                        <div> {item['email']}</div>
-                        <div> {item['registered_on']}</div>
-                        <label>
+                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--3cols">
+                        <form className="edit-items__form-view edit-user__form-view Rtable-cell" id="edit-video-form" onSubmit={this.submitUpdate}>
+                        <div className="Rtable-cell"> {item['email']}</div>
+                        <div className="Rtable-cell"> {item['registered_on']}</div>
+                        <label className="Rtable-cell">
                             <input type="text" placeholder={item['name']} name="item_name" onChange={this.handleChange.bind(this, item['id'], item['rank'])} />
                         </label>
-                        <label >
+                        <label>
                           <input type="checkbox" defaultChecked={item['admin']} name="item_name" onChange={this.handleChange.bind(this, item['id'], item['rank'])} />
                         </label>
-                        <input type="submit" className="button" value="update" />
+                        <input type="submit" className="button" value="update" disabled/>
                         </form>
                         <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deleteUsers(item.id)}/>
                     </li>

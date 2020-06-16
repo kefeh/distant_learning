@@ -58,7 +58,8 @@ class Client {
                 },
                 crossDomain: true,
                 success: (result) => {
-                  localStorage.setItem(this.LOCAL_STORAGE_LOGIN_DATA, result);
+                  console.log(result.data.user_id)
+                  localStorage.setItem(this.LOCAL_STORAGE_LOGIN_DATA, result.data.user_id);
                   return result;
                 },
                 error: (error) => {

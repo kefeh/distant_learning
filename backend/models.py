@@ -561,6 +561,7 @@ class TimeTable(db.Model):
     
     def format(self):
         return {
+            'id': self.id,
             'link': self.link,
             'name': self.name,
             'accepted': self.accepted,

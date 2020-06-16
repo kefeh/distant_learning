@@ -3,6 +3,7 @@ import "../stylesheets/MainCategoryNav.css";
 import $ from "jquery";
 import ContentDisplay from "./ContentDisplay";
 import VideoView from "./VideoView";
+import TimetableView from "./TimetableView"
 
 class MainCategoryNav extends Component {
     constructor(props) {
@@ -26,6 +27,9 @@ class MainCategoryNav extends Component {
             subTabVisibility: false,
             selectedSubCatId: '',
             selectedSubCatname: '',
+            selected_class: '',
+            selected_category: '',
+            viewTimeTable: false,
         };
     }
     componentDidMount() {
@@ -264,6 +268,19 @@ class MainCategoryNav extends Component {
           })
     }
 
+    setTimetableInfo = (class_id, category_id) => {
+        this.setState({
+            selected_class: class_id,
+            selected_category: category_id,
+        })
+    }
+
+    showTimeTable = () => {
+        this.setState({
+            viewTimeTable: !this.state.viewTimeTable
+        })
+    }
+
     render() {
         return (
             <div>
@@ -334,12 +351,25 @@ class MainCategoryNav extends Component {
                                             <span></span>
                                         </label>
                                         <div className="class-nav">
-                                            <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData}/>
+                                            <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData} setTimetableInfo={this.setTimetableInfo}/>
                                         </div>
                                     </div>
-                                    <div className="video-body">
+                                    
+                                    <div className='timetable-button' onClick={() => {this.showTimeTable()}}>
+                                        {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
+                                            <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
+                                        </svg>
+                                        revision timetable</div>):
+                                        <div><svg className="icon-arrow-left2 icon-arrow-left2-question">
+                                            <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
+                                        </svg>
+                                        back</div>}
+                                        </div>
+                                    {this.state.viewTimeTable? (<div className="video-body">
+                                        <TimetableView category_id={this.state.selected_category} class_id={this.state.selected_class} />
+                                    </div>): <div className="video-body">
                                         <VideoView from_add={this.state.videos} delete_hide={true} />
-                                    </div>
+                                    </div>}
                                 </div>
                                 {/* <div className="row main-body-content">
                                     <div className="col-2 class-nav">
