@@ -1085,8 +1085,8 @@ def create_app(test_config=None):
 
         result = []
         if students:
-            for student in students
-            result.append(result.format())
+            for student in students:
+                result.append(result.format())
         else:
             return jsonify({'students': result, 'status': 'fail'})
 
@@ -1104,7 +1104,7 @@ def create_app(test_config=None):
         return jsonify({'message': "Delete Successful"})
 
     @app.route('/student', methods=['POST'])
-    def add_nuber():
+    def add_student():
         data = request.json
         if (data.get('student') == '') or (data.get('timetable_id') == ''):
             abort(422)
