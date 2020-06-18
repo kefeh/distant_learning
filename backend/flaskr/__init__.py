@@ -974,8 +974,8 @@ def create_app(test_config=None):
         teacher_id = data.get('teacher_id')
         start_time = data.get('start_time')
         end_time = data.get('end_time')
-        print(data.get('category_id'))
-        category_id = data.get('category_id') if data.get('category') else None
+        # print(data.get('category_id'))
+        category_id = data.get('category_id') if data.get('category_id') else None
     # try:
         timetable = TimeTable(name=name, link=link, time=date,
                                 teacher_id=teacher_id, class_id=class_id,

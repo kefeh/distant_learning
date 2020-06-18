@@ -10,9 +10,9 @@ import './stylesheets/App.css';
 import FormView from './components/FormView';
 import MainView from './components/MainView';
 import Header from './components/Header';
-import Register from './components/Register';
 import Login from './components/Login';
 import Logout from "./components/Logout"
+import Footer from "./components/Footer"
 import PrivateRoute from "./components/PrivateRoute"
 
 
@@ -32,6 +32,7 @@ class App extends Component {
           <Route component={MainView} />
         </Switch>
       </Router>
+      <Footer />
     </div>
   );
 

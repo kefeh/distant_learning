@@ -8,6 +8,8 @@ class Client {
 
     setToken = (token) => {
         localStorage.setItem(this.LOCAL_STORAGE_KEY, token);
+        this.getStatus()
+
     }
 
     removeToken = () => {

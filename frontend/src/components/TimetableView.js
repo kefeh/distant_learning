@@ -24,6 +24,7 @@ class TimetableView extends Component {
           teacher_id: '',
           accepted: '',
           users: '',
+          countDownDate: new Date("Jan 5, 2021 15:37:25").getTime(),
         }
       }
 
@@ -226,6 +227,34 @@ class TimetableView extends Component {
         // document.getElementById("edit-video-form").reset();
       }
 
+
+      // Update the count down every 1 second
+      setTimer = () => {
+        setInterval(function() {
+      
+        // Get today's date and time
+        var now = new Date().getTime();
+      
+        // Find the distance between now and the count down date
+        var distance = this.state.countDownDate - now;
+      
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+        // Display the result in the element with id="demo"
+        document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s ";
+      
+        // If the count down is finished, write some text
+        if (distance < 0) {
+          clearInterval(this.setTimer);
+          document.getElementById("demo").innerHTML = "EXPIRED";
+        }
+      }, 1000);}
+
     render() {
         if (this.state.fetchingInProgress){
             return (
@@ -235,6 +264,7 @@ class TimetableView extends Component {
         else {
             return (
                 <div className="view-user-holder">
+                <h2>Revision Timetable/Calendrier de révision</h2>
                 <DatePicker
                         placeholderText="Click to choose a date"
                         selected={this.state.date}
@@ -242,7 +272,6 @@ class TimetableView extends Component {
                         onChange={this.handleDateChange} //only when value has changed
                         />
                 { this.state.timetables && <div id="view-user-items" className="view-user-holder__view-user-items">
-                <h2></h2>
                 <ul >
                 {!client.isLoggedIn() ? (
                     <li className="Rtable Rtable--4cols table-title">
@@ -258,12 +287,17 @@ class TimetableView extends Component {
                         <div className="Rtable-cell table-item"> {`${item['start_time']} to ${item['end_time']}`}</div>
                         <div className="Rtable-cell table-item"> {item['time']}</div>
                         <div className="Rtable-cell table-item"> <a href={item['link']}>Click here / cliquez ici</a></div>
-                        {client.isLoggedIn() ? (
+                        {/* {client.isLoggedIn() ? (
                           item["accepted"]? (<input style={{backgroundColor: "red"}} type="submit" className="button" value="decline" />):
-                          (<input type="submit" className="button" value='accept' />)):<></>}
+                          (<input type="submit" className="button" value='accept' />)):<></>} */}
                         </form>
-                        {client.isLoggedIn() ? (
-                        <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deletetimetable(item.id)}/>):<></>}
+                        {/* {client.isLoggedIn() ? (
+                        <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deletetimetable(item.id)}/>):<></>} */}
+                        <form onSubmit={this.acceptSchedule.bind(this, item['id'])}>
+                          <input type="email" placeholder="Enter your email" name="email" onChange={this.handleChange} required />
+                          <input type="submit" className="button" value="signup for revision" />
+                          
+                        </form>
                     </li>
                     ))}
                 </ul>

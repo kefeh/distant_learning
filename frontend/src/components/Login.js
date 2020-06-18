@@ -52,7 +52,12 @@ class Login extends Component {
           crossDomain: true,
           success: (result) => {
             client.setToken(result.auth_token)
+            client.getStatus()
             this.setState({shouldRedirect: true})
+            console.log("DOne with login")
+            console.log(this.redirectPath())
+            console.log(this.state.shouldRedirect)
+            this.state.shouldRedirect?this.forceUpdate():this.setState({shouldRedirect: true});
             return;
           },
           error: (error) => {
