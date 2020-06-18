@@ -965,9 +965,11 @@ def create_app(test_config=None):
         data = request.json
         if (data.get('name') == '') or (data.get('link') == '')\
                 or (data.get('time') == '') or (data.get('teacher_id') == '')\
-                    or (data.get('start_time') == '') or (data.get('end_time') == ''):
+                    or (data.get('start_time') == '') or (data.get('end_time') == '')\
+                        or (data.get('signup_time')) == '':
             abort(422)
         date = datetime.strptime(data.get('time'), "%Y-%m-%d %H:%M")
+        signup_time = datetime.strptime(data.get('signup_time'), "%Y-%m-%d %H:%M")
         name = data.get('name')
         link = data.get('link')
         class_id = data.get('class_id')
@@ -979,7 +981,8 @@ def create_app(test_config=None):
     # try:
         timetable = TimeTable(name=name, link=link, time=date,
                                 teacher_id=teacher_id, class_id=class_id,
-                                category_id=category_id, start_time=start_time, end_time=end_time)
+                                category_id=category_id, start_time=start_time,
+                                end_time=end_time, signup_time=signup_time)
         timetable.insert()
     # except Exception:
     #     abort(422)
@@ -1069,6 +1072,49 @@ def create_app(test_config=None):
             abort(500)
         return jsonify({'message': "Delete Successful"})
 
+
+    @app.route('/student', methods=['GET'])
+    def get_student():
+
+        timetable_id = request.args.get('timetable_id', int)
+
+        if not timetable_id:
+            abort(422)
+
+        students = Student.query.get().one_or_none()
+
+        result = []
+        if students:
+            for student in students
+            result.append(result.format())
+        else:
+            return jsonify({'students': result, 'status': 'fail'})
+
+        return jsonify({'students': result, 'status': 'pass'})
+
+    @app.route('/student/<int:student_id>', methods=['DELETE'])
+    def delete_student(student_id):
+        student = Student.query.get(student_id)
+        if not student:
+            abort(404)
+        try:
+            student.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'message': "Delete Successful"})
+
+    @app.route('/student', methods=['POST'])
+    def add_nuber():
+        data = request.json
+        if (data.get('student') == '') or (data.get('timetable_id') == ''):
+            abort(422)
+        try:
+            student = Student(student=data.get('student'), timetable_id=data.get('timetable_id'))
+            student.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success'})
 
     # @app.route('/questions/search', methods=['POST'])
     # def search_question():

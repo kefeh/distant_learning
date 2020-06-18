@@ -529,9 +529,11 @@ class TimeTable(db.Model):
     link = Column(String)
     name = Column(String)
     time = Column(DateTime)
+    signup_time = Column(DateTime)
     accepted = Column(Boolean)
     start_time = Column(String)
     end_time = Column(String)
+    students = relationship('Student', cascade="all,delete", backref='timetable')
     teacher_id = Column(Integer, ForeignKey(
         'users.id', ondelete='cascade'), nullable=True)
     class_id = Column(Integer, ForeignKey(
@@ -539,7 +541,7 @@ class TimeTable(db.Model):
     category_id = Column(Integer, ForeignKey(
         'categories.id', ondelete='cascade'), nullable=True)
 
-    def __init__(self, name, time, link, teacher_id, class_id, category_id, start_time, end_time, accepted=False):
+    def __init__(self, name, time, link, teacher_id, class_id, category_id, start_time, end_time, signup_time, accepted=False):
         self.link = link
         self.name = name
         self.time = time
@@ -548,7 +550,8 @@ class TimeTable(db.Model):
         self.class_id = class_id
         self.category_id = category_id,
         self.start_time = start_time,
-        self.end_time = end_time
+        self.end_time = end_time,
+        self.signup_time = signup_time,
 
         db.session.commit()
 
@@ -570,9 +573,12 @@ class TimeTable(db.Model):
             'name': self.name,
             'accepted': self.accepted,
             'time': self.time.strftime("%Y-%m-%d"),
+            'signup_time': self.signup_time.strftime("%Y-%m-%d %H:%M"),
             'start_time': self.start_time,
             'end_time': self.end_time,
-            'teacher': self.users.name if self.users else 'No name'
+            'teacher': self.users.name if self.users else 'No name',
+            'signup': True if signup_time > datetime.now() else False,
+            'students': self.students,
         }
 
 
@@ -600,4 +606,35 @@ class Number(db.Model):
     def format(self):
         return {
             'number': self.number
+        }
+
+
+class Student(db.Model):
+    __tablename__ = 'students'
+
+    student = Column(String, primary_key=True)
+    timetable_id = Column(Integer, ForeignKey(
+        'timetable.id', ondelete='cascade'), nullable=True)
+
+    def __init__(self, student, timetable_id):
+        self.student = student
+        self.timetable_id = timetable_id
+
+        db.session.commit()
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+    
+    def format(self):
+        return {
+            'student': self.student,
+            'timetable_id': self.timetable_id
         }
