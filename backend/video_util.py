@@ -94,7 +94,7 @@ from m_dir import BASE_PATH
 # except Exception as exp:
 #     print(exp)
 #     return None
-    return link
+    # return link
 
 def convert_to_path(video, filename):
     vid_path = os.path.join(BASE_PATH, 'videos')
