@@ -24,73 +24,73 @@ from m_dir import BASE_PATH
 # it to server to be able to
 
 # access your email from the server
-TOKEN_PICKLE = f"{BASE_PATH}/token.pickle"
-CREDENTIALS = f"{BASE_PATH}/credentials.json"
+# TOKEN_PICKLE = f"{BASE_PATH}/token.pickle"
+# CREDENTIALS = f"{BASE_PATH}/credentials.json"
 
-SCOPES = ["https://www.googleapis.com/auth/youtube",
-          "https://www.googleapis.com/auth/youtube.upload"]
-
-
-api_service_name = "youtube"
-api_version = "v3"
-
-creds = None
-# The file token.pickle stores the user's access and refresh tokens, and is
-# created automatically when the authorization flow completes for the first
-# time.
-if os.path.exists(TOKEN_PICKLE):
-    with open(TOKEN_PICKLE, 'rb') as token:
-        creds = pickle.load(token)
-# If there are no (valid) credentials available, let the user log in.
-if not creds or not creds.valid:
-    if creds and creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-    else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-            CREDENTIALS, SCOPES)
-        creds = flow.run_local_server(port=8081)
-    # Save the credentials for the next run
-    with open(TOKEN_PICKLE, 'wb') as token:
-        pickle.dump(creds, token)
-
-youtube = googleapiclient.discovery.build(
-    api_service_name, api_version, credentials=creds)
+# SCOPES = ["https://www.googleapis.com/auth/youtube",
+#           "https://www.googleapis.com/auth/youtube.upload"]
 
 
-def upload_video(file_name, title, description):
-# try:
-    file_name = convert_to_path(file_name, title)
-    request = youtube.videos().insert(
-        part="snippet,player,status",
-        body={
-            "snippet": {
-                "categoryId": "22",
-                "description": description,
-                "title": title
-            },
-            "status": {
-                "privacyStatus": "private"
-            },
-            "player": {},
-        },
-        media_body=MediaFileUpload(file_name),
-    )
-    response = request.execute()
-    from pprint import pprint
-    pprint(response)
+# api_service_name = "youtube"
+# api_version = "v3"
 
-    # the response has a player key which looks like
-    # 'player': {'embedHtml': '<iframe width="480" height="270" '
-    # 'src="//www.youtube.com/embed/U73sYiT1R8M" '
-    # 'frameborder="0" allow="accelerometer; '
-    # 'autoplay; encrypted-media; gyroscope; '
-    # 'picture-in-picture" '
-    # 'allowfullscreen></iframe>'},
+# creds = None
+# # The file token.pickle stores the user's access and refresh tokens, and is
+# # created automatically when the authorization flow completes for the first
+# # time.
+# if os.path.exists(TOKEN_PICKLE):
+#     with open(TOKEN_PICKLE, 'rb') as token:
+#         creds = pickle.load(token)
+# # If there are no (valid) credentials available, let the user log in.
+# if not creds or not creds.valid:
+#     if creds and creds.expired and creds.refresh_token:
+#         creds.refresh(Request())
+#     else:
+#         flow = InstalledAppFlow.from_client_secrets_file(
+#             CREDENTIALS, SCOPES)
+#         creds = flow.run_local_server(port=8081)
+#     # Save the credentials for the next run
+#     with open(TOKEN_PICKLE, 'wb') as token:
+#         pickle.dump(creds, token)
 
-    # embedHTML = response.get('player').get('embedHtml')
-    base = '//www.youtube.com/embed/'
-    vid_id = response.get('id')
-    link = f"{base}{vid_id}"
+# youtube = googleapiclient.discovery.build(
+#     api_service_name, api_version, credentials=creds)
+
+
+# def upload_video(file_name, title, description):
+# # try:
+#     file_name = convert_to_path(file_name, title)
+#     request = youtube.videos().insert(
+#         part="snippet,player,status",
+#         body={
+#             "snippet": {
+#                 "categoryId": "22",
+#                 "description": description,
+#                 "title": title
+#             },
+#             "status": {
+#                 "privacyStatus": "private"
+#             },
+#             "player": {},
+#         },
+#         media_body=MediaFileUpload(file_name),
+#     )
+#     response = request.execute()
+#     from pprint import pprint
+#     pprint(response)
+
+#     # the response has a player key which looks like
+#     # 'player': {'embedHtml': '<iframe width="480" height="270" '
+#     # 'src="//www.youtube.com/embed/U73sYiT1R8M" '
+#     # 'frameborder="0" allow="accelerometer; '
+#     # 'autoplay; encrypted-media; gyroscope; '
+#     # 'picture-in-picture" '
+#     # 'allowfullscreen></iframe>'},
+
+#     # embedHTML = response.get('player').get('embedHtml')
+#     base = '//www.youtube.com/embed/'
+#     vid_id = response.get('id')
+#     link = f"{base}{vid_id}"
 # except Exception as exp:
 #     print(exp)
 #     return None
