@@ -9,7 +9,7 @@ from flask_bcrypt import Bcrypt
 import random
 
 from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable, Student
-from video_util import upload_video
+# from video_util import upload_video
 from auth import requires_auth, requires_admin
 
 QUESTIONS_PER_PAGE = 10
@@ -442,16 +442,16 @@ def create_app(test_config=None):
             abort(422)
         description = data.get('description', '')
         date = data.get('time', '')
-        if 'file' in request.files:
-            video = request.files['file']
-            if video.filename == '':
-                abort(400)
-            file_name = video.filename
-            resp = upload_video(video, file_name, description)
-            link = resp
-            print(link)
-            from time import sleep
-            sleep(5)
+        # if 'file' in request.files:
+        #     video = request.files['file']
+        #     if video.filename == '':
+        #         abort(400)
+        #     file_name = video.filename
+        #     resp = upload_video(video, file_name, description)
+        #     link = resp
+        #     print(link)
+        #     from time import sleep
+        #     sleep(5)
         link = link[0].replace("watch?v=", "embed/")
     # try:
         date = datetime.now()
@@ -475,20 +475,20 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': up_video.id})
 
-    def add_upload_video():
-        if ('file' not in request.files):
-            print('no file')
-            abort(400)
-        video = request.files['file']
-        if video.filename == '':
-            print('no file name')
-            abort(400)
-        file_name = video.filename
-        resp = upload_video(video, file_name, description)
-        link = resp
-        if link:
-            return jsonify({'url': link, 'message': 'success'})
-        abort(422)
+    # def add_upload_video():
+    #     if ('file' not in request.files):
+    #         print('no file')
+    #         abort(400)
+    #     video = request.files['file']
+    #     if video.filename == '':
+    #         print('no file name')
+    #         abort(400)
+    #     file_name = video.filename
+    #     resp = upload_video(video, file_name, description)
+    #     link = resp
+    #     if link:
+    #         return jsonify({'url': link, 'message': 'success'})
+    #     abort(422)
 
 
 # Get endpoints
