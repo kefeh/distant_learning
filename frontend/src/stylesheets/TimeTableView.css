@@ -6,6 +6,7 @@
     flex-direction: row;
     margin: 0 0 2em 0;
     padding: 0;
+    position: relative;
   }
 .Rtable-cell {
     box-sizing: border-box;
@@ -48,4 +49,25 @@
 
 .view-user-holder__delete{
     cursor: pointer;
+}
+
+.student-display{
+    position: absolute;
+    left: 0;
+    bottom: -0.5rem;
+    font-size: 0.8rem;
+}
+
+input[type='submit'].signup-button{
+    background-color: #468908;
+    color: white;
+    outline: none;
+    border: none;
+    font-size: 0.9rem;
+    padding: 0.5em;
+}
+
+.signup-time{
+    font-size: 0.8rem;
+    color: #E84641;
 }

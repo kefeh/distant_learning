@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable, Student
 from video_util import upload_video
 from auth import requires_auth, requires_admin
 
@@ -1034,8 +1034,12 @@ def create_app(test_config=None):
 
         result = []
         for a_timetable in timetable:
-            result.append(a_timetable.format())
-        print(result)
+            ttable = a_timetable.format()
+            students = []
+            for student in ttable.get('students', []):
+                students.append(student.format())
+            ttable['students'] = students
+            result.append(ttable)
         return jsonify({
             'data': result,
             'status': 'success',
@@ -1106,15 +1110,19 @@ def create_app(test_config=None):
     @app.route('/student', methods=['POST'])
     def add_student():
         data = request.json
+        print(data)
         if (data.get('student') == '') or (data.get('timetable_id') == ''):
             abort(422)
+        student = Student.query.get(data.get('student'))
+        if student:
+            return jsonify({'message': 'You are already signedup / Vous êtes déjà inscrit'})
         try:
             student = Student(student=data.get('student'), timetable_id=data.get('timetable_id'))
             student.insert()
         except Exception:
             abort(422)
 
-        return jsonify({'message': 'success'})
+        return jsonify({'message': "Vous vous êtes inscrit avec succès / You have successfully signed Up"})
 
     # @app.route('/questions/search', methods=['POST'])
     # def search_question():

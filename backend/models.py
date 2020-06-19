@@ -577,7 +577,7 @@ class TimeTable(db.Model):
             'start_time': self.start_time,
             'end_time': self.end_time,
             'teacher': self.users.name if self.users else 'No name',
-            'signup': True if signup_time > datetime.now() else False,
+            'signup': True if self.signup_time > datetime.now() else False,
             'students': self.students,
         }
 

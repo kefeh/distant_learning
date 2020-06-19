@@ -39,6 +39,7 @@ class AddTimeTable extends Component {
           selected_date: '',
           start_time: '',
           end_time: '',
+          signup_time: '',
         }
       }
 
@@ -218,7 +219,8 @@ class AddTimeTable extends Component {
               teacher_id: this.state.teacher_id,
               time: full_date,
               start_time: this.state.start_time,
-              end_time: this.state.end_time
+              end_time: this.state.end_time,
+              signup_time: this.state.signup_time
             }),
             xhrFields: {
               withCredentials: true
@@ -290,6 +292,18 @@ class AddTimeTable extends Component {
       handleSelect = (event) => {
         this.setState({
             selected_date: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()}`,
+            date: event
+        })
+        // console.log(this.state.item_rank)
+        // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
+      }
+
+      handleSignupSelect = (event) => {
+        console.log(event)
+        console.log(event.getMinutes())
+        console.log(event.getHours())
+        this.setState({
+            signup_time: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()} ${event.getHours()}:${event.getMinutes()}`,
             date: event
         })
         // console.log(this.state.item_rank)
@@ -386,14 +400,17 @@ class AddTimeTable extends Component {
                                 ))}
                             </select>
                         </label>
+                        <label className="Rtable-cell">
+                          <DatePicker
+                            placeholderText="Click to choose a date"
+                            selected={this.state.date}
+                            onSelect={this.handleSelect} //when day is clicked
+                            onChange={this.handleDateChange} //only when value has changed
+                            />
+                        </label>
                     </div>
                     </form>
-                    <DatePicker
-                        placeholderText="Click to choose a date"
-                        selected={this.state.date}
-                        onSelect={this.handleSelect} //when day is clicked
-                        onChange={this.handleDateChange} //only when value has changed
-                        />
+                    
                 <form className="add-items__form-view" id="add-video-form" onSubmit={this.submitTimeTable}>
                     <label>
                         <input type="text" name="name" placeholder="Name" onChange={this.handleChange} required/>
@@ -406,6 +423,17 @@ class AddTimeTable extends Component {
                     </label>
                     <label>
                         <input type="text" name="end_time" placeholder="ends at(HH:MM)" onChange={this.handleChange} required/>
+                    </label>
+                    <label>
+                        <DatePicker
+                          selected={this.state.date}
+                          onChange={this.handleSignupSelect}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeIntervals={15}
+                          timeCaption="time"
+                          dateFormat="MMMM d, yyyy h:mm"
+                        />
                     </label>
                     {this.state.isUploading ? <input type="submit" className="button" value="uploading..." /> 
                     :
