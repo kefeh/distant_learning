@@ -416,7 +416,7 @@ class AddTimeTable extends Component {
                         <input type="text" name="name" placeholder="Name" onChange={this.handleChange} required/>
                     </label>
                     <label>
-                    <input type="url" placeholder="https://zoom.com/id=HbAZ6cFxCeY"  name="link" onChange={this.handleChange} required/>
+                    <input type="text" placeholder="class code"  name="link" onChange={this.handleChange} required/>
                     </label>
                     <label>
                         <input type="text" name="start_time" placeholder="starts at(HH:MM)" onChange={this.handleChange} required/>

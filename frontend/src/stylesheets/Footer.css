@@ -3,7 +3,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 2rem;
+    padding: 1rem 2rem 0 2rem;
     text-align: left;
     background-color: #3f7a07;
 }
@@ -11,15 +11,16 @@
 li.Footer-list__item{
     text-align: left;
     color: #e2e2e2;
-    font: 0.8rem;
+    font-size: 0.8rem;
     letter-spacing: .1px;
-    line-height: 1.5;
+    line-height: 1;
 }
 .link{
     cursor: pointer;
 }
 .Buttom {
-    padding: 1.5rem 2rem;
+    font-size: 0.8rem;
+    padding: 1.5em 2em;
     background-color: #4c9607;
     border-top: 2px solid #e2e2e2;
     border-bottom: 2px solid #E84641;

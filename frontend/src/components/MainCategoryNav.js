@@ -352,6 +352,10 @@ class MainCategoryNav extends Component {
                                         </label>
                                         <div className="class-nav">
                                             <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData} setTimetableInfo={this.setTimetableInfo}/>
+                                            <div className="timetable-notification">
+                                                <p>Check timetable regularly before the start of class for instructions on how to attend</p>
+                                                <p>Vérifiez régulièrement l'horaire avant le début du cours pour savoir comment y assister.</p>
+                                            </div>
                                         </div>
                                     </div>
                                     

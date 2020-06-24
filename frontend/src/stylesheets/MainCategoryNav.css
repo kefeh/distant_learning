@@ -189,6 +189,19 @@
     cursor: pointer;
 }
 
+.timetable-notification{
+    padding-top: 2rem;
+    font-size: 0.8rem;
+    color: #E84641;
+    animation: blink 1s linear infinite;
+    bottom: 0;
+}
+@keyframes blink{
+    0%{opacity: 0;}
+    50%{opacity: .5;}
+    100%{opacity: 1;}
+}
+
 @media only screen and (max-width: 768px) {
     /* For mobile phones: */
     .Main-holder__nav__link--button {
