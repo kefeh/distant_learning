@@ -268,10 +268,9 @@ class VideoView extends Component {
   onMouseLeaveHandler = (event) => {
     event.preventDefault();
     var tooltipSpan = event.target.childNodes[1];
-    var relatedTarget = typeof(event.relatedTarget) === "undefined" ? {'id': 'something'} : event.relatedTarget.childNodes[1];
+    // var relatedTarget = typeof(event.relatedTarget) === "undefined" ? {'id': 'something'} : event.relatedTarget.childNodes[1];
     if(typeof(tooltipSpan) !== "undefined"){
-      console.log(relatedTarget)
-      if((typeof(relatedTarget) === "undefined" || relatedTarget.id !== "tooltip-span")  && tooltipSpan.id === "tooltip-span"){
+      if((typeof(event.relatedTarget) === "undefined" || event.relatedTarget !== event.target)  && tooltipSpan.id === "tooltip-span"){
         tooltipSpan.style.display = "none";
       }
     }
