@@ -117,7 +117,7 @@ class AddVideo extends Component {
       url: `/class?sub_category_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ classes: result.data })
         return;
       },
@@ -227,7 +227,7 @@ class AddVideo extends Component {
         return;
       },
       error: (error) => {
-        console.log(error)
+        // console.log(error)
         alert(error.responseJSON.message)
         return;
       }
@@ -273,7 +273,7 @@ class AddVideo extends Component {
   }
 
   onChangeHandler=event=>{
-    console.log(event.target.files[0])
+    // console.log(event.target.files[0])
     this.setState({
       video: event.target.files[0],
     })

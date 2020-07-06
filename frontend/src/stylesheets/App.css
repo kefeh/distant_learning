@@ -6,7 +6,7 @@ body {
   /* font: 400 14px/1.6 "PT Serif", Verdana, sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("http://www.minesec.gov.cm/wp-content/uploads/2017/11/Background-PC-2-MINESEC.jpg");
+  /* background-image: url("http://www.minesec.gov.cm/wp-content/uploads/2017/11/Background-PC-2-MINESEC.jpg"); */
   background-position: center top;
   background-size: cover;
   background-repeat: no-repeat;

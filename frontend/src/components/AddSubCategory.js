@@ -34,7 +34,7 @@ class AddSubCategory extends Component {
       url: `/sub_categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ sub_categories: result.data })
         return;
       },
@@ -51,7 +51,7 @@ class AddSubCategory extends Component {
       url: `/sub_categories?education_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ sub_categories: result.data })
         return;
       },
@@ -98,7 +98,7 @@ class AddSubCategory extends Component {
       url: `/educations`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ educations: result.data })
         return;
       },

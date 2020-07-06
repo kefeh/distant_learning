@@ -70,8 +70,9 @@
 }
 
 .video-body{
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.05);
     flex: 1;
+    margin-left: 0.2rem;
 }
 
 .nav-item-system__row{
@@ -119,13 +120,51 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    align-items: flex-start;
     position: relative;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .main-body-menu{
-    width: 18rem;
+    /* width: 18rem; */
     background-color: white;
+    flex-basis: 18rem;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+.main-body-content-section{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    position: relative;
+    margin-right: 1%;
+    margin-left: 1%;
+}
+.timetable-button{
+    position: absolute;
+    top: -2.5rem;
+    right: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 999;
+    color: #E84641;
+}
+
+.icon-calendar, .icon-arrow-left2{
+    width: 1.8em;
+    height: 1.8em;
+    fill: #E84641;
+    cursor: pointer;
+}
+
+.timetable-notification{
+    padding: 0.5em;
+    font-size: 0.8rem;
+    color: #E84641;
+    animation: blink 1s linear infinite;
+    bottom: 0;
 }
 .nav-toggle{
     display: none;
@@ -169,32 +208,6 @@
 .educ-name{
     display: block;
     width: 100%;
-}
-
-.timetable-button{
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 999;
-    color: #E84641;
-}
-
-.icon-calendar, .icon-arrow-left2{
-    width: 1.8em;
-    height: 1.8em;
-    fill: #E84641;
-    cursor: pointer;
-}
-
-.timetable-notification{
-    padding-top: 2rem;
-    font-size: 0.8rem;
-    color: #E84641;
-    animation: blink 1s linear infinite;
-    bottom: 0;
 }
 @keyframes blink{
     0%{opacity: 0;}
@@ -272,7 +285,7 @@
     .second-tab{
         font-size: 0.8rem;
     }
-    .timetable-button{
-        top: -2.5%;
-    }
+    /* .timetable-button{
+        top: -2.5rem;
+    } */
 }

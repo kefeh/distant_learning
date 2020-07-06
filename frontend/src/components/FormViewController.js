@@ -32,7 +32,7 @@ class FormViewController extends Component {
 
   render() {
     // const { selection, parent } = this.props;
-    // console.log(selection)
+    // // console.log(selection)
     if (this.state.selection === 'SYSTEM'){
         return (
             <AddSystem parent={this.state.parent}/>

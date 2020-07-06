@@ -60,7 +60,7 @@ class Client {
                 },
                 crossDomain: true,
                 success: (result) => {
-                  console.log(result.data.user_id)
+                  // console.log(result.data.user_id)
                   localStorage.setItem(this.LOCAL_STORAGE_LOGIN_DATA, result.data.user_id);
                   return result;
                 },
@@ -76,7 +76,7 @@ class Client {
 
     isLoggedIn = () => {
       this.getStatus()
-      console.log(localStorage.getItem(this.LOCAL_STORAGE_LOGIN_DATA))
+      // console.log(localStorage.getItem(this.LOCAL_STORAGE_LOGIN_DATA))
       return localStorage.getItem(this.LOCAL_STORAGE_LOGIN_DATA)?true:false;
     }
 }

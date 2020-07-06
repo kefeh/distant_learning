@@ -124,7 +124,7 @@ class ContentDisplay extends Component {
 
     displayClasses = (key, some_class, fetchVideoData, setTimetableInfo) => {
         return(
-            <div key={key} className="row pl-0">
+            <div key={key} className="pl-0">
             <div
                 className={`hover__cursor__style texting-styling form-view__categories-list-item class-nav__item ${
                     some_class.id + some_class.name === this.state.selectedBlock ? "active" : ""

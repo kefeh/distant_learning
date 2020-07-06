@@ -36,7 +36,7 @@ class AddClass extends Component {
       url: `/class`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ classes: result.data })
         return;
       },
@@ -53,7 +53,7 @@ class AddClass extends Component {
       url: `/class?education_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ classes: result.data })
         return;
       },
@@ -69,7 +69,7 @@ class AddClass extends Component {
       url: `/class?sub_category_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ classes: result.data })
         return;
       },
@@ -85,7 +85,7 @@ class AddClass extends Component {
       url: `/sub_categories?education_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ sub_categories: result.data })
         return;
       },
@@ -132,7 +132,7 @@ class AddClass extends Component {
       url: `/educations`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ educations: result.data })
         return;
       },

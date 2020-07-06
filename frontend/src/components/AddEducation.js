@@ -23,9 +23,9 @@ class AddEducation extends Component {
   }
 
   componentDidMount(){
-    console.log('the props')
-    console.log(this.props)
-    console.log('ends here')
+    // console.log('the props')
+    // console.log(this.props)
+    // console.log('ends here')
     var system_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
     this.getEducationsUpdate(system_id); 
     this.getSystems();

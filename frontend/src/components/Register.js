@@ -29,7 +29,7 @@ class Register extends Component {
     submitRegister = (event) => {
         this.setState({ registerInProgress: true });
         event.preventDefault();
-        console.log(`${this.state.email + this.state.password + this.state.admin}`)
+        // console.log(`${this.state.email + this.state.password + this.state.admin}`)
         $.ajax({
           url: '/register', //TODO: update request URL
           type: "POST",

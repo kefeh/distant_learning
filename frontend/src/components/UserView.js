@@ -37,7 +37,7 @@ class UserView extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             this.setState({
               users: result.data,
               fetchingInProgress: false,
@@ -45,7 +45,7 @@ class UserView extends Component {
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -69,7 +69,7 @@ class UserView extends Component {
             },
             crossDomain: true,
             success: (result) => {
-              console.log(result)
+              // console.log(result)
               this.getUsers()
               this.setState({
                 fetchingInProgress: false,
@@ -77,7 +77,7 @@ class UserView extends Component {
               return;
             },
             error: (error) => {
-              console.log(error)
+              // console.log(error)
               alert(error.responseJSON.message)
               this.setState({
                 fetchingInProgress: false,
@@ -90,21 +90,21 @@ class UserView extends Component {
 
     
       handleChange = (id, rank, event) => {
-        // console.log('updating')
-        // console.log(id)
-        // console.log(event.target.value)
-        // console.log(rank)
-        // console.log(this.state.item_rank)
+        // // console.log('updating')
+        // // console.log(id)
+        // // console.log(event.target.value)
+        // // console.log(rank)
+        // // console.log(this.state.item_rank)
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
       }
     
       handleRankChange = (id, name, event) => {
-        // console.log('updating')
-        // console.log(id)
-        // console.log(event.target.value)
+        // // console.log('updating')
+        // // console.log(id)
+        // // console.log(event.target.value)
         // name = typeof this.state.item_name == "undefined" || this.state.item_name === ""?name: this.state.item_name;
-        // console.log(name)
-        // console.log(this.state.item_name)
+        // // console.log(name)
+        // // console.log(this.state.item_name)
         // this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
       }
     

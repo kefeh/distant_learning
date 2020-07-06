@@ -13,7 +13,7 @@ class MainView extends Component {
         }
       }
     componentWillMount() {
-        console.log("I have mounted")
+        // console.log("I have mounted")
     this.getSystems();
     }
 
@@ -80,7 +80,7 @@ class MainView extends Component {
         url: ``,
         type: "GET",
         success: (result) => {
-            console.log(dummy_result.systems)
+            // console.log(dummy_result.systems)
         this.setState({
             systems: dummy_result.systems, current_system: dummy_result.current_system}, ()=>{console.log("STATE", this.state)})
         return;
@@ -93,7 +93,7 @@ class MainView extends Component {
     }
 
     render() {
-        console.log("SYTEM", this.state.systems);
+        // console.log("SYTEM", this.state.systems);
     return (
         <div className="system-view">
         <div className="system-list">

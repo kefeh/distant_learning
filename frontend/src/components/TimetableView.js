@@ -41,7 +41,7 @@ class TimetableView extends Component {
             selected_date: this.setDate()
         })
         this.getTimetable(this.props.category_id, this.props.class_id)
-        console.log("References")
+        // console.log("References")
       }
 
       setDate = (date) => {
@@ -53,7 +53,7 @@ class TimetableView extends Component {
       }
 
       getTimetable = (date) => {
-        console.log(localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA))
+        // console.log(localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA))
         var selected_date = typeof date !== 'undefined'?date:this.state.selected_date
         var query_url = this.state.category_id && typeof this.state.category_id !== "undefined"?`/timetable?category_id=${this.state.category_id}&time=${selected_date}`: `/timetable?class_id=${this.state.class_id}&time=${selected_date}`
         query_url = !client.isLoggedIn()?`${query_url}&accepted=${true}`:`${query_url}&teacher_id=${localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA)}`
@@ -72,7 +72,7 @@ class TimetableView extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             this.setState({
               timetables: result.data,
               fetchingInProgress: false,
@@ -80,7 +80,7 @@ class TimetableView extends Component {
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             // alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -104,7 +104,7 @@ class TimetableView extends Component {
             },
             crossDomain: true,
             success: (result) => {
-              console.log(result)
+              // console.log(result)
               this.getTimetable()
               this.setState({
                 fetchingInProgress: false,
@@ -112,7 +112,7 @@ class TimetableView extends Component {
               return;
             },
             error: (error) => {
-              console.log(error)
+              // console.log(error)
               alert(error.responseJSON.message)
               this.setState({
                 fetchingInProgress: false,
@@ -139,7 +139,7 @@ class TimetableView extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             this.setState({
               users: result.data,
               fetchingInProgress: false,
@@ -147,7 +147,7 @@ class TimetableView extends Component {
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -176,13 +176,13 @@ class TimetableView extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             alert(result.message)
             this.setState({ fetchingInProgress: false });
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -209,7 +209,7 @@ class TimetableView extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             this.getTimetable()
             this.setState({
               fetchingInProgress: false,
@@ -217,7 +217,7 @@ class TimetableView extends Component {
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -233,7 +233,7 @@ class TimetableView extends Component {
             date: event,
         })
         this.getTimetable(this.setDate(event))
-        // console.log(this.state.item_rank)
+        // // console.log(this.state.item_rank)
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
       }
 
@@ -243,12 +243,12 @@ class TimetableView extends Component {
       }
     
       handleRankChange = (id, name, event) => {
-        // console.log('updating')
-        // console.log(id)
-        // console.log(event.target.value)
+        // // console.log('updating')
+        // // console.log(id)
+        // // console.log(event.target.value)
         // name = typeof this.state.item_name == "undefined" || this.state.item_name === ""?name: this.state.item_name;
-        // console.log(name)
-        // console.log(this.state.item_name)
+        // // console.log(name)
+        // // console.log(this.state.item_name)
         // this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
       }
     

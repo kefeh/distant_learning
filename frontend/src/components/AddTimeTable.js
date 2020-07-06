@@ -67,7 +67,7 @@ class AddTimeTable extends Component {
           },
           crossDomain: true,
           success: (result) => {
-            console.log(result)
+            // console.log(result)
             this.setState({
               users: result.data,
               fetchingInProgress: false,
@@ -75,7 +75,7 @@ class AddTimeTable extends Component {
             return;
           },
           error: (error) => {
-            console.log(error)
+            // console.log(error)
             alert(error.responseJSON.message)
             this.setState({
               fetchingInProgress: false,
@@ -87,7 +87,7 @@ class AddTimeTable extends Component {
 
     
       componentWillReceiveProps(nextProps) {
-        var parent_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+        // var parent_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
       }
     
       updateVideos=(videos)=>{
@@ -162,7 +162,7 @@ class AddTimeTable extends Component {
           url: `/class?sub_category_id=${id}`, //TODO: update request URL
           type: "GET",
           success: (result) => {
-            console.log(result.data)
+            // console.log(result.data)
             this.setState({ classes: result.data })
             return;
           },
@@ -202,7 +202,7 @@ class AddTimeTable extends Component {
       submitTimeTable = (event) => {
         event.preventDefault();
         var full_date = `${this.state.selected_date} 00:02`
-        console.log(full_date)
+        // console.log(full_date)
         $.ajax({
             url: '/timetable', //TODO: update request URL
             type: "POST",
@@ -278,7 +278,7 @@ class AddTimeTable extends Component {
       }
     
       onChangeHandler=event=>{
-        console.log(event.target.files[0])
+        // console.log(event.target.files[0])
         this.setState({
           video: event.target.files[0],
         })
@@ -294,29 +294,29 @@ class AddTimeTable extends Component {
             selected_date: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()}`,
             date: event
         })
-        // console.log(this.state.item_rank)
+        // // console.log(this.state.item_rank)
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
       }
 
       handleSignupSelect = (event) => {
-        console.log(event)
-        console.log(event.getMinutes())
-        console.log(event.getHours())
+        // console.log(event)
+        // console.log(event.getMinutes())
+        // console.log(event.getHours())
         this.setState({
             signup_time: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()} ${event.getHours()}:${event.getMinutes()}`,
             date: event
         })
-        // console.log(this.state.item_rank)
+        // // console.log(this.state.item_rank)
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
       }
     
       handleDateChange = (event) => {
-        // console.log('updating')
-        // console.log(id)
-        // console.log(event.target.value)
+        // // console.log('updating')
+        // // console.log(id)
+        // // console.log(event.target.value)
         // name = typeof this.state.item_name == "undefined" || this.state.item_name === ""?name: this.state.item_name;
-        // console.log(name)
-        // console.log(this.state.item_name)
+        // // console.log(name)
+        // // console.log(this.state.item_name)
         // this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
       }
     

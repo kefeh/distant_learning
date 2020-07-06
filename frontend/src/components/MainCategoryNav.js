@@ -46,7 +46,7 @@ class MainCategoryNav extends Component {
                     url: `/systems`, //TODO: update request URL
                     type: "GET",
                     success: (result) => {
-                        console.log("labista one", result.data);
+                        // console.log("labista one", result.data);
                         this.setState(
                             (prevState) => ({
                                 ...prevState,
@@ -75,14 +75,14 @@ class MainCategoryNav extends Component {
     }
 
     getInitialVideos = (selection_id) => {
-        console.log("SOme videos")
+        // console.log("SOme videos")
         $.ajax({
         url: `/videos?education_id=${selection_id}`, //TODO: update request URL
         type: "GET",
         success: (result) => {
             this.setState({ videos: result.data})
-            console.log(result.data)
-            console.log(selection_id)
+            // console.log(result.data)
+            // console.log(selection_id)
             // this.props.updateVideos(this.state.videos)
             return;
         },
@@ -95,7 +95,7 @@ class MainCategoryNav extends Component {
 
     displayTab = (data) => {
         return (
-            <div className="row nav-item-system__row" style={{ color: "white", backgroundColor: "#468908" }}>
+            <div className="row nav-item-system__row ml-0 mr-0" style={{ color: "white", backgroundColor: "#468908" }}>
                 {data.map((item) => (
                     <div
                         key={item.id}
@@ -123,10 +123,10 @@ class MainCategoryNav extends Component {
     };
 
     handleTab2Click = (data, nextData) => {
-        console.log('something is working')
-        console.log(data.sub_categories)
+        // console.log('something is working')
+        // console.log(data.sub_categories)
         var cond = data.sub_categories && data.sub_categories.length > 0?true:false
-        console.log(cond)
+        // console.log(cond)
         this.setState((prevState) => ({
             ...prevState,
             selectedItem2: data.id + data.name,
@@ -158,7 +158,7 @@ class MainCategoryNav extends Component {
                     url: `/class?sub_category_id=${prevData.id}`, //TODO: update request URL
                     type: "GET",
                     success: (result) => {
-                        console.log(result.data);
+                        // console.log(result.data);
                         this.setState((prevState) => ({
                             ...prevState,
                             lastLevelData: {
@@ -178,8 +178,8 @@ class MainCategoryNav extends Component {
     };
 
     showChildData = (prevData, data) => {
-        console.log(data);
-        console.log('system_click')
+        // console.log(data);
+        // console.log('system_click')
         // if (data === this.state.level2Data && this.state.level2Data.length > 0) {
         //     this.setState((prevState) => ({
         //         ...prevState,
@@ -231,7 +231,7 @@ class MainCategoryNav extends Component {
                     url: `/class?education_id=${prevData.id}`, //TODO: update request URL
                     type: "GET",
                     success: (result) => {
-                        console.log(result.data);
+                        // console.log(result.data);
                         this.setState((prevState) => ({
                             ...prevState,
                             lastLevelData: {
@@ -295,10 +295,10 @@ class MainCategoryNav extends Component {
                         Error occured file fetching data
                     </div>
                 ) : this.state.level1Data.data ? (
-                    <div className="container-fluid">
+                    <div className="">
                         {this.displayTab(this.state.level1Data.data)}
                         {this.state.level2Data.length > 0 && (
-                            <div className="row second-tab-row">
+                            <div className="row second-tab-row m-0">
                                 {this.state.level2Data.map((item) => (
                                     <>
                                         <div
@@ -330,7 +330,7 @@ class MainCategoryNav extends Component {
                                 ))}
                             </div>
                         )}
-                        <div className="mt-5" style={{ minHeight: "400px" }}>
+                        <div className="mt-5 main-body-content" style={{ minHeight: "400px" }}>
                             {this.state.lastLevelData.isFetching ? (
                                 <div className="text-center">
                                     <div className="spinner-border" role="status">
@@ -343,7 +343,7 @@ class MainCategoryNav extends Component {
                                 </div>
                             ) : this.state.lastLevelData.data && this.state.lastLevelData.data.length > 0  ? (
                                 <>
-                                <div className="main-body-content">
+                                {/* <div className=""> */}
                                     <div className="main-body-menu">
                                         <input type="checkbox" id="nav-toggle" className="nav-toggle"></input>
 
@@ -352,14 +352,10 @@ class MainCategoryNav extends Component {
                                         </label>
                                         <div className="class-nav">
                                             <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData} setTimetableInfo={this.setTimetableInfo}/>
-                                            <div className="timetable-notification">
-                                                <p>Check timetable regularly before the start of class for instructions on how to attend</p>
-                                                <p>Vérifiez régulièrement l'horaire avant le début du cours pour savoir comment y assister.</p>
-                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <div className='timetable-button' onClick={() => {this.showTimeTable()}}>
+                                    <div className="main-body-content-section">
+                                        <div className='timetable-button' onClick={() => {this.showTimeTable()}}>
                                         {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
@@ -369,12 +365,17 @@ class MainCategoryNav extends Component {
                                         </svg>
                                         back</div>}
                                         </div>
-                                    {this.state.viewTimeTable? (<div className="video-body">
-                                        <TimetableView category_id={this.state.selected_category} class_id={this.state.selected_class} />
-                                    </div>): <div className="video-body">
-                                        <VideoView from_add={this.state.videos} delete_hide={true} />
-                                    </div>}
-                                </div>
+                                        {this.state.viewTimeTable? (<div className="video-body">
+                                            <TimetableView category_id={this.state.selected_category} class_id={this.state.selected_class} />
+                                        </div>): <div className="video-body">
+                                            <VideoView from_add={this.state.videos} delete_hide={true} />
+                                        </div>}
+                                        <div className="timetable-notification">
+                                            <p>Check timetable regularly before the start of class for instructions on how to attend</p>
+                                            <p>Vérifiez régulièrement l'horaire avant le début du cours pour savoir comment y assister.</p>
+                                        </div>
+                                    </div>
+                                {/* </div> */}
                                 {/* <div className="row main-body-content">
                                     <div className="col-2 class-nav">
                                         <ContentDisplay classes={this.state.lastLevelData.data} fetchVideoData={this.fetchVideoData}/>

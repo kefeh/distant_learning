@@ -165,7 +165,7 @@ class FormView extends Component {
   }
 
   render() {
-    console.log(this.state.selection);
+    // console.log(this.state.selection);
     return (
       <div className="form-view">
         <div className="form-view__categories-list" >

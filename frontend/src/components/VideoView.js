@@ -24,20 +24,23 @@ class VideoView extends Component {
       active_question_id: '',
       toggle: false
     }
+    this.mouseOverInterval = null;
+    this.mouseOverTime = 2000;
+    this.time = 0;
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('yes')
-    console.log(nextProps.from_add)
-    console.log('no')
+    // console.log('yes')
+    // console.log(nextProps.from_add)
+    // console.log('no')
     this.setState({videos: nextProps.from_add})
   }
 
   componentDidMount(){
     this.getClass();
-    console.log(this.props.from_add)
-    console.log("something")
-    console.log(client.isLoggedIn())
+    // console.log(this.props.from_add)
+    // console.log("something")
+    // console.log(client.isLoggedIn())
     this.props.from_add?this.setState({videos: this.props.from_add}):(
     this.state.selection?this.getVideos(this.state.selection):(() => {})());
     $(document)
@@ -60,7 +63,7 @@ class VideoView extends Component {
       url: `/class`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ classes: result.data, selection: result.data?result.data[0]: {}})
         return;
       },
@@ -72,16 +75,16 @@ class VideoView extends Component {
   }
   
   getVideos = (selection) => {
-    console.log(selection)
+    // console.log(selection)
     var selection_id = (typeof selection !== 'undefined')?selection.id:this.state.selection.id
     $.ajax({
       url: `/videos?subject_id=${selection_id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ videos: result.data, selection: selection?selection.id:this.state.selection})
-        console.log('Getting the questions')
+        // console.log('Getting the questions')
         this.getQuestion(result.data[0].id)
-        console.log('After Getting the questions')
+        // console.log('After Getting the questions')
         // this.props.updateVideos(this.state.videos)
         return;
       },
@@ -98,7 +101,7 @@ class VideoView extends Component {
       url: `/questions?video_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ questions: result.data })
         return;
       },
@@ -242,6 +245,39 @@ class VideoView extends Component {
     this.setState({active_video_id: '', active_video: ''})
   }
 
+  onMouseEnterHandler = (event) => {
+    event.preventDefault();
+      var tooltipSpan = event.target.childNodes[1];
+      if(tooltipSpan.id === "tooltip-span"){
+        var x = event.clientX,
+            y = event.clientY;
+        
+        tooltipSpan.style.display = "block";
+        var windowWidth = window.screen.width
+        var width = tooltipSpan.offsetWidth
+        if((x+2+width + 50 > windowWidth)){
+          x = windowWidth - (width + width/4)
+        }
+
+        tooltipSpan.style.top = (y+10) + 'px';
+        tooltipSpan.style.left = (x) + 'px';
+      }
+    // console.log(tooltipSpan)
+  }
+
+  onMouseLeaveHandler = (event) => {
+    event.preventDefault();
+    var tooltipSpan = event.target.childNodes[1];
+    var relatedTarget = typeof(event.relatedTarget) === "undefined" ? {'id': 'something'} : event.relatedTarget.childNodes[1];
+    if(typeof(tooltipSpan) !== "undefined"){
+      console.log(relatedTarget)
+      if((typeof(relatedTarget) === "undefined" || relatedTarget.id !== "tooltip-span")  && tooltipSpan.id === "tooltip-span"){
+        tooltipSpan.style.display = "none";
+      }
+    }
+    // console.log(tooltipSpan)
+  }
+
   render() {
     const { from_add, delete_hide } = this.props;
     var hide_edit_delete = typeof delete_hide==="undefined"?false:delete_hide
@@ -260,7 +296,7 @@ class VideoView extends Component {
           <div className="video">
             <ul>
             {this.state.videos && !this.state.active_video && this.state.videos.map((item, ind)=> (
-              <li key={item.id} className="video__list" onClick={() => {this.setViewVideo(item)}}>
+              <li key={item.id} id={item.id} className="video__list" onClick={() => {this.setViewVideo(item)}}>
                   <div className="video__card">
                     <iframe title={item.name} src={item.link} allowfullscreen="allowFullScreen"
                         mozallowfullscreen="mozallowfullscreen" 
@@ -269,7 +305,12 @@ class VideoView extends Component {
                         webkitallowfullscreen="webkitallowfullscreen"
                         name="someIframe" />
                     <div className="video__card-text">
-                        <span className="Name">{item.name}</span>
+                        <span className="Name" data-tooltip={item.name} onMouseEnter={this.onMouseEnterHandler} onMouseLeave={this.onMouseLeaveHandler}>
+                          {item.name}
+                          <span id="tooltip-span">
+                            {item.name}
+                          </span>
+                        </span>
                         <span className="Date">{item.date}</span>
                         </div>
                     <div className={`Actions ${typeof from_add === 'undefined' || hide_edit_delete?'hide':'show'}`}>

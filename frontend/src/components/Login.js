@@ -36,7 +36,7 @@ class Login extends Component {
     submitLogin = (event) => {
         this.setState({ loginInProgress: true });
         event.preventDefault();
-        console.log(`${this.state.email + this.state.password + this.state.remember}`)
+        // console.log(`${this.state.email + this.state.password + this.state.remember}`)
         $.ajax({
           url: '/login',
           type: "POST",
@@ -54,9 +54,9 @@ class Login extends Component {
             client.setToken(result.auth_token)
             client.getStatus()
             this.setState({shouldRedirect: true})
-            console.log("DOne with login")
-            console.log(this.redirectPath())
-            console.log(this.state.shouldRedirect)
+            // console.log("DOne with login")
+            // console.log(this.redirectPath())
+            // console.log(this.state.shouldRedirect)
             this.state.shouldRedirect?this.forceUpdate():this.setState({shouldRedirect: true});
             return;
           },
