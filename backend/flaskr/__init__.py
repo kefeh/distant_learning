@@ -469,7 +469,7 @@ def create_app(test_config=None):
             0] != '' and data.get('category_id')[0] != '0') else None
         if up_video.class_id == None and up_video.category_id == None:
             abort(422, description="Please select a Class or level/Cycle")
-        up_video.revision = data.get('revision') if data.get('revision') else False
+        up_video.revision = True if data.get('revision')[0] and data.get('revision')[0]=='true' else False
         up_video.insert()
     # except Exception:
     #     abort(422)
@@ -631,14 +631,27 @@ def create_app(test_config=None):
         category_id = request.args.get('category_id')
         # adding code that gets all videos based on a particular education id
         education_id = request.args.get('education_id')
-        if education_id:
-            videos = get_videos_by_education_id(education_id)
-        elif category_id:
-            videos = Video.query.filter(Video.category_id == category_id)
-        elif class_id:
-            videos = Video.query.filter(Video.class_id == class_id)
+        revision = request.args.get('revision', type=bool)
+        print('getting revision')
+        print(revision)
+        if revision:
+            if education_id:
+                videos = get_videos_by_education_id(education_id, Video.revision == revision)
+            elif category_id:
+                videos = Video.query.filter(Video.category_id == category_id, Video.revision == revision)
+            elif class_id:
+                videos = Video.query.filter(Video.class_id == class_id, Video.revision == revision)
+            else:
+                videos = Video.query.filter(Video.revision == revision).all()
         else:
-            videos = Video.query.all()
+            if education_id:
+                videos = get_videos_by_education_id(education_id)
+            elif category_id:
+                videos = Video.query.filter(Video.category_id == category_id)
+            elif class_id:
+                videos = Video.query.filter(Video.class_id == class_id)
+            else:
+                videos = Video.query.all()
         result = []
         links = []
         for some_video in videos:
