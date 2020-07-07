@@ -6,6 +6,7 @@ import AddCategory from './AddCategory'
 import AddSubCategory from './AddSubCategory'
 import AddClass from './AddClass'
 import AddVideo from './AddVideo'
+import AddRevisionVideo from './AddRevisionVideo'
 import ManageTeachers from './ManageTeachers'
 
 class FormViewController extends Component {
@@ -66,6 +67,11 @@ class FormViewController extends Component {
     if (this.state.selection === 'VIDEO'){
         return (
             <AddVideo parent={this.state.parent}/>
+        );
+    }
+    if (this.state.selection === "REVISION-VIDEO"){
+        return (
+            <AddRevisionVideo parent={this.state.parent}/>
         );
     }
     if (this.state.selection === 'TEACHERS'){
