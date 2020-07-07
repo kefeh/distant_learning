@@ -223,7 +223,7 @@ class AddVideo extends Component {
       data: formData,
       success: (result) => {
         document.getElementById("add-video-form").reset();
-        this.getVideosUpdateClass(this.state.class_id);
+        (!this.state.category_id || this.state.category_id === 0 || typeof(this.state.category_id) === "undefined") ? this.getVideosUpdateClass(this.state.class_id) : this.getVideosUpdateCategory(this.state.category_id);
         return;
       },
       error: (error) => {
@@ -285,7 +285,7 @@ class AddVideo extends Component {
         url: `/video/${id}`, //TODO: update request URL
         type: "DELETE",
         success: (result) => {
-          this.getVideosUpdateClass(this.state.class_id);
+          (!this.state.category_id || this.state.category_id === 0 || typeof(this.state.category_id) === "undefined") ? this.getVideosUpdateClass(this.state.class_id) : this.getVideosUpdateCategory(this.state.category_id);
           return;
         },
         error: (error) => {
