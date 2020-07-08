@@ -40,7 +40,7 @@ class TimetableView extends Component {
             category_id: this.props.class_id,
             selected_date: this.setDate()
         })
-        this.getTimetable(this.props.category_id, this.props.class_id)
+        this.getTimetable(this.setDate(), this.props.category_id, this.props.class_id)
         // console.log("References")
       }
 
@@ -52,10 +52,12 @@ class TimetableView extends Component {
           return`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:01`
       }
 
-      getTimetable = (date) => {
+      getTimetable = (date, category_id, class_id) => {
         // console.log(localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA))
         var selected_date = typeof date !== 'undefined'?date:this.state.selected_date
-        var query_url = this.state.category_id && typeof this.state.category_id !== "undefined"?`/timetable?category_id=${this.state.category_id}&time=${selected_date}`: `/timetable?class_id=${this.state.class_id}&time=${selected_date}`
+        class_id = typeof(class_id)==='undefined'?this.state.class_id:class_id
+        category_id = (typeof(category_id)==='undefined')?this.state.category_id:category_id
+        var query_url = typeof(category_id) !== "undefined" && category_id !== ''?`/timetable?category_id=${category_id}&time=${selected_date}`: `/timetable?class_id=${class_id}&time=${selected_date}`
         query_url = !client.isLoggedIn()?`${query_url}&accepted=${true}`:`${query_url}&teacher_id=${localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA)}`
         this.setState({ fetchingInProgress: true });
         $.ajax({

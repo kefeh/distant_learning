@@ -152,7 +152,16 @@
     z-index: 999;
     color: #E84641;
 }
-
+.timetable-button-secondary{
+    position: absolute;
+    top: 40%;
+    right: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 999;
+    color: #E84641;
+}
 .icon-calendar, .icon-arrow-left2{
     width: 1.8em;
     height: 1.8em;

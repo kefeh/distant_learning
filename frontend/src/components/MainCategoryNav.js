@@ -254,13 +254,14 @@ class MainCategoryNav extends Component {
         );
     };
 
-    fetchVideoData = (class_id, category_id) => {
-        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}&revision=${this.state.viewRevisionVideos}`: `/videos?class_id=${class_id}&revision=${this.state.viewRevisionVideos}`
+    fetchVideoData = (class_id, category_id, revision) => {
+        revision = typeof(revision) === "undefined"?this.state.viewRevisionVideos:revision
+        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}&revision=${revision}`: `/videos?class_id=${class_id}&revision=${revision}`
         $.ajax({
             url: query_url, //TODO: update request URL
             type: "GET",
             success: (result) => {
-              this.setState({ videos: result.data})
+              this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id, viewRevisionVideos: revision})
               return;
             },
             error: (error) => {
@@ -287,8 +288,13 @@ class MainCategoryNav extends Component {
         console.log(this.state.selectedItem1.split('-')[0])
         console.log(this.state.viewRevisionVideos)
 
-        this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.getInitialVideos(this.state.selectedItem1.split('-')[0])
-        this.fetchLeaveData(this.state.level2Data[0])
+        if(this.state.selected_category !== "" || this.state.selected_class !== ""){
+            this.fetchVideoData(this.state.selected_class, this.state.selected_category, true)
+        }else{
+            this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.getInitialVideos(this.state.selectedItem1.split('-')[0])
+        }
+        
+        // this.fetchLeaveData(this.state.level2Data[0])
     }
 
     render() {
@@ -370,6 +376,16 @@ class MainCategoryNav extends Component {
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
                                         revision/révision</div>):
+                                        <div><svg className="icon-arrow-left2 icon-arrow-left2-question">
+                                            <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
+                                        </svg>
+                                        back</div>}
+                                        </div>
+                                        <div className='timetable-button-secondary' onClick={() => {this.showTimeTable()}}>
+                                        {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
+                                            <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
+                                        </svg>
+                                        something else</div>):
                                         <div><svg className="icon-arrow-left2 icon-arrow-left2-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
                                         </svg>
