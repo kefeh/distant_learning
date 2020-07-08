@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 
-import ViewItems from "./ViewItems"
 import VideoView from "./VideoView"
 
 import '../stylesheets/FormView.css';
@@ -23,7 +22,7 @@ class AddVideo extends Component {
       categories: [],
       category_id: 0,
       isUploading: false,
-      categories: [],
+      // categories: [],
       system_id: 0,
       sub_categories: [],
       sub_category_id: 0,

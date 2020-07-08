@@ -22,7 +22,7 @@ class AddRevisionVideo extends Component {
       categories: [],
       category_id: 0,
       isUploading: false,
-      categories: [],
+      // categories: [],
       system_id: 0,
       sub_categories: [],
       sub_category_id: 0,

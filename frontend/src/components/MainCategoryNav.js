@@ -30,6 +30,7 @@ class MainCategoryNav extends Component {
             selected_class: '',
             selected_category: '',
             viewTimeTable: false,
+            viewRevisionVideos: false,
         };
     }
     componentDidMount() {
@@ -56,7 +57,7 @@ class MainCategoryNav extends Component {
                                     isFetching: false,
                                 },
                                 level2Data: result.data[0].education_list,
-                                selectedItem1: result.data[0].id + result.data[0].name,
+                                selectedItem1: result.data[0].id + '-' + result.data[0].name,
                                 selectedItem2:
                                     result.data[0].education_list && result.data[0].education_list.length > 0
                                         ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
@@ -74,13 +75,14 @@ class MainCategoryNav extends Component {
         );
     }
 
-    getInitialVideos = (selection_id) => {
+    getInitialVideos = (selection_id, revision) => {
+        revision = typeof(revision) === "undefined"?false:revision
         // console.log("SOme videos")
         $.ajax({
-        url: `/videos?education_id=${selection_id}`, //TODO: update request URL
+        url: `/videos?education_id=${selection_id}&revision=${revision}`, //TODO: update request URL
         type: "GET",
         success: (result) => {
-            this.setState({ videos: result.data})
+            this.setState({ videos: result.data, viewRevisionVideos: revision})
             // console.log(result.data)
             // console.log(selection_id)
             // this.props.updateVideos(this.state.videos)
@@ -102,7 +104,7 @@ class MainCategoryNav extends Component {
                         id={`${item.id}${item.name}`}
                         onClick={() => this.handleTabClick(item, item.education_list)}
                         className={`col hover__cursor__style single-tab-hover text-center py-3 nav-item-system font-weight-bolder ${
-                            item.id + item.name === this.state.selectedItem1 ? "nav-item-system__active" : null
+                            item.id + '-' + item.name === this.state.selectedItem1 ? "nav-item-system__active" : null
                         }`}
                     >
                         {item.name.toUpperCase()}
@@ -115,7 +117,7 @@ class MainCategoryNav extends Component {
     handleTabClick = (data, nextData) => {
         this.setState((prevState) => ({
             ...prevState,
-            selectedItem1: data.id + data.name,
+            selectedItem1: data.id + '-' + data.name,
             videos: [],
             tabVisibility: true,
         }));
@@ -240,8 +242,8 @@ class MainCategoryNav extends Component {
                                 isFetching: false,
                             },
                         }));
-                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.getInitialVideos(prevData.id):(()=>{})()
-                        this.getInitialVideos(prevData.id)
+                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.getInitialVideos(prevData.id, this.state.viewRevisionVideos):(()=>{})()
+                        this.getInitialVideos(prevData.id, this.state.viewRevisionVideos)
                         return;
                     },
                     error: (error) => {
@@ -253,7 +255,7 @@ class MainCategoryNav extends Component {
     };
 
     fetchVideoData = (class_id, category_id) => {
-        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}`: `/videos?class_id=${class_id}`
+        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}&revision=${this.state.viewRevisionVideos}`: `/videos?class_id=${class_id}&revision=${this.state.viewRevisionVideos}`
         $.ajax({
             url: query_url, //TODO: update request URL
             type: "GET",
@@ -279,6 +281,14 @@ class MainCategoryNav extends Component {
         this.setState({
             viewTimeTable: !this.state.viewTimeTable
         })
+    }
+
+    showRevisionVideo = () => {
+        console.log(this.state.selectedItem1.split('-')[0])
+        console.log(this.state.viewRevisionVideos)
+
+        this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.getInitialVideos(this.state.selectedItem1.split('-')[0])
+        this.fetchLeaveData(this.state.level2Data[0])
     }
 
     render() {
@@ -355,8 +365,8 @@ class MainCategoryNav extends Component {
                                         </div>
                                     </div>
                                     <div className="main-body-content-section">
-                                        <div className='timetable-button' onClick={() => {this.showTimeTable()}}>
-                                        {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
+                                        <div className='timetable-button' onClick={() => {this.showRevisionVideo()}}>
+                                        {!this.state.viewRevisionVideos? (<div><svg className="icon-calendar icon-calendar-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
                                         revision/révision</div>):
