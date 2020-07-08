@@ -615,12 +615,18 @@ def create_app(test_config=None):
 
         return jsonify({'data': result, 'message': 'success'})
 
-    def get_videos_by_education_id(education_id):
+    def get_videos_by_education_id(education_id, revision=False):
         education = Education.query.get(education_id)
         video_list = []
         for a_class in education.class_list:
-            videos = Video.query.filter(
-                Video.class_id == a_class.id).order_by(asc(Video.date))
+            if revision:
+                videos = Video.query.filter(
+                    Video.class_id == a_class.id, Video.revision == revision).order_by(
+                        asc(Video.date))
+            else:
+                videos = Video.query.filter(
+                    Video.class_id == a_class.id).order_by(
+                        asc(Video.date))
             video_list += videos
         video_list = video_list[:10] if len(video_list) > 10 else video_list
         return video_list
@@ -631,12 +637,11 @@ def create_app(test_config=None):
         category_id = request.args.get('category_id')
         # adding code that gets all videos based on a particular education id
         education_id = request.args.get('education_id')
-        revision = request.args.get('revision', type=bool)
-        print('getting revision')
-        print(revision)
+        revision = request.args.get('revision')
+        revision = True if revision == 'true' else False
         if revision:
             if education_id:
-                videos = get_videos_by_education_id(education_id, Video.revision == revision)
+                videos = get_videos_by_education_id(education_id, revision)
             elif category_id:
                 videos = Video.query.filter(Video.category_id == category_id, Video.revision == revision)
             elif class_id:
@@ -656,6 +661,8 @@ def create_app(test_config=None):
         links = []
         for some_video in videos:
             some_video = some_video.format()
+            if not revision and some_video.get('revision') == True:
+                continue
             if some_video.get('link') in links:
                 continue
             links.append(some_video.get('link'))
