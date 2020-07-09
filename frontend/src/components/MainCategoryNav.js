@@ -82,7 +82,7 @@ class MainCategoryNav extends Component {
         url: `/videos?education_id=${selection_id}&revision=${revision}`, //TODO: update request URL
         type: "GET",
         success: (result) => {
-            this.setState({ videos: result.data, viewRevisionVideos: revision})
+            this.setState({ videos: result.data, viewRevisionVideos: revision, viewTimeTable : this.state.viewTimeTable?!this.state.viewTimeTable:this.state.viewTimeTable})
             // console.log(result.data)
             // console.log(selection_id)
             // this.props.updateVideos(this.state.videos)
@@ -261,7 +261,7 @@ class MainCategoryNav extends Component {
             url: query_url, //TODO: update request URL
             type: "GET",
             success: (result) => {
-              this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id, viewRevisionVideos: revision})
+              this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id, viewRevisionVideos: revision, viewTimeTable : this.state.viewTimeTable?!this.state.viewTimeTable:this.state.viewTimeTable})
               return;
             },
             error: (error) => {
@@ -381,16 +381,30 @@ class MainCategoryNav extends Component {
                                         </svg>
                                         back</div>}
                                         </div>
-                                        <div className='timetable-button-secondary' onClick={() => {this.showTimeTable()}}>
-                                        {!this.state.viewTimeTable? (<div><svg className="icon-calendar icon-calendar-question">
-                                            <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
-                                        </svg>
-                                        something else</div>):
-                                        <div><svg className="icon-arrow-left2 icon-arrow-left2-question">
-                                            <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
-                                        </svg>
-                                        back</div>}
-                                        </div>
+                                        {this.state.viewRevisionVideos && <div className={`timetable-button-secondary ${!this.state.viewTimeTable?"front":"back"}`} onClick={() => {this.showTimeTable()}}>
+                                        {!this.state.viewTimeTable? (<div className="floating-button">
+                                            <div className="button-names">
+                                                <span>timetable</span>
+                                                <span>calendrier</span>
+                                            </div>
+                                            <div className="button-icons">
+                                                <svg className="icon-calendar-front icon-calendar-question">
+                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
+                                                </svg>
+                                            </div>
+                                        </div>):
+                                        <div className="floating-button">
+                                            <div className="button-icons">
+                                                <svg className="icon-arrow-right2 icon-arrow-right2-question">
+                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-right2"></use>
+                                                </svg>
+                                            </div>
+                                            <div className="button-names">
+                                                <span>back</span>
+                                                <span>retour</span>
+                                            </div>
+                                        </div>}
+                                        </div>}
                                         {this.state.viewTimeTable? (<div className="video-body">
                                             <TimetableView category_id={this.state.selected_category} class_id={this.state.selected_class} />
                                         </div>): <div className="video-body">
@@ -398,7 +412,7 @@ class MainCategoryNav extends Component {
                                         </div>}
                                         <div className="timetable-notification">
                                             <p>Check timetable regularly before the start of class for instructions on how to attend</p>
-                                            <p>Vérifiez régulièrement l'horaire avant le début du cours pour savoir comment y assister.</p>
+                                            <p>Vérifiez régulièrement les implois du temps avant le début du cours pour savoir comment y assister.</p>
                                         </div>
                                     </div>
                                 {/* </div> */}

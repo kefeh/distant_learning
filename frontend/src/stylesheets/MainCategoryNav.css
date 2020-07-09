@@ -155,12 +155,57 @@
 .timetable-button-secondary{
     position: absolute;
     top: 40%;
-    right: 0;
+    /* right: 0; */
     font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
     z-index: 999;
     color: #E84641;
+}
+.floating-button{
+    display: flex;
+    flex-direction: row;
+}
+.button-names{
+    display: flex;
+    flex-direction: column;
+    font-size: 0.6rem;
+    line-height: 1;
+    padding: 1em 2em;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: rgb(40, 90, 2);
+    align-self: center;
+    border-radius: 0.5rem;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in ;
+}
+.front .button-names{
+    margin-right: -1rem;
+    transform-origin: right;
+}
+.front:hover .button-names, .back:hover .button-names{
+    transform: scaleX(1);
+}
+.back .button-names{
+    margin-left: -1rem;
+    transform-origin: left;
+}
+.back{
+    margin-left: 1%;
+    left: 0;
+}
+.front{
+    margin-right: 1%;
+    right: 0;
+}
+.icon-calendar-front, .icon-arrow-right2{
+    width: 1.4rem;
+    height: 1.4rem;
+    cursor: pointer;
+    fill: white;
+    /* margin: auto; */
 }
 .icon-calendar, .icon-arrow-left2{
     width: 1.8em;
@@ -168,7 +213,17 @@
     fill: #E84641;
     cursor: pointer;
 }
-
+.button-icons{
+    background-color: #E84641;
+    border-radius: 1000rem;
+    box-sizing: unset;
+	width:60px;
+    height:60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999999;
+}
 .timetable-notification{
     padding: 0.5em;
     padding-top: 1rem;
