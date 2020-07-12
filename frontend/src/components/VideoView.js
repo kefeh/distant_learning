@@ -278,7 +278,7 @@ class VideoView extends Component {
   }
 
   render() {
-    const { from_add, delete_hide } = this.props;
+    const { from_add, delete_hide, revision } = this.props;
     var hide_edit_delete = typeof delete_hide==="undefined"?false:delete_hide
     return (
       <div className={`form-view ${typeof from_add === 'undefined'?null:'form-view__add-video'}`}>
@@ -292,6 +292,7 @@ class VideoView extends Component {
           </ul>
         </div>
         <div className="form-view__item-view form-view__item-video">
+          {revision && <h3 className="revision-header">Revision Videos</h3>}
           <div className="video">
             <ul>
             {this.state.videos && !this.state.active_video && this.state.videos.map((item, ind)=> (

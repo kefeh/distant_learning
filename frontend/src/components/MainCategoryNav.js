@@ -75,14 +75,15 @@ class MainCategoryNav extends Component {
         );
     }
 
-    getInitialVideos = (selection_id, revision) => {
+    getInitialVideos = (selection_id, revision, timetable) => {
         revision = typeof(revision) === "undefined"?false:revision
+        timetable = typeof(timetable) === "undefined"?false:timetable
         // console.log("SOme videos")
         $.ajax({
         url: `/videos?education_id=${selection_id}&revision=${revision}`, //TODO: update request URL
         type: "GET",
         success: (result) => {
-            this.setState({ videos: result.data, viewRevisionVideos: revision, viewTimeTable : this.state.viewTimeTable?!this.state.viewTimeTable:this.state.viewTimeTable})
+            this.setState({ videos: result.data, viewRevisionVideos: revision, viewTimeTable : timetable})
             // console.log(result.data)
             // console.log(selection_id)
             // this.props.updateVideos(this.state.videos)
@@ -261,7 +262,7 @@ class MainCategoryNav extends Component {
             url: query_url, //TODO: update request URL
             type: "GET",
             success: (result) => {
-              this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id, viewRevisionVideos: revision, viewTimeTable : this.state.viewTimeTable?!this.state.viewTimeTable:this.state.viewTimeTable})
+              this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id})
               return;
             },
             error: (error) => {
@@ -280,20 +281,37 @@ class MainCategoryNav extends Component {
 
     showTimeTable = () => {
         this.setState({
+            viewRevisionVideos: this.state.viewTimeTable,
             viewTimeTable: !this.state.viewTimeTable
         })
     }
 
-    showRevisionVideo = () => {
-        console.log(this.state.selectedItem1.split('-')[0])
-        console.log(this.state.viewRevisionVideos)
-
-        if(this.state.selected_category !== "" || this.state.selected_class !== ""){
-            this.fetchVideoData(this.state.selected_class, this.state.selected_category, true)
-        }else{
-            this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.getInitialVideos(this.state.selectedItem1.split('-')[0])
+    showTimeTableMain = () => {
+        var viewTimeTable = this.state.viewRevisionVideos && !this.state.viewTimeTable? false:!this.state.viewTimeTable
+        this.setState({
+            viewRevisionVideos: false,
+            viewTimeTable: viewTimeTable
+        })
+        if(!viewTimeTable){
+             if( this.state.selected_category !== "" || this.state.selected_class !== ""){
+                this.fetchVideoData(this.state.selected_class, this.state.selected_category, false)
+            }else{
+                this.getInitialVideos(this.state.selectedItem1.split('-')[0], false)
+            }
         }
-        
+       
+    }
+
+    showRevisionVideo = () => {
+        if(this.state.selected_category !== "" || this.state.selected_class !== ""){
+            this.fetchVideoData(this.state.selected_class, this.state.selected_category, !this.state.viewRevisionVideos)
+        }else{
+            this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.showTimeTable()
+        }
+        this.setState({
+            viewTimeTable: this.state.viewRevisionVideos,
+            viewRevisionVideos: !this.state.viewRevisionVideos
+        })
         // this.fetchLeaveData(this.state.level2Data[0])
     }
 
@@ -371,8 +389,8 @@ class MainCategoryNav extends Component {
                                         </div>
                                     </div>
                                     <div className="main-body-content-section">
-                                        <div className='timetable-button' onClick={() => {this.showRevisionVideo()}}>
-                                        {!this.state.viewRevisionVideos? (<div><svg className="icon-calendar icon-calendar-question">
+                                        <div className='timetable-button' onClick={() => {this.showTimeTableMain()}}>
+                                        {(!this.state.viewTimeTable && !this.state.viewRevisionVideos)? (<div><svg className="icon-calendar icon-calendar-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
                                         revision/révision</div>):
@@ -381,34 +399,34 @@ class MainCategoryNav extends Component {
                                         </svg>
                                         back</div>}
                                         </div>
-                                        {this.state.viewRevisionVideos && <div className={`timetable-button-secondary ${!this.state.viewTimeTable?"front":"back"}`} onClick={() => {this.showTimeTable()}}>
-                                        {!this.state.viewTimeTable? (<div className="floating-button">
+                                        {(this.state.viewTimeTable || this.state.viewRevisionVideos) && <div className={`timetable-button-secondary ${this.state.viewTimeTable?"front":"back"}`} onClick={() => {this.showRevisionVideo()}}>
+                                        {this.state.viewTimeTable? (<div className="floating-button">
                                             <div className="button-names">
-                                                <span>timetable</span>
-                                                <span>calendrier</span>
+                                                <span>revision videos</span>
+                                                <span>vidéos de révision</span>
                                             </div>
                                             <div className="button-icons">
-                                                <svg className="icon-calendar-front icon-calendar-question">
-                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
+                                                <svg className="icon-film-front icon-film-question">
+                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-film"></use>
                                                 </svg>
                                             </div>
                                         </div>):
                                         <div className="floating-button">
                                             <div className="button-icons">
-                                                <svg className="icon-arrow-right2 icon-arrow-right2-question">
-                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-right2"></use>
+                                                <svg className="icon-calendar-front icon-calendar-question">
+                                                    <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                                 </svg>
                                             </div>
                                             <div className="button-names">
-                                                <span>back</span>
-                                                <span>retour</span>
+                                                <span>timetable</span>
+                                                <span>calendrier</span>
                                             </div>
                                         </div>}
                                         </div>}
                                         {this.state.viewTimeTable? (<div className="video-body">
                                             <TimetableView category_id={this.state.selected_category} class_id={this.state.selected_class} />
                                         </div>): <div className="video-body">
-                                            <VideoView from_add={this.state.videos} delete_hide={true} />
+                                            <VideoView from_add={this.state.videos} delete_hide={true} revision={this.state.viewRevisionVideos} />
                                         </div>}
                                         <div className="timetable-notification">
                                             <p>Check timetable regularly before the start of class for instructions on how to attend</p>
