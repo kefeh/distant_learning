@@ -150,6 +150,14 @@ class FormView extends Component {
       this.getClass()
       return;
     }
+    if(some_selection==="EXAMS"){
+      this.getEducations()
+      return;
+    }
+    if(some_selection==="EXAMS-CATEGORY"){
+      this.getEducations()
+      return;
+    }
     if(some_selection==="REVISION-VIDEO"){
       this.getClass()
       return;
@@ -192,6 +200,12 @@ class FormView extends Component {
               </li>
               <li className={`form-view__categories-list-item VIDEO ${"VIDEO" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('VIDEO')}}>
                 Video
+              </li>
+              <li className={`form-view__categories-list-item EXAMS ${"EXAMS" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('EXAMS')}}>
+                Exams
+              </li>
+              <li className={`form-view__categories-list-item EXAM-CATEGORY ${"EXAM-CATEGORY" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('EXAM-CATEGORY')}}>
+                Exams Level
               </li>
               <li className={`form-view__categories-list-item REVISION-VIDEO ${"REVISION-VIDEO" === this.state.selection ? 'active' : null}`} onClick={() => {this.setSelection('REVISION-VIDEO')}}>
                 Revision Video

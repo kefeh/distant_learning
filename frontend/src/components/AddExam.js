@@ -31,7 +31,7 @@ class AddExam extends Component {
     this.getSystems() 
   }
 
-  getClass = () => {
+  getExams = () => {
     $.ajax({
       url: `/exams`, //TODO: update request URL
       type: "GET",
@@ -64,7 +64,7 @@ class AddExam extends Component {
     })
   }
 
-  getClasSubUpdate = (id) => {
+  getExamsubUpdate = (id) => {
     $.ajax({
       url: `/exams?sub_category_id=${id}`, //TODO: update request URL
       type: "GET",
@@ -161,7 +161,7 @@ class AddExam extends Component {
       crossDomain: true,
       success: (result) => {
         // document.getElementById("add-class-form").reset();
-        this.state.sub_category_id?this.getClasSubUpdate(this.state.sub_category_id):this.getExamUpdate(this.state.education_id);
+        this.state.sub_category_id?this.getExamsubUpdate(this.state.sub_category_id):this.getExamUpdate(this.state.education_id);
         // this.setState({sub_category_id:0})
         return;
       },
@@ -190,7 +190,7 @@ class AddExam extends Component {
 
   handleSubCategoryChange = (event) => {
     this.setState({sub_category_id: event.target.value})
-    this.getClasSubUpdate(event.target.value)
+    this.getExamsubUpdate(event.target.value)
   }
 
   updateChild = (id, rank, name) => {
@@ -276,14 +276,14 @@ class AddExam extends Component {
         <ViewItems 
           items={this.state.exams}
           deleteAction = {this.deleteAction}
-          getClass={this.getClass}
+          getExams={this.getExams}
           updateChild={this.updateChild}
         />
         <div id="add-items__form">
-          <h2>Add a New Class</h2>
+          <h2>Add a New Exam Type</h2>
           <form className="add-items__form-view" id="add-class-form" onSubmit={this.submitSubCategory}>
             <label>
-              <span>Class</span>
+              <span>Exam</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             {/* <label className={this.state.education_id?'hide':null}>
