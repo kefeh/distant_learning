@@ -361,6 +361,83 @@ class Classes(db.Model):
         }
 
 
+class Exams(db.Model):
+    __tablename__ = 'exams'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    rank = Column(Integer)
+
+    exam_type = relationship(
+        'ExamType', cascade="all,delete", backref='exams')
+    revision_videos = relationship('Video', cascade="all,delete", backref='exams')
+    timetable = relationship('TimeTable', cascade="all,delete", backref='exams')
+
+    education_id = Column(Integer, ForeignKey(
+        'educations.id', ondelete='cascade'), nullable=True)
+    sub_category_id = Column(Integer, ForeignKey(
+        'sub_categories.id', ondelete='cascade'), nullable=True)
+
+    def __init__(self, name):
+        self.name = name
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'rank': self.rank,
+            'exam_type': self.exam_type,
+            'revision_videos': self.revision_videos
+        }
+
+
+class ExamType(db.Model):
+    __tablename__ = 'exam_type'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    rank = Column(Integer)
+    exam_id = Column(Integer, ForeignKey('exam.id', ondelete='cascade'))
+
+    # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
+    # classes = relationship('Classes', cascade="all,delete", backref='categories')
+    timetable = relationship('TimeTable', cascade="all,delete", backref='categories')
+    revision_videos = relationship('Video', cascade='all,delete', backref='categories')
+
+    def __init__(self, name):
+        self.name = name
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'rank': self.rank,
+            'revision_videos': self.revision_videos
+        }
+
+
 '''
 subject
 
