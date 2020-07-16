@@ -201,6 +201,8 @@ class Education(db.Model):
 
     class_list = relationship(
         'Classes', cascade="all,delete", backref='education')
+    exam_list = relationship(
+        'Exams', cascade="all,delete", backref='education')
     sub_categories = relationship(
         'SubCategory', cascade="all,delete", backref='education')
 
@@ -286,6 +288,8 @@ class SubCategory(db.Model):
     # sub_categories = relationship('SubCategories', remote_side=[id], backref='categories')
     classes = relationship(
         'Classes', cascade="all,delete", backref='sub_categories')
+    exams = relationship(
+        'Exams', cascade="all,delete", backref='sub_categories')
 
 # the subcategory can be a child of a category or of a sub_category
     education_id = Column(Integer, ForeignKey(
@@ -398,7 +402,7 @@ class Exams(db.Model):
             'name': self.name,
             'rank': self.rank,
             'exam_type': self.exam_type,
-            'revision_videos': self.revision_videos
+            'revision_videos': self.revision_videos,
         }
 
 
@@ -408,11 +412,11 @@ class ExamType(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     rank = Column(Integer)
-    exam_id = Column(Integer, ForeignKey('exam.id', ondelete='cascade'))
+    exam_id = Column(Integer, ForeignKey('exams.id', ondelete='cascade'))
 
     # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
     # classes = relationship('Classes', cascade="all,delete", backref='categories')
-    timetable = relationship('TimeTable', cascade="all,delete", backref='categories')
+    timetables = relationship('TimeTable', cascade="all,delete", backref='categories')
     revision_videos = relationship('Video', cascade='all,delete', backref='categories')
 
     def __init__(self, name):
@@ -434,7 +438,8 @@ class ExamType(db.Model):
             'id': self.id,
             'name': self.name,
             'rank': self.rank,
-            'revision_videos': self.revision_videos
+            'revision_videos': self.revision_videos,
+            'timetables': self.timetables
         }
 
 
