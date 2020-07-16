@@ -10,7 +10,7 @@ class AddExam extends Component {
     super();
     this.state = {
       name: "",
-      classes: [],
+      exams: [],
       sub_categories: [],
       educations: [],
       education_id: 0,
@@ -37,11 +37,11 @@ class AddExam extends Component {
       type: "GET",
       success: (result) => {
         // console.log(result.data)
-        this.setState({ classes: result.data })
+        this.setState({ exams: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load classes. Please try your request again')
+        alert('Unable to load exams. Please try your request again')
         return;
       }
     })
@@ -54,11 +54,11 @@ class AddExam extends Component {
       type: "GET",
       success: (result) => {
         // console.log(result.data)
-        this.setState({ classes: result.data })
+        this.setState({ exams: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load classes. Please try your request again')
+        alert('Unable to load exams. Please try your request again')
         return;
       }
     })
@@ -70,11 +70,11 @@ class AddExam extends Component {
       type: "GET",
       success: (result) => {
         // console.log(result.data)
-        this.setState({ classes: result.data })
+        this.setState({ exams: result.data })
         return;
       },
       error: (error) => {
-        alert('Unable to load classes. Please try your request again')
+        alert('Unable to load exams. Please try your request again')
         return;
       }
     })
@@ -274,7 +274,7 @@ class AddExam extends Component {
           </label>
         </form>
         <ViewItems 
-          items={this.state.classes}
+          items={this.state.exams}
           deleteAction = {this.deleteAction}
           getClass={this.getClass}
           updateChild={this.updateChild}
