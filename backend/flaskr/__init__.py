@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask_bcrypt import Bcrypt
 import random
 
-from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable, Student
+from models import setup_db, System, Category, Education, Classes, Video, SubCategory, Question, Answer, User, BlacklistToken, TimeTable, Student, Exams, ExamType
 # from video_util import upload_video
 from auth import requires_auth, requires_admin
 
@@ -485,7 +485,6 @@ def create_app(test_config=None):
             an_exam['exam_types'] = e_type_list
             an_exam['revision_videos'] = vid_list
             result.append(an_exam)
-
         return jsonify({'data': result, 'message': 'success'})
 
 
@@ -851,6 +850,17 @@ def create_app(test_config=None):
         except Exception:
             abort(500)
         return jsonify({'success': True, "deleted": video_id})
+
+    @app.route('/exams/<int:exams_id>', methods=['DELETE'])
+    def delete_exams(exams_id):
+        exams = Exams.query.get(exams_id)
+        if not exams:
+            abort(404)
+        try:
+            exams.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted": class_id})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()

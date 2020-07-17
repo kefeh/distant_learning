@@ -52,6 +52,7 @@ class AddExam extends Component {
     $.ajax({
       url: `/exams?education_id=${id}`, //TODO: update request URL
       type: "GET",
+      cache: false,
       success: (result) => {
         // console.log(result.data)
         this.setState({ exams: result.data })
