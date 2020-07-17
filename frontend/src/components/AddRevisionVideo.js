@@ -243,7 +243,7 @@ class AddRevisionVideo extends Component {
     this.getVideosUpdateExamLevel( event.target.value)
   }
 
-  handleClassChange = (event) => {
+  handleExamsChange = (event) => {
     this.setState({
       exam_id: event.target.value, exam_level_id: 0
     });
@@ -329,7 +329,7 @@ class AddRevisionVideo extends Component {
             </select>
           </label>
           <label>
-            <select name="exam_id" onChange={this.handleClassChange} required>
+            <select name="exam_id" onChange={this.handleExamsChange} required>
                 <option value={0}>Select an Exams</option>
                 {this.state.exams && this.state.exams.map((item, ind) => (
                 <option key={item['id']} value={item.id}>

@@ -480,11 +480,12 @@ def create_app(test_config=None):
                 e_type_list.append(e_type)
             for v in an_exam.get('revision_videos'):
                 v = v.format()
-                v.pop('revision_videos')
                 vid_list.append(v)
             an_exam['exam_type'] = e_type_list
+            an_exam['exam_levels'] = an_exam.pop('exam_type')
             an_exam['revision_videos'] = vid_list
             result.append(an_exam)
+            print(result)
         return jsonify({'data': result, 'message': 'success'})
 
 
@@ -786,6 +787,8 @@ def create_app(test_config=None):
         category_id = request.args.get('category_id')
         # adding code that gets all videos based on a particular education id
         education_id = request.args.get('education_id')
+        exam_id = request.args.get('exam_id')
+        exam_type_id = request.args.get('exam_level_id')
         if education_id:
             videos = get_videos_by_education_id(education_id)
         elif category_id:
@@ -793,17 +796,15 @@ def create_app(test_config=None):
         elif class_id:
             videos = Video.query.filter(Video.class_id == class_id)
         elif exam_id:
-            videos = Video.query.filter(Video.exam_id == exam_id, Video.revision == revision)
+            videos = Video.query.filter(Video.exam_id == exam_id)
         elif exam_type_id:
-            videos = Video.query.filter(Video.exam_type_id == exam_type_id, Video.revision == revision)
+            videos = Video.query.filter(Video.exam_type_id == exam_type_id)
         else:
             videos = Video.query.all()
         result = []
         links = []
         for some_video in videos:
             some_video = some_video.format()
-            if not revision and some_video.get('revision') == True:
-                continue
             if some_video.get('link') in links:
                 continue
             links.append(some_video.get('link'))
