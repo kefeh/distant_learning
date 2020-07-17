@@ -629,14 +629,14 @@ class TimeTable(db.Model):
     exam_type_id = Column(Integer, ForeignKey(
         'exam_type.id', ondelete='cascade'), nullable=True)
 
-    def __init__(self, name, time, link, teacher_id, class_id, category_id, start_time, end_time, signup_time, accepted=False):
+    def __init__(self, name, time, link, teacher_id, exam_id, exam_type_id, start_time, end_time, signup_time, accepted=False):
         self.link = link
         self.name = name
         self.time = time
         self.accepted = accepted
         self.teacher_id = teacher_id
-        self.class_id = class_id
-        self.category_id = category_id,
+        self.exam_id = exam_id
+        self.exam_type_id = exam_type_id,
         self.start_time = start_time,
         self.end_time = end_time,
         self.signup_time = signup_time,

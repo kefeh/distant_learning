@@ -1157,16 +1157,15 @@ def create_app(test_config=None):
         signup_time = datetime.strptime(data.get('signup_time'), "%Y-%m-%d %H:%M")
         name = data.get('name')
         link = data.get('link')
-        class_id = data.get('class_id')
+        exam_id = data.get('exam_id')
         teacher_id = data.get('teacher_id')
         start_time = data.get('start_time')
         end_time = data.get('end_time')
-        # print(data.get('category_id'))
-        category_id = data.get('category_id') if data.get('category_id') else None
+        exam_type_id = data.get('exam_level_id') if data.get('exam_level_id') else None
     # try:
         timetable = TimeTable(name=name, link=link, time=date,
-                                teacher_id=teacher_id, class_id=class_id,
-                                category_id=category_id, start_time=start_time,
+                                teacher_id=teacher_id, exam_id=exam_id,
+                                exam_type_id=exam_type_id, start_time=start_time,
                                 end_time=end_time, signup_time=signup_time)
         timetable.insert()
     # except Exception:
