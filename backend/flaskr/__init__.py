@@ -409,6 +409,86 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': classes.id})
 
+
+# Exams level
+
+    @app.route('/exams', methods=['POST'])
+    def add_exams():
+        data = request.json
+        education_id = data.get('education_id', None)
+        sub_category_id = data.get('sub_category_id', None)
+
+        if ((data.get('name', '') == '')):
+            abort(422)
+        try:
+            exams = Exams(name=data.get(
+                'name'))
+            exams.rank = data.get('rank')
+            if education_id or sub_category_id:
+                if education_id:
+                    exams.education_id = int(data.get('education_id'))
+                if sub_category_id:
+                    exams.sub_category_id = int(data.get('sub_category_id'))
+            else:
+                abort(422)
+        except Exception:
+            abort(422)
+        exams.insert()
+
+        return jsonify({'message': 'success', 'id': exams.id})
+
+    @app.route('/exams', methods=['PUT'])
+    def update_exams():
+        print("updating exams")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+        try:
+            exams = Exams.query.get(data.get('id'))
+            exams.name = data.get('name')
+            exams.rank = data.get('rank')
+            exams.update()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': exams.id})
+
+
+    @app.route('/exams', methods=['GET'])
+    def get_exams():
+        education_id = request.args.get('education_id')
+        sub_category_id = request.args.get('sub_category_id')
+
+        if sub_category_id:
+            exams = Exams.query.order_by(asc(Exams.rank)).filter(
+                Exams.sub_category_id == sub_category_id)
+        elif education_id:
+            exams = Exams.query.order_by(asc(Exams.rank)).filter(
+                Exams.education_id == education_id)
+        else:
+            exams = Exams.query.order_by(asc(Exams.rank)).all()
+        result = []
+        for an_exam in exams:
+            an_exam = an_exam.format()
+            exam_type = an_exam.get('exam_type', [])
+            e_type_list = []
+            vid_list = []
+            for e_type in exam_type:
+                e_type = e_type.format()
+                e_type.pop('revision_videos')
+                e_type_list.append(e_type)
+            for v in an_exam.get('revision_videos'):
+                v = v.format()
+                v.pop('revision_videos')
+                vid_list.append(v)
+            an_exam['exam_types'] = e_type_list
+            an_exam['revision_videos'] = vid_list
+            result.append(an_exam)
+
+        return jsonify({'data': result, 'message': 'success'})
+
+
 # Add Category level
 
     @app.route('/subject', methods=['POST'])
