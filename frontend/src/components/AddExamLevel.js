@@ -100,6 +100,7 @@ class AddExamType extends Component {
   getExamLevelUpdate = (id) => {
     $.ajax({
       url: `/exam_level?exam_id=${id}`, //TODO: update request URL
+      cache: false,
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.data })
