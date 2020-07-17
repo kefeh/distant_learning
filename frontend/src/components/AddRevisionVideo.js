@@ -206,16 +206,15 @@ class AddRevisionVideo extends Component {
     formData.append('file', this.state.video)
     formData.append('name', this.state.name)
     formData.append('exam_id', this.state.exam_id)
-    formData.append('exam_level_id', this.state.exam_level_id)
+    formData.append('exam_type_id', this.state.exam_level_id)
     formData.append('link', this.state.link)
-    formData.append('revision', true)
     formData.append('description', this.state.description)
     this.setState({
       isUploading: true,
     })
     
     $.ajax({
-      url: '/video', //TODO: update request URL
+      url: '/revision_video', //TODO: update request URL
       type: "POST",
       processData: false,
       contentType: false,

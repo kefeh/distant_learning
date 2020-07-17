@@ -596,7 +596,6 @@ def create_app(test_config=None):
             0] != '' and data.get('category_id')[0] != '0') else None
         if up_video.class_id == None and up_video.category_id == None:
             abort(422, description="Please select a Class or level/Cycle")
-        up_video.revision = True if data.get('revision')[0] and data.get('revision')[0]=='true' else False
         up_video.insert()
     # except Exception:
     #     abort(422)
