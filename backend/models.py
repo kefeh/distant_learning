@@ -414,10 +414,8 @@ class ExamType(db.Model):
     rank = Column(Integer)
     exam_id = Column(Integer, ForeignKey('exams.id', ondelete='cascade'))
 
-    # sub_categories = relationship('SubCategory', cascade="all,delete", backref='categories')
-    # classes = relationship('Classes', cascade="all,delete", backref='categories')
-    timetables = relationship('TimeTable', cascade="all,delete", backref='categories')
-    revision_videos = relationship('Video', cascade='all,delete', backref='categories')
+    timetables = relationship('TimeTable', cascade="all,delete", backref='exam_type')
+    revision_videos = relationship('Video', cascade='all,delete', backref='exam_type')
 
     def __init__(self, name):
         self.name = name
@@ -628,6 +626,10 @@ class TimeTable(db.Model):
         'classes.id', ondelete='cascade'), nullable=True)
     category_id = Column(Integer, ForeignKey(
         'categories.id', ondelete='cascade'), nullable=True)
+    exam_id = Column(Integer, ForeignKey(
+        'exams.id', ondelete='cascade'), nullable=True)
+    exam_type_id = Column(Integer, ForeignKey(
+        'exam_type.id', ondelete='cascade'), nullable=True)
 
     def __init__(self, name, time, link, teacher_id, class_id, category_id, start_time, end_time, signup_time, accepted=False):
         self.link = link
