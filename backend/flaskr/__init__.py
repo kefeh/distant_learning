@@ -579,16 +579,6 @@ def create_app(test_config=None):
             abort(422)
         description = data.get('description', '')
         date = data.get('time', '')
-        # if 'file' in request.files:
-        #     video = request.files['file']
-        #     if video.filename == '':
-        #         abort(400)
-        #     file_name = video.filename
-        #     resp = upload_video(video, file_name, description)
-        #     link = resp
-        #     print(link)
-        #     from time import sleep
-        #     sleep(5)
         link = link[0].replace("watch?v=", "embed/")
     # try:
         date = datetime.now()
@@ -613,20 +603,43 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'success', 'id': up_video.id})
 
-    # def add_upload_video():
-    #     if ('file' not in request.files):
-    #         print('no file')
-    #         abort(400)
-    #     video = request.files['file']
-    #     if video.filename == '':
-    #         print('no file name')
-    #         abort(400)
-    #     file_name = video.filename
-    #     resp = upload_video(video, file_name, description)
-    #     link = resp
-    #     if link:
-    #         return jsonify({'url': link, 'message': 'success'})
+
+    @app.route('/revision_video', methods=['POST'])
+    def add_revision_video():
+        from datetime import datetime
+        data = request.form
+        data = data.to_dict(flat=False)
+        print(request.files)
+        print(data)
+        if ('file' not in request.files) and (data.get('link', '')[0] == ''):
+            abort(400)
+        link = data.get('link', '')
+        if ((data.get('description', '')[0] == '')):
+            abort(422)
+        description = data.get('description', '')
+        date = data.get('time', '')
+        link = link[0].replace("watch?v=", "embed/")
+    # try:
+        date = datetime.now()
+        exam_id = None
+        up_video = Video(name=data.get(
+            'name')[0], link=link, description=description[0], date=date)
+        if(data.get('exam_id')[0] != '' and data.get('exam_id')[0] != '0'):
+            exam_id = int(data.get('exam_id')[0])
+            up_class = Classes.query.filter(Classes.id == exam_id).one()
+            if up_class.categories and not (data.get('exam_type_id')[
+                    0] != '' and data.get('exam_type_id')[0] != '0'):
+                abort(422, description="Please select a level or Cycle")
+        up_video.exam_id = exam_id
+        up_video.exam_type_id = data.get('exam_type_id')[0] if (data.get('exam_type_id')[
+            0] != '' and data.get('exam_type_id')[0] != '0') else None
+        if up_video.exam_id == None and up_video.exam_type_id == None:
+            abort(422, description="Please select a Exam Type or level/Cycle")
+        up_video.insert()
+    # except Exception:
     #     abort(422)
+
+        return jsonify({'message': 'success', 'id': up_video.id})
 
 
 # Get endpoints
@@ -774,24 +787,18 @@ def create_app(test_config=None):
         category_id = request.args.get('category_id')
         # adding code that gets all videos based on a particular education id
         education_id = request.args.get('education_id')
-        revision = True if revision == 'true' else False
-            if education_id:
-                videos = get_videos_by_education_id(education_id, revision)
-            else:
-                videos = Video.query.filter(Video.revision == revision).all()
+        if education_id:
+            videos = get_videos_by_education_id(education_id)
+        elif category_id:
+            videos = Video.query.filter(Video.category_id == category_id)
+        elif class_id:
+            videos = Video.query.filter(Video.class_id == class_id)
+        elif exam_id:
+            videos = Video.query.filter(Video.exam_id == exam_id, Video.revision == revision)
+        elif exam_type_id:
+            videos = Video.query.filter(Video.exam_type_id == exam_type_id, Video.revision == revision)
         else:
-            if education_id:
-                videos = get_videos_by_education_id(education_id)
-            elif category_id:
-                videos = Video.query.filter(Video.category_id == category_id)
-            elif class_id:
-                videos = Video.query.filter(Video.class_id == class_id)
-            elif exam_id:
-                videos = Video.query.filter(Video.exam_id == exam_id, Video.revision == revision)
-            elif exam_type_id:
-                videos = Video.query.filter(Video.exam_type_id == exam_type_id, Video.revision == revision)
-            else:
-                videos = Video.query.all()
+            videos = Video.query.all()
         result = []
         links = []
         for some_video in videos:
