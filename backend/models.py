@@ -501,6 +501,10 @@ class Video(db.Model):
         'categories.id', ondelete='cascade'), nullable=True)
     class_id = Column(Integer, ForeignKey(
         'classes.id', ondelete='cascade'), nullable=True)
+    exam_id = Column(Integer, ForeignKey(
+        'exams.id', ondelete='cascade'), nullable=True)
+    exam_type_id = Column(Integer, ForeignKey(
+        'exam_type.id', ondelete='cascade'), nullable=True)
 
     questions = relationship('Question', cascade="all,delete", backref='video')
 
