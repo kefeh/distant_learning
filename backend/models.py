@@ -493,7 +493,6 @@ class Video(db.Model):
     link = Column(String)
     description = Column(String)
     date = Column(DateTime)
-    revision = Column(Boolean, nullable=True)
 
     category_id = Column(Integer, ForeignKey(
         'categories.id', ondelete='cascade'), nullable=True)
@@ -530,7 +529,6 @@ class Video(db.Model):
             'link': self.link,
             'description': self.description,
             'date': self.date.strftime('%Y/%m/%d'),
-            'revision': self.revision
         }
 
 
