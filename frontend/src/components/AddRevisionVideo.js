@@ -144,7 +144,7 @@ class AddRevisionVideo extends Component {
   getVideosUpdateExam = (id) => {
     
     $.ajax({
-      url: `/videos?exam_id=${id}&revision=${true}`, //TODO: update request URL
+      url: `/videos?exam_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ videos: result.data, isUploading: false })
@@ -159,7 +159,7 @@ class AddRevisionVideo extends Component {
 
   getVideosUpdateExamLevel = (id) => {
     $.ajax({
-      url: `/videos?exam_level_id=${id}&revision=${true}`, //TODO: update request URL
+      url: `/videos?exam_level_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ videos: result.data, isUploading: false })
