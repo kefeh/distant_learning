@@ -774,15 +774,9 @@ def create_app(test_config=None):
         category_id = request.args.get('category_id')
         # adding code that gets all videos based on a particular education id
         education_id = request.args.get('education_id')
-        revision = request.args.get('revision')
         revision = True if revision == 'true' else False
-        if revision:
             if education_id:
                 videos = get_videos_by_education_id(education_id, revision)
-            elif category_id:
-                videos = Video.query.filter(Video.category_id == category_id, Video.revision == revision)
-            elif class_id:
-                videos = Video.query.filter(Video.class_id == class_id, Video.revision == revision)
             else:
                 videos = Video.query.filter(Video.revision == revision).all()
         else:
@@ -792,6 +786,10 @@ def create_app(test_config=None):
                 videos = Video.query.filter(Video.category_id == category_id)
             elif class_id:
                 videos = Video.query.filter(Video.class_id == class_id)
+            elif exam_id:
+                videos = Video.query.filter(Video.exam_id == exam_id, Video.revision == revision)
+            elif exam_type_id:
+                videos = Video.query.filter(Video.exam_type_id == exam_type_id, Video.revision == revision)
             else:
                 videos = Video.query.all()
         result = []
