@@ -25,10 +25,10 @@ class AddTimeTable extends Component {
           videos: [],
           educations: [],
           education_id: 0,
-          classes: [],
-          class_id: 0,
-          categories: [],
-          category_id: 0,
+          exams: [],
+          exam_id: 0,
+          exam_levels: [],
+          exam_level_id: 0,
           isUploading: false,
           system_id: 0,
           teacher_id: '',
@@ -46,7 +46,7 @@ class AddTimeTable extends Component {
       componentDidMount(){
         this.getUsers()
         this.getEducations();
-        this.getClasses(this.state.education_id);
+        this.getExams(this.state.education_id);
         this.getSystems()
       }
     
@@ -139,35 +139,36 @@ class AddTimeTable extends Component {
         })
       }
     
-      getClasses = (id) => {
+      getExams = (id) => {
         this.setState({
           isUploading: false,
         })
         $.ajax({
-          url: `/class?education_id=${id}`, //TODO: update request URL
+          url: `/exams?education_id=${id}`, //TODO: update request URL
           type: "GET",
+          cache: false,
           success: (result) => {
-            this.setState({ classes: result.data })
+            this.setState({ exams: result.data })
             return;
           },
           error: (error) => {
-            alert('Unable to load classes. Please try your request again')
+            alert('Unable to load exams. Please try your request again')
             return;
           }
         })
       }
     
-      getClassSubUpdate = (id) => {
+      getExamSubUpdate = (id) => {
         $.ajax({
-          url: `/class?sub_category_id=${id}`, //TODO: update request URL
+          url: `/exams?sub_category_id=${id}`, //TODO: update request URL
           type: "GET",
           success: (result) => {
             // console.log(result.data)
-            this.setState({ classes: result.data })
+            this.setState({ exams: result.data })
             return;
           },
           error: (error) => {
-            alert('Unable to load classes. Please try your request again')
+            alert('Unable to load exams. Please try your request again')
             return;
           }
         })
@@ -188,11 +189,11 @@ class AddTimeTable extends Component {
         })
       }
 
-      getClassCategories(id){
-        this.state.classes.forEach((element)=>{
+      getExamCategories(id){
+        this.state.exams.forEach((element)=>{
           if(Number(element.id) === Number(id)){
             this.setState({
-              categories: element.categories,
+              exam_levels: element.exam_levels,
             });
           }
         })
@@ -213,8 +214,8 @@ class AddTimeTable extends Component {
                 },
             data: JSON.stringify({
               name: this.state.name,
-              class_id: this.state.class_id,
-              category_id: this.state.category_id,
+              exam_id: this.state.exam_id,
+              exam_level_id: this.state.exam_level_id,
               link: this.state.link,
               teacher_id: this.state.teacher_id,
               time: full_date,
@@ -241,31 +242,31 @@ class AddTimeTable extends Component {
         this.setState({[event.target.name]: event.target.value})
       }
     
-      handleCategoryChange = (event) => {
+      handleExamLevelChange = (event) => {
         this.setState({
-          category_id: event.target.value
+          exam_level_id: event.target.value
         })
       }
     
-      handleClassChange = (event) => {
+      handleExamChange = (event) => {
         this.setState({
-          class_id: event.target.value, category_id: 0
+          exam_id: event.target.value, exam_level_id: 0
         });
-        this.getClassCategories(event.target.value)
+        this.getExamCategories(event.target.value)
       }
     
       handleEducationChange = (event) => {
-        this.getClasses(event.target.value)
+        this.getExams(event.target.value)
         this.getSubCategoryUpdate(event.target.value)  
         this.setState({
-          education_id: event.target.value, class_id: 0, sub_category_id:0, category_id: 0
+          education_id: event.target.value, exam_id: 0, sub_category_id:0, exam_level_id: 0
         })
       }
     
       handleSubCategoryChange = (event) => {
         this.setState({education_id: event.target.value})
-        this.getClassSubUpdate(event.target.value)
-        this.setState({class_id:0, categories:[]})
+        this.getExamSubUpdate(event.target.value)
+        this.setState({exam_id:0, exam_levels:[]})
       }
     
       handleSystemChange = (event) => {
@@ -371,9 +372,9 @@ class AddTimeTable extends Component {
                     </div>
                     <div className="Rtable Rtable--3cols">
                         <label className="Rtable-cell">
-                            <select name="class_id" onChange={this.handleClassChange} required>
-                                <option value={0}>Select a class</option>
-                                {this.state.classes && this.state.classes.map((item, ind) => (
+                            <select name="exam_id" onChange={this.handleExamChange} required>
+                                <option value={0}>Select a Exam</option>
+                                {this.state.exams && this.state.exams.map((item, ind) => (
                                 <option key={item['id']} value={item.id}>
                                     {item.name}
                                 </option>
@@ -381,9 +382,9 @@ class AddTimeTable extends Component {
                             </select>
                         </label>
                         <label className="Rtable-cell">
-                            <select name="category_id" onChange={this.handleCategoryChange}>
+                            <select name="exam_level_id" onChange={this.handleExamLevelChange}>
                                 <option value={0}>Select a Level Or Cycle</option>
-                                {this.state.categories && this.state.categories.map((item, ind) => (
+                                {this.state.exam_levels && this.state.exam_levels.map((item, ind) => (
                                 <option key={item['id']} value={item.id}>
                                     {item.name}
                                 </option>

@@ -48,7 +48,6 @@ class ViewItems extends Component {
     return (
       <div className="view-holder">
         { this.items && <div id="view-items" className="view-holder__view-items">
-          <h2></h2>
           <ul >
             {this.items.map((item, ind) => (
               <li key={item['id']} className="view-holder__list-item">
