@@ -5,14 +5,14 @@ import ViewItems from "./ViewItems"
 
 import '../stylesheets/FormView.css';
 
-class AddCategory extends Component {
+class AddExamType extends Component {
   constructor(props){
     super();
     this.state = {
       name: "",
       classes: [],
-      categories: [],
-      class_id: 0,
+      exam_level: [],
+      exam_id: 0,
       educations: [],
       education_id: 0,
       systems: [],
@@ -23,14 +23,14 @@ class AddCategory extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    var class_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
-    this.getCategoriesUpdate(class_id);  
+    var exam_id = typeof nextProps.parent === "undefined" || !nextProps.parent?'':nextProps.parent.id
+    this.getExamLevelUpdate(exam_id);  
   }
 
   componentDidMount(){
-    this.getClass();
-    var class_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
-    this.getCategoriesUpdate(class_id);
+    this.getExams();
+    var exam_id = typeof this.props.parent === "undefined" || !this.props.parent?'':this.props.parent.id
+    this.getExamLevelUpdate(exam_id);
     this.getEducationsUpdate('');
     this.getSystems()
   }
@@ -81,9 +81,9 @@ class AddCategory extends Component {
     })
   }
 
-  getClass = () => {
+  getExams = () => {
     $.ajax({
-      url: `/class`, //TODO: update request URL
+      url: `exams`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         // console.log(result.data)
@@ -97,9 +97,9 @@ class AddCategory extends Component {
     })
   }
 
-  getCategoriesUpdate = (id) => {
+  getExamLevelUpdate = (id) => {
     $.ajax({
-      url: `/categories?class_id=${id}`, //TODO: update request URL
+      url: `/exam_level?exam_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.data })
@@ -112,9 +112,9 @@ class AddCategory extends Component {
     })
   }
 
-  getCategories = () => {
+  getExamLevel = () => {
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `/exam_level`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.data })
@@ -127,9 +127,9 @@ class AddCategory extends Component {
     })
   }
 
-  getClassSubUpdate = (id) => {
+  getExamSubUpdate = (id) => {
     $.ajax({
-      url: `/class?sub_category_id=${id}`, //TODO: update request URL
+      url: `/exams?sub_category_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         // console.log(result.data)
@@ -143,9 +143,9 @@ class AddCategory extends Component {
     })
   }
 
-  getClassUpdate = (id) => {
+  getExamUpdate = (id) => {
     $.ajax({
-      url: `/class?education_id=${id}`, //TODO: update request URL
+      url: `/exams?education_id=${id}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         // console.log(result.data)
@@ -159,16 +159,16 @@ class AddCategory extends Component {
     })
   }
 
-  submitCategory = (event) => {
+  submitExamLevel = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/categories', //TODO: update request URL
+      url: '/exam_level', //TODO: update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({
         name: this.state.name,
-        class_id: this.state.class_id,
+        exam_id: this.state.exam_id,
       }),
       xhrFields: {
         withCredentials: true
@@ -176,7 +176,7 @@ class AddCategory extends Component {
       crossDomain: true,
       success: (result) => {
         document.getElementById("add-categories-form").reset();
-        this.getCategoriesUpdate(this.state.class_id);
+        this.getExamLevelUpdate(this.state.exam_id);
         return;
       },
       error: (error) => {
@@ -188,7 +188,7 @@ class AddCategory extends Component {
 
   updateChild = (id, rank, name) => {
     $.ajax({
-      url: '/categories', //TODO: update request URL
+      url: '/exam_level', //TODO: update request URL
       type: "PUT",
       dataType: 'json',
       contentType: 'application/json',
@@ -203,7 +203,7 @@ class AddCategory extends Component {
       crossDomain: true,
       success: (result) => {
         // document.getElementById("add-systems-form").reset();
-        this.getCategoriesUpdate(this.state.class_id);
+        this.getExamLevelUpdate(this.state.exam_id);
         alert('Successfully Updated the Level/Cycle')
         return;
       },
@@ -225,31 +225,31 @@ class AddCategory extends Component {
 
   handleEducationChange = (event) => {
     this.setState({education_id: event.target.value})
-    this.getClassUpdate(event.target.value)
+    this.getExamUpdate(event.target.value)
     this.getSubCategoryUpdate(event.target.value)    
-    this.setState({class_id:0})
+    this.setState({exam_id:0})
   }
 
   handleSubCategoryChange = (event) => {
     this.setState({education_id: event.target.value})
-    this.getClassSubUpdate(event.target.value)
-    this.setState({class_id:0, categories:[]})
+    this.getExamSubUpdate(event.target.value)
+    this.setState({exam_id:0, categories:[]})
   }
 
   handleClassChange = (event) => {
     this.setState({
-      class_id: event.target.value,
+      exam_id: event.target.value,
     });
-    this.getCategoriesUpdate(event.target.value)
+    this.getExamLevelUpdate(event.target.value)
   }
 
   deleteAction = (id) => { 
     if(window.confirm('are you sure you want to delete the Education?')) {
       $.ajax({
-        url: `/categories/${id}`, //TODO: update request URL
+        url: `/exam_level/${id}`, //TODO: update request URL
         type: "DELETE",
         success: (result) => {
-          this.getCategoriesUpdate(this.state.class_id);
+          this.getExamLevelUpdate(this.state.exam_id);
           return;
         },
         error: (error) => {
@@ -295,8 +295,8 @@ class AddCategory extends Component {
             </select>
           </label>
           <label>
-            <select name="class_id" onChange={this.handleClassChange}>
-                <option value={0}>Select a class</option>
+            <select name="exam_id" onChange={this.handleClassChange}>
+                <option value={0}>Select a Exam</option>
                 {this.state.classes && this.state.classes.map((item, ind) => (
                 <option key={item['id']} value={item.id}>
                     {item.name}
@@ -308,14 +308,14 @@ class AddCategory extends Component {
         <ViewItems 
           items={this.state.categories}
           deleteAction = {this.deleteAction}
-          getCategories={this.getCategories}
+          getExamLevel={this.getExamLevel}
           updateChild={this.updateChild}
         />
         <div id="add-items__form">
-          <h2>Add a New Level Or Cycle</h2>
-          <form className="add-items__form-view" id="add-categories-form" onSubmit={this.submitCategory}>
+          <h2>Add a New Exam Level</h2>
+          <form className="add-items__form-view" id="add-categories-form" onSubmit={this.submitExamLevel}>
             <label>
-              <span>Level Or Cycle</span>
+              <span>Exam Level</span>
               <input type="text" name="name" onChange={this.handleChange}/>
             </label>
             <input type="submit" className="button" value="Submit" />
@@ -326,4 +326,4 @@ class AddCategory extends Component {
   }
 }
 
-export default AddCategory;
+export default AddExamType;
