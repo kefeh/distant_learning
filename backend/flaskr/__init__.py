@@ -482,9 +482,67 @@ def create_app(test_config=None):
                 v = v.format()
                 v.pop('revision_videos')
                 vid_list.append(v)
-            an_exam['exam_types'] = e_type_list
+            an_exam['exam_type'] = e_type_list
             an_exam['revision_videos'] = vid_list
             result.append(an_exam)
+        return jsonify({'data': result, 'message': 'success'})
+
+
+# Add Exam level
+
+    @app.route('/exam_level', methods=['POST'])
+    def add_exam_level():
+        data = request.json
+        if ((data.get('name', '') == '') or (
+                data.get('exam_id', '') == '')):
+            abort(422)
+        try:
+            exam_level = ExamType(name=data.get(
+                'name'))
+            exam_level.exam_id = data.get('exam_id')
+            exam_level.rank = data.get('rank')
+            exam_level.insert()
+        except Exception:
+            abort(422)
+
+        return jsonify({'message': 'success', 'id': exam_level.id})
+
+    @app.route('/exam_level', methods=['PUT'])
+    def update_exam_level():
+        print("updating exam_level")
+        data = request.json
+        print(data)
+        if ((data.get('name') == '') or (data.get('id') == '')):
+            abort(422)
+    # try:
+        exam_level = ExamType.query.get(data.get('id'))
+        exam_level.name = data.get('name')
+        exam_level.rank = data.get('rank')
+        exam_level.update()
+    # except Exception:
+    #     abort(422)
+
+        return jsonify({'message': 'success', 'id': exam_level.id})
+
+
+    @app.route('/exam_level', methods=['GET'])
+    def get_exam_level():
+        exam_id = request.args.get('exam_id')
+        if exam_id:
+            exam_level = ExamType.query.order_by(
+                asc(ExamType.rank)).filter(ExamType.exam_id == exam_id)
+        else:
+            exam_level = ExamType.query.order_by(asc(ExamType.rank)).all()
+        result = []
+        for an_exam_level in exam_level:
+            an_exam_level = an_exam_level.format()
+            videos = an_exam_level.get('videos', [])
+            videos = []
+            for video in videos:
+                video = video.format()
+                videos.append(video)
+            an_exam_level['videos'] = videos
+            result.append(an_exam_level)
         return jsonify({'data': result, 'message': 'success'})
 
 
@@ -860,7 +918,18 @@ def create_app(test_config=None):
             exams.delete()
         except Exception:
             abort(500)
-        return jsonify({'success': True, "deleted": class_id})
+        return jsonify({'success': True, "deleted": exams_id})
+
+    @app.route('/exam_level/<int:exams_type_id>', methods=['DELETE'])
+    def delete_exam_type(exams_type_id):
+        exam_level = ExamType.query.get(exams_type_id)
+        if not exam_level:
+            abort(404)
+        try:
+            exam_level.delete()
+        except Exception:
+            abort(500)
+        return jsonify({'success': True, "deleted": exams_type_id})
     # @app.route('/system', methods=['GET'])
     # def get_categories():
     #     categories = Category.query.all()
