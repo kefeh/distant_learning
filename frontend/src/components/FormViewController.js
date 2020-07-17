@@ -9,6 +9,7 @@ import AddVideo from './AddVideo'
 import AddRevisionVideo from './AddRevisionVideo'
 import ManageTeachers from './ManageTeachers'
 import AddExam from './AddExam'
+import AddExamLevel from './AddExamLevel'
 
 class FormViewController extends Component {
   constructor(){
@@ -77,7 +78,7 @@ class FormViewController extends Component {
     }
     if (this.state.selection === 'EXAM-CATEGORY'){
         return (
-            <AddClass parent={this.state.parent}/>
+            <AddExamLevel parent={this.state.parent}/>
         );
     }
     if (this.state.selection === "REVISION-VIDEO"){

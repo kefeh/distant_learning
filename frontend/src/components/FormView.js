@@ -109,6 +109,22 @@ class FormView extends Component {
     })
   }
 
+  getExams = () => {
+    $.ajax({
+      url: `/exams`, //TODO: update request URL
+      type: "GET",
+      success: (result) => {
+        // console.log(result.data)
+        this.setState({ parent: result.data, selectionParent:result.data?result.data[0]:null })
+        return;
+      },
+      error: (error) => {
+        alert('Unable to load exams. Please try your request again')
+        return;
+      }
+    })
+  }
+
   setActive = () => {
     document.getElementsByClassName('active')[0].classList.remove('active')
     document.getElementsByClassName(this.state.selection)[0].classList.add('active')
@@ -154,8 +170,8 @@ class FormView extends Component {
       this.getEducations()
       return;
     }
-    if(some_selection==="EXAMS-CATEGORY"){
-      this.getEducations()
+    if(some_selection==="EXAM-CATEGORY"){
+      this.getExams()
       return;
     }
     if(some_selection==="REVISION-VIDEO"){
