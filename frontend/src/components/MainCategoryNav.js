@@ -322,7 +322,7 @@ class MainCategoryNav extends Component {
                 this.getInitialVideos(this.state.selectedEduc.id, false)
             }
         }
-        this.state.selectedSubCat?this.fetchClassSubData(this.state.selectedSubCat, true):this.fetchLeaveData(this.state.selectedEduc, viewTimeTable)
+        this.state.selectedSubCat?this.fetchClassSubData(this.state.selectedSubCat, viewTimeTable):this.fetchLeaveData(this.state.selectedEduc, viewTimeTable)
     }
 
     showRevisionVideo = () => {
