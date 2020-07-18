@@ -284,7 +284,7 @@ class TimetableView extends Component {
                 <div className="view-user-holder">
                 <h2>Revision Timetable/Calendrier de révision</h2>
                 <DatePicker
-                        // placeholderText="Click to choose a date"
+                        placeholderText="Click to choose a date"
                         selected={this.state.date}
                         onSelect={this.handleSelect} //when day is clicked
                         onChange={this.handleDateChange} //only when value has changed
