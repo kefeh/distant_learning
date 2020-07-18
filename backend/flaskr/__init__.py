@@ -477,6 +477,7 @@ def create_app(test_config=None):
             for e_type in exam_type:
                 e_type = e_type.format()
                 e_type.pop('revision_videos')
+                e_type.pop('timetables')
                 e_type_list.append(e_type)
             for v in an_exam.get('revision_videos'):
                 v = v.format()
@@ -537,12 +538,13 @@ def create_app(test_config=None):
         result = []
         for an_exam_level in exam_level:
             an_exam_level = an_exam_level.format()
-            videos = an_exam_level.get('videos', [])
-            videos = []
+            videos = an_exam_level.get('revision_videos', [])
+            an_exam_level.pop('timetables')
+            video_list = []
             for video in videos:
                 video = video.format()
-                videos.append(video)
-            an_exam_level['videos'] = videos
+                video_list.append(video)
+            an_exam_level['revision_videos'] = video_list
             result.append(an_exam_level)
         return jsonify({'data': result, 'message': 'success'})
 
@@ -626,8 +628,8 @@ def create_app(test_config=None):
             'name')[0], link=link, description=description[0], date=date)
         if(data.get('exam_id')[0] != '' and data.get('exam_id')[0] != '0'):
             exam_id = int(data.get('exam_id')[0])
-            up_class = Classes.query.filter(Classes.id == exam_id).one()
-            if up_class.categories and not (data.get('exam_type_id')[
+            up_exam = Exams.query.filter(Exams.id == exam_id).one()
+            if up_exam.exam_type and not (data.get('exam_type_id')[
                     0] != '' and data.get('exam_type_id')[0] != '0'):
                 abort(422, description="Please select a level or Cycle")
         up_video.exam_id = exam_id
@@ -659,7 +661,9 @@ def create_app(test_config=None):
             category_lists = sm_edu.get('category_list')
             result.append(sm_edu)
             classes = sm_edu.get('class_list', [])
+            exams = sm_edu.get('exam_list', [])
             class_list = []
+            exam_list = []
             for s_class in classes:
                 s_class = s_class.format()
                 s_class.pop('categories')
@@ -672,6 +676,12 @@ def create_app(test_config=None):
                 sub_categories.append(s_category)
             sm_edu['class_list'] = class_list
             sm_edu['sub_categories'] = sub_categories
+            for exam in exams:
+                exam = exam.format()
+                exam.pop('exam_type')
+                exam.pop('revision_videos')
+                exam_list.append(exam)
+            sm_edu['exam_list'] = exam_list
         from pprint import pprint
         pprint(educations)
 
@@ -768,16 +778,17 @@ def create_app(test_config=None):
     def get_videos_by_education_id(education_id, revision=False):
         education = Education.query.get(education_id)
         video_list = []
-        for a_class in education.class_list:
-            if revision:
-                videos = Video.query.filter(
-                    Video.class_id == a_class.id, Video.revision == revision).order_by(
-                        asc(Video.date))
-            else:
+        if not revision:
+            for a_class in education.class_list:
                 videos = Video.query.filter(
                     Video.class_id == a_class.id).order_by(
                         asc(Video.date))
-            video_list += videos
+                video_list += videos
+        else:
+            for exam in education.exam_list:
+                videos = Video.query.filter(
+                    Video.exam_id == exam.id).order_by(asc(Video.date))
+                video_list += videos
         video_list = video_list[:10] if len(video_list) > 10 else video_list
         return video_list
 
@@ -789,8 +800,10 @@ def create_app(test_config=None):
         education_id = request.args.get('education_id')
         exam_id = request.args.get('exam_id')
         exam_type_id = request.args.get('exam_level_id')
+        revision = request.args.get('revision')
+        revision = True if revision == 'true' else False
         if education_id:
-            videos = get_videos_by_education_id(education_id)
+            videos = get_videos_by_education_id(education_id, revision)
         elif category_id:
             videos = Video.query.filter(Video.category_id == category_id)
         elif class_id:
@@ -821,6 +834,7 @@ def create_app(test_config=None):
             for ed in system.education_list:
                 s_ed = ed.format()
                 s = s_ed.pop('class_list')
+                s_ed.pop('exam_list')
                 sub_cat = []
                 for item in s_ed['sub_categories']:
                     t = item.format()
@@ -1176,8 +1190,8 @@ def create_app(test_config=None):
     @app.route('/timetable', methods=['GET'])
     def get_timetable():
         params = request.args
-        class_id = params.get('class_id', type=int, default=None)
-        category_id = params.get('category_id', type=int, default=None)
+        exam_id = params.get('exam_id', type=int, default=None)
+        exam_type_id = params.get('exam_level_id', type=int, default=None)
         teacher_id = params.get('teacher_id', type=int, default=None)
         accepted = params.get('accepted', type=bool, default=None)
         print(params.get('time', type=str, default=None))
@@ -1186,29 +1200,29 @@ def create_app(test_config=None):
         if teacher_id:
             teacher = User.query.get(teacher_id)
             teacher_id = None if teacher.format()['admin'] else teacher_id
-        if teacher_id and class_id and category_id and accepted:
+        if teacher_id and exam_id and exam_type_id and accepted:
             timetable = TimeTable.query.filter(
-                TimeTable.teacher_id == teacher_id, TimeTable.category_id == category_id, TimeTable.accepted == accepted)
-        elif teacher_id and class_id and accepted and not category_id:
+                TimeTable.teacher_id == teacher_id, TimeTable.exam_type_id == exam_type_id, TimeTable.accepted == accepted)
+        elif teacher_id and exam_id and accepted and not exam_type_id:
             timetable = TimeTable.query.filter(
-                TimeTable.teacher_id == teacher_id, TimeTable.class_id == class_id, TimeTable.accepted == accepted)
-        elif teacher_id and class_id and not accepted and not category_id:
+                TimeTable.teacher_id == teacher_id, TimeTable.exam_id == exam_id, TimeTable.accepted == accepted)
+        elif teacher_id and exam_id and not accepted and not exam_type_id:
             timetable = TimeTable.query.filter(
-                TimeTable.teacher_id == teacher_id, TimeTable.class_id == class_id)
-        elif teacher_id and category_id and not accepted and not class_id:
+                TimeTable.teacher_id == teacher_id, TimeTable.exam_id == exam_id)
+        elif teacher_id and exam_type_id and not accepted and not exam_id:
             timetable = TimeTable.query.filter(
-                TimeTable.teacher_id == teacher_id, TimeTable.category_id == category_id)
-        elif accepted and category_id and not teacher_id and not class_id:
+                TimeTable.teacher_id == teacher_id, TimeTable.exam_type_id == exam_type_id)
+        elif accepted and exam_type_id and not teacher_id and not exam_id:
             timetable = TimeTable.query.filter(
-                TimeTable.accepted == accepted, TimeTable.category_id == category_id)
-        elif accepted and class_id and not teacher_id and not category_id:
+                TimeTable.accepted == accepted, TimeTable.exam_type_id == exam_type_id)
+        elif accepted and exam_id and not teacher_id and not exam_type_id:
             timetable = TimeTable.query.filter(
-                TimeTable.accepted == accepted, TimeTable.class_id == class_id)
-        elif category_id:
+                TimeTable.accepted == accepted, TimeTable.exam_id == exam_id)
+        elif exam_type_id:
             timetable = TimeTable.query.filter(
-                TimeTable.category_id == category_id)
-        elif class_id:
-            timetable = TimeTable.query.filter(TimeTable.class_id == class_id)
+                TimeTable.exam_type_id == exam_type_id)
+        elif exam_id:
+            timetable = TimeTable.query.filter(TimeTable.exam_id == exam_id)
         elif teacher_id:
             timetable = TimeTable.query.filter(
                 TimeTable.teacher_id == teacher_id)

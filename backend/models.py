@@ -226,7 +226,8 @@ class Education(db.Model):
             'name': self.name,
             'class_list': self.class_list,
             'rank': self.rank,
-            'sub_categories': self.sub_categories
+            'sub_categories': self.sub_categories,
+            'exam_list': self.exam_list
         }
 
 
