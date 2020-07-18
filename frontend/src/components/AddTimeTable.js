@@ -40,6 +40,7 @@ class AddTimeTable extends Component {
           start_time: '',
           end_time: '',
           signup_time: '',
+          studio: ''
         }
       }
 
@@ -221,7 +222,8 @@ class AddTimeTable extends Component {
               time: full_date,
               start_time: this.state.start_time,
               end_time: this.state.end_time,
-              signup_time: this.state.signup_time
+              signup_time: this.state.signup_time,
+              studio: this.state.studio
             }),
             xhrFields: {
               withCredentials: true
@@ -417,13 +419,16 @@ class AddTimeTable extends Component {
                         <input type="text" name="name" placeholder="Name" onChange={this.handleChange} required/>
                     </label>
                     <label>
-                    <input type="text" placeholder="class code"  name="link" onChange={this.handleChange} required/>
+                    <input type="text" placeholder="class Link"  name="link" onChange={this.handleChange} required/>
                     </label>
                     <label>
                         <input type="text" name="start_time" placeholder="starts at(HH:MM)" onChange={this.handleChange} required/>
                     </label>
                     <label>
                         <input type="text" name="end_time" placeholder="ends at(HH:MM)" onChange={this.handleChange} required/>
+                    </label>
+                    <label>
+                        <input type="text" name="studio" placeholder="studio" onChange={this.handleChange} required/>
                     </label>
                     <label>
                         <DatePicker

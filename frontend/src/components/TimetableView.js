@@ -292,32 +292,31 @@ class TimetableView extends Component {
                 { this.state.timetables && <div id="view-user-items" className="view-user-holder__view-user-items">
                 <ul >
                 {!client.isLoggedIn() ? (
-                    <li className="Rtable Rtable--4cols table-title">
+                    <li className="Rtable Rtable--5cols table-title">
                       <div className="Rtable-cell table-title-item"> Name / Nom</div>
                       <div className="Rtable-cell table-title-item"> Date / Date</div>
                       <div className="Rtable-cell table-title-item"> Time / Temps</div>
+                      <div className="Rtable-cell table-title-item"> Venue / Venu</div>
                       <div className="Rtable-cell table-title-item"> Register / S'inscrire</div>
                     </li>):<></>}
                     {this.state.timetables.length > 0 && this.state.timetables.map((item, ind) => (
-                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--4cols">
+                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--5cols">
                         <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
                         <div className="Rtable-cell table-item"> {item['name']}</div>
                         <div className="Rtable-cell table-item"> {item['time']}</div>
-                        <div className="Rtable-cell table-item"> {`${item['start_time']} to ${item['end_time']}`}</div>
-                        {!item["signup"] && <div className="Rtable-cell table-item" > <span style={{color: "red"}}>Closed</span></div>}
+                        <div className="Rtable-cell table-item"> {`${item['start_time']} - ${item['end_time']}`}</div>
+                        <div className="Rtable-cell table-item"> {item['studio']}</div>
+                        {!item["signup"] ? (<div className="Rtable-cell table-item" > <span style={{color: "red"}}>Closed</span></div>)
+                        :<div className="Rtable-cell table-item">
+                          <a href={item['link']} target="_blank" rel="noopener noreferrer">Click here/Cliquez ici</a>
+                          <div className="signup-time">Latest/Avant {item['signup_time']}</div>
+                        </div>}
                         {client.isLoggedIn() ? (
                           item["accepted"]? (<input style={{backgroundColor: "red"}} type="submit" className="button" value="decline" />):
                           (<input type="submit" className="button" value='accept' />)):<></>}
                         </form>
                         {client.isLoggedIn() ? (
                         <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deletetimetable(item.id)}/>):<></>}
-                        {item["signup"] && 
-                        <form onSubmit={this.addStudent.bind(this, item['id'])}>
-                          {/* <div className="code"> Use: {item['link']}</div> */}
-                          <input type="text" style={{color: "black", fontWeight: 'bold'}} placeholder={`use: ${item['link']}`} name="student" onChange={this.handleChange} required />
-                          <input type="submit" className="signup-button" value="signup / s'inscrire" disabled/>
-                          <div className="signup-time">Latest/Avant {item['signup_time']}</div>
-                        </form>}
                         {/* {client.isLoggedIn() &&<div className="student-display">
                         <span >Students Signedup {item['students'].length }</span>
                         </div>} */}
