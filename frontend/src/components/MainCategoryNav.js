@@ -60,7 +60,9 @@ class MainCategoryNav extends Component {
                                 },
                                 level2Data: result.data[0].education_list,
                                 selectedItem1: result.data[0].id + '-' + result.data[0].name,
-                                selectedEduc: result.data[0],
+                                selectedEduc: result.data[0].education_list && result.data[0].education_list.length > 0
+                                    ? result.data[0].education_list[0]
+                                    : null,
                                 selectedItem2:
                                     result.data[0].education_list && result.data[0].education_list.length > 0
                                         ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
@@ -119,7 +121,6 @@ class MainCategoryNav extends Component {
     };
 
     handleTabClick = (data, nextData) => {
-        console.log(data)
         this.setState((prevState) => ({
             ...prevState,
             selectedItem1: data.id + '-' + data.name,
@@ -240,7 +241,7 @@ class MainCategoryNav extends Component {
         var showExamsCheck = typeof(showExams) === 'undefined'?false:showExams
         var url_for = (!this.state.viewTimeTable && !this.state.viewRevisionVideos)? '/class': '/exams'
         url_for = typeof(showExams) === 'undefined'? (showExamsCheck?'/exams':url_for):(showExams?'/exams':'/class')
-        console.log(url_for)
+        // console.log(url_for)
         var viewTimeTableCheck = url_for === '/exams'?true:false
         this.setState(
             (prevState) => ({
@@ -304,7 +305,7 @@ class MainCategoryNav extends Component {
     }
 
     showTimeTable = () => {
-        console.log('showtimetable')
+        // console.log('showtimetable')
         this.setState({
             viewRevisionVideos: this.state.viewTimeTable,
             viewTimeTable: !this.state.viewTimeTable
