@@ -119,10 +119,12 @@ class MainCategoryNav extends Component {
     };
 
     handleTabClick = (data, nextData) => {
+        console.log(data)
         this.setState((prevState) => ({
             ...prevState,
             selectedItem1: data.id + '-' + data.name,
             videos: [],
+            selectedEduc: nextData?nextData[0]:null,
             tabVisibility: true,
         }));
         this.showChildData(data, nextData);
