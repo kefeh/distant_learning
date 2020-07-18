@@ -1175,12 +1175,14 @@ def create_app(test_config=None):
         teacher_id = data.get('teacher_id')
         start_time = data.get('start_time')
         end_time = data.get('end_time')
+        studio = data.get('studio')
         exam_type_id = data.get('exam_level_id') if data.get('exam_level_id') else None
     # try:
         timetable = TimeTable(name=name, link=link, time=date,
                                 teacher_id=teacher_id, exam_id=exam_id,
                                 exam_type_id=exam_type_id, start_time=start_time,
-                                end_time=end_time, signup_time=signup_time)
+                                end_time=end_time, signup_time=signup_time,
+                                studio=studio)
         timetable.insert()
     # except Exception:
     #     abort(422)
@@ -1233,10 +1235,10 @@ def create_app(test_config=None):
         result = []
         for a_timetable in timetable:
             ttable = a_timetable.format()
-            students = []
-            for student in ttable.get('students', []):
-                students.append(student.format())
-            ttable['students'] = students
+            # students = []
+            # for student in ttable.get('students', []):
+            #     students.append(student.format())
+            # ttable['students'] = students
             result.append(ttable)
         return jsonify({
             'data': result,

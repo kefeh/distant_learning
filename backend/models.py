@@ -618,7 +618,7 @@ class TimeTable(db.Model):
     accepted = Column(Boolean)
     start_time = Column(String)
     end_time = Column(String)
-    students = relationship('Student', cascade="all,delete", backref='timetable')
+    studio = Column(String)
     teacher_id = Column(Integer, ForeignKey(
         'users.id', ondelete='cascade'), nullable=True)
     class_id = Column(Integer, ForeignKey(
@@ -630,7 +630,7 @@ class TimeTable(db.Model):
     exam_type_id = Column(Integer, ForeignKey(
         'exam_type.id', ondelete='cascade'), nullable=True)
 
-    def __init__(self, name, time, link, teacher_id, exam_id, exam_type_id, start_time, end_time, signup_time, accepted=False):
+    def __init__(self, name, time, link, teacher_id, exam_id, exam_type_id, start_time, end_time, signup_time, studio, accepted=False):
         self.link = link
         self.name = name
         self.time = time
@@ -641,6 +641,7 @@ class TimeTable(db.Model):
         self.start_time = start_time,
         self.end_time = end_time,
         self.signup_time = signup_time,
+        self.studio = studio,
 
         db.session.commit()
 
@@ -667,7 +668,7 @@ class TimeTable(db.Model):
             'end_time': self.end_time,
             'teacher': self.users.name if self.users else 'No name',
             'signup': True if self.signup_time > datetime.now() else False,
-            'students': self.students,
+            'studio': self.studio,
         }
 
 
