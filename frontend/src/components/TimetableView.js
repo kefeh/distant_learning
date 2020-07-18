@@ -38,7 +38,7 @@ class TimetableView extends Component {
         this.setState({
             class_id: this.props.category_id,
             category_id: this.props.class_id,
-            selected_date: this.setDate()
+            selected_date: this.setDate(this.state.date)
         })
         this.getTimetable(this.setDate(), this.props.category_id, this.props.class_id)
         // console.log("References")
@@ -57,7 +57,7 @@ class TimetableView extends Component {
         var selected_date = typeof date !== 'undefined'?date:this.state.selected_date
         class_id = typeof(class_id)==='undefined'?this.state.class_id:class_id
         category_id = (typeof(category_id)==='undefined')?this.state.category_id:category_id
-        var query_url = typeof(category_id) !== "undefined" && category_id !== ''?`/timetable?category_id=${category_id}&time=${selected_date}`: `/timetable?class_id=${class_id}&time=${selected_date}`
+        var query_url = typeof(category_id) !== "undefined" && category_id !== ''?`/timetable?exam_level_id=${category_id}&time=${selected_date}`: `/timetable?exam_id=${class_id}&time=${selected_date}`
         query_url = !client.isLoggedIn()?`${query_url}&accepted=${true}`:`${query_url}&teacher_id=${localStorage.getItem(client.LOCAL_STORAGE_LOGIN_DATA)}`
         this.setState({ fetchingInProgress: true });
         $.ajax({
@@ -260,6 +260,15 @@ class TimetableView extends Component {
         // this.setState({item_id: 0, item_name: 0, item_rank:0})
         // document.getElementById("edit-video-form").reset();
       }
+      handleDateChange = (event) => {
+        // // console.log('updating')
+        // // console.log(id)
+        // // console.log(event.target.value)
+        // name = typeof this.state.item_name == "undefined" || this.state.item_name === ""?name: this.state.item_name;
+        // // console.log(name)
+        // // console.log(this.state.item_name)
+        // this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
+      }
 
 
       // Update the count down every 1 second
@@ -275,7 +284,7 @@ class TimetableView extends Component {
                 <div className="view-user-holder">
                 <h2>Revision Timetable/Calendrier de révision</h2>
                 <DatePicker
-                        placeholderText="Click to choose a date"
+                        // placeholderText="Click to choose a date"
                         selected={this.state.date}
                         onSelect={this.handleSelect} //when day is clicked
                         onChange={this.handleDateChange} //only when value has changed

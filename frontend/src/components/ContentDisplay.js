@@ -93,7 +93,8 @@ class ContentDisplay extends Component {
     }
 
     toggleDrop = (child) => {
-        if(child.categories.length > 0){
+        var check = typeof(child.categories) === 'undefined'? child.exam_levels : child.categories
+        if(check.length > 0){
             if (child.id + child.name === this.state.selectedBlock) {
                 this.setState((prevState) => ({
                     ...prevState,
@@ -123,6 +124,7 @@ class ContentDisplay extends Component {
         }}
 
     displayClasses = (key, some_class, fetchVideoData, setTimetableInfo) => {
+        var categories = typeof(some_class.categories) === 'undefined'? some_class.exam_levels:some_class.categories
         return(
             <div key={key} className="pl-0">
             <div
@@ -132,19 +134,19 @@ class ContentDisplay extends Component {
                 onClick={() => this.toggleDrop(some_class)}
             >
                 <span className="class-iten-text">{some_class.name}</span>
-                {some_class.categories && some_class.categories.length > 0 &&(<div className="menu-icon">
+                {categories && categories.length > 0 &&(<div className="menu-icon">
                 <svg className="icon-circle-down">
                     <use xlinkHref="./icons/symbol-defs.svg#icon-circle-down"></use>
                 </svg>
                 </div>)}
             </div>
-            {some_class.categories && some_class.categories.length > 0 && (
+            {categories && categories.length > 0 && (
                 <div
                     className={`ml-5 ${
                         some_class.id + some_class.name === this.state.selectedBlock ? "d-block" : "d-none"
                     }`}
                 >
-                    {some_class.categories.map((classItem) => (
+                    {categories.map((classItem) => (
                         <DisplayCategories key={classItem.id} classItem={classItem} fetchVideoData={this.props.fetchVideoData} setTimetableInfo={this.props.setTimetableInfo}/>
                     ))}
                 </div>

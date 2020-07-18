@@ -29,6 +29,8 @@ class MainCategoryNav extends Component {
             selectedSubCatname: '',
             selected_class: '',
             selected_category: '',
+            selectedSubCat: null,
+            selectedEduc: null,
             viewTimeTable: false,
             viewRevisionVideos: false,
         };
@@ -58,6 +60,7 @@ class MainCategoryNav extends Component {
                                 },
                                 level2Data: result.data[0].education_list,
                                 selectedItem1: result.data[0].id + '-' + result.data[0].name,
+                                selectedEduc: result.data[0],
                                 selectedItem2:
                                     result.data[0].education_list && result.data[0].education_list.length > 0
                                         ? result.data[0].education_list[0].id + result.data[0].education_list[0].name
@@ -133,7 +136,11 @@ class MainCategoryNav extends Component {
         this.setState((prevState) => ({
             ...prevState,
             selectedItem2: data.id + data.name,
+            selectedEduc: data,
             subTabVisibility: cond,
+            selectedSubCat: null,
+            selected_class: '',
+            selected_category: '',
         }));
         this.getInitialVideos(data.id)
         this.showChildData(data, nextData);
@@ -142,42 +149,49 @@ class MainCategoryNav extends Component {
     handleSubCatClick = (data, parentData) => {
         this.setState({ selectedSubCatId: data.id + data.name, 
             selectedSubCatname: data.name,
+            selectedSubCat: data,
             subTabVisibility:false });
         // this.getInitialVideos(parentData.id)
         this.fetchClassSubData(data);
     };
 
-    fetchClassSubData = (prevData) => {
-        this.setState(
-            (prevState) => ({
-                ...prevState,
-                lastLevelData: {
-                    ...prevState.lastLevelData,
-                    isFetching: true,
-                },
-            }),
-            () =>
-                $.ajax({
-                    url: `/class?sub_category_id=${prevData.id}`, //TODO: update request URL
-                    type: "GET",
-                    success: (result) => {
-                        // console.log(result.data);
-                        this.setState((prevState) => ({
-                            ...prevState,
-                            lastLevelData: {
-                                ...prevState.lastLevelData,
-                                data: result.data,
-                                isFetching: false,
-                            },
-                        }));
-                        return;
+    fetchClassSubData = (prevData, showExams) => {
+        if (prevData){
+            var showExamsCheck = typeof(showExams) === 'undefined'?false:showExams
+            var url_for = (!this.state.viewTimeTable && !this.state.viewRevisionVideos)? '/class': '/exams'
+            url_for = typeof(showExams) === 'undefined'? (showExamsCheck?'/exams':url_for):(showExams?'/exams':'/class')
+            this.setState(
+                (prevState) => ({
+                    ...prevState,
+                    lastLevelData: {
+                        ...prevState.lastLevelData,
+                        isFetching: true,
                     },
-                    error: (error) => {
-                        alert("Unable to load categories. Please try your request again");
-                        return;
-                    },
-                })
-        );
+                }),
+                () =>
+                    $.ajax({
+                        url: `${url_for}?sub_category_id=${prevData.id}`, //TODO: update request URL
+                        type: "GET",
+                        success: (result) => {
+                            // console.log(result.data);
+                            this.setState((prevState) => ({
+                                ...prevState,
+                                lastLevelData: {
+                                    ...prevState.lastLevelData,
+                                    data: result.data,
+                                    isFetching: false,
+                                },
+                            }));
+                            return;
+                        },
+                        error: (error) => {
+                            alert("Unable to load categories. Please try your request again");
+                            return;
+                        },
+                    })
+            );
+        }
+        
     };
 
     showChildData = (prevData, data) => {
@@ -220,7 +234,12 @@ class MainCategoryNav extends Component {
         }
     };
 
-    fetchLeaveData = (prevData) => {
+    fetchLeaveData = (prevData, showExams) => {
+        var showExamsCheck = typeof(showExams) === 'undefined'?false:showExams
+        var url_for = (!this.state.viewTimeTable && !this.state.viewRevisionVideos)? '/class': '/exams'
+        url_for = typeof(showExams) === 'undefined'? (showExamsCheck?'/exams':url_for):(showExams?'/exams':'/class')
+        console.log(url_for)
+        var viewTimeTableCheck = url_for === '/exams'?true:false
         this.setState(
             (prevState) => ({
                 ...prevState,
@@ -231,8 +250,9 @@ class MainCategoryNav extends Component {
             }),
             () =>
                 $.ajax({
-                    url: `/class?education_id=${prevData.id}`, //TODO: update request URL
+                    url: `${url_for}?education_id=${prevData.id}`, //TODO: update request URL
                     type: "GET",
+                    cache: false,
                     success: (result) => {
                         // console.log(result.data);
                         this.setState((prevState) => ({
@@ -243,8 +263,8 @@ class MainCategoryNav extends Component {
                                 isFetching: false,
                             },
                         }));
-                        (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.getInitialVideos(prevData.id, this.state.viewRevisionVideos):(()=>{})()
-                        this.getInitialVideos(prevData.id, this.state.viewRevisionVideos)
+                        // (typeof result.data !== "undefined"|| result.data.length > 0 ) && typeof result.data[0] !== "undefined"? this.getInitialVideos(prevData.id, this.state.viewRevisionVideos):(()=>{})()
+                        this.getInitialVideos(prevData.id, this.state.viewRevisionVideos, viewTimeTableCheck)
                         return;
                     },
                     error: (error) => {
@@ -257,9 +277,11 @@ class MainCategoryNav extends Component {
 
     fetchVideoData = (class_id, category_id, revision) => {
         revision = typeof(revision) === "undefined"?this.state.viewRevisionVideos:revision
-        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}&revision=${revision}`: `/videos?class_id=${class_id}&revision=${revision}`
+        var query_url = category_id && typeof category_id !== "undefined"?`/videos?category_id=${category_id}`: `/videos?class_id=${class_id}`
+        var sec_query_url = category_id && typeof category_id !== "undefined"?`/videos?exam_level_id=${category_id}`: `/videos?exam_id=${class_id}`
+        var url_for_query = (!this.state.viewTimeTable && !this.state.viewRevisionVideos) ? query_url : sec_query_url
         $.ajax({
-            url: query_url, //TODO: update request URL
+            url: url_for_query, //TODO: update request URL
             type: "GET",
             success: (result) => {
               this.setState({ videos: result.data, selected_category: category_id, selected_class: class_id})
@@ -280,6 +302,7 @@ class MainCategoryNav extends Component {
     }
 
     showTimeTable = () => {
+        console.log('showtimetable')
         this.setState({
             viewRevisionVideos: this.state.viewTimeTable,
             viewTimeTable: !this.state.viewTimeTable
@@ -296,23 +319,23 @@ class MainCategoryNav extends Component {
              if( this.state.selected_category !== "" || this.state.selected_class !== ""){
                 this.fetchVideoData(this.state.selected_class, this.state.selected_category, false)
             }else{
-                this.getInitialVideos(this.state.selectedItem1.split('-')[0], false)
+                this.getInitialVideos(this.state.selectedEduc.id, false)
             }
         }
-       
+        this.state.selectedSubCat?this.fetchClassSubData(this.state.selectedSubCat, true):this.fetchLeaveData(this.state.selectedEduc, viewTimeTable)
     }
 
     showRevisionVideo = () => {
         if(this.state.selected_category !== "" || this.state.selected_class !== ""){
             this.fetchVideoData(this.state.selected_class, this.state.selected_category, !this.state.viewRevisionVideos)
         }else{
-            this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedItem1.split('-')[0], !this.state.viewRevisionVideos):this.showTimeTable()
+            this.state.viewRevisionVideos===false?this.getInitialVideos(this.state.selectedEduc.id, !this.state.viewRevisionVideos):this.showTimeTable()
         }
         this.setState({
             viewTimeTable: this.state.viewRevisionVideos,
             viewRevisionVideos: !this.state.viewRevisionVideos
         })
-        // this.fetchLeaveData(this.state.level2Data[0])
+        // this.fetchLeaveData(this.state.level2Data[0], true)
     }
 
     render() {

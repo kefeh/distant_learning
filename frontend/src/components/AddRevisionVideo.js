@@ -261,7 +261,7 @@ class AddRevisionVideo extends Component {
 
   handleSubCategoryChange = (event) => {
     this.setState({education_id: event.target.value})
-    this.getClassSubUpdate(event.target.value)
+    this.getExamsSubUpdate(event.target.value)
     this.setState({exam_id:0, exam_levels:[]})
   }
 
