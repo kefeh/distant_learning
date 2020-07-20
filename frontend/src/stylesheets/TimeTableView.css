@@ -71,3 +71,22 @@ input[type='submit'].signup-button{
     font-size: 0.7rem;
     color: #E84641;
 }
+
+.editing-timetable{
+    display: flex;
+    flex-direction: row;
+    margin-right: 2rem;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.icon-editing-delete{
+    margin-right: 2rem;
+}
+
+.icon-editing-timetable{
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    fill: red;
+}

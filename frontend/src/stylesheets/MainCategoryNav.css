@@ -149,7 +149,7 @@
     font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
-    z-index: 999;
+    /* z-index: 999; */
     color: #E84641;
 }
 .timetable-button-secondary{

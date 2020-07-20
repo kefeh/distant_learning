@@ -25,7 +25,16 @@ class TimetableView extends Component {
           accepted: '',
           users: '',
           student: '',
+          edit_timetable: false,
+          edit_item_id: null,
           countDownDate: new Date("Jan 5, 2021 15:37:25").getTime(),
+          name: null,
+          start_time: null,
+          end_time: null,
+          link: null,
+          signup_time: null,
+          studio: null,
+          updateInProgress: false,
         }
       }
 
@@ -50,6 +59,55 @@ class TimetableView extends Component {
               date = new Date()
           }
           return`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:01`
+      }
+
+      submitTimeTable = (event) => {
+        event.preventDefault()
+        this.setState({
+          updateInProgress : true
+        })
+        // console.log(full_date)
+        $.ajax({
+            url: '/timetable', //TODO: update request URL
+            type: "PUT",
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem(client.LOCAL_STORAGE_KEY)}`,
+                },
+            data: JSON.stringify({
+              id: this.state.edit_item_id,
+              name: this.state.name,
+              link: this.state.link,
+              start_time: this.state.start_time,
+              end_time: this.state.end_time,
+              signup_time: this.state.signup_time,
+              studio: this.state.studio
+            }),
+            xhrFields: {
+              withCredentials: true
+            },
+            crossDomain: true,
+            success: (result) => {
+              alert('Successfully Updated timetable')
+              this.setState({
+                updateInProgress: false,
+                edit_timetable: false,
+                edit_item_id: null,
+              })
+              this.getTimetable()
+              return;
+            },
+            error: (error) => {
+              alert('Unable to update timetable. Please try your request again')
+              this.setState({
+                updateInProgress: false,
+                edit_timetable: false,
+                edit_item_id: null,
+              })
+              return;
+            }
+          })
       }
 
       getTimetable = (date, category_id, class_id) => {
@@ -239,6 +297,13 @@ class TimetableView extends Component {
         // this.setState({item_name: event.target.value, item_id:id , item_rank:this.state.item_rank!==""?this.state.rank:rank})
       }
 
+
+      handleUpdateSelect = (event) => {
+        this.setState({
+            signup_time: `${event.getFullYear()}-${event.getMonth() + 1}-${event.getDate()} ${event.getHours()}:${event.getMinutes()}`,
+        })
+      }
+
     
       handleChange = (event) => {
         this.setState({[event.target.name]: event.target.value})
@@ -268,6 +333,18 @@ class TimetableView extends Component {
         // // console.log(name)
         // // console.log(this.state.item_name)
         // this.setState({item_rank: event.target.value, item_id: this.state.item_id!==0?this.state.item_id:id, item_name: name })
+      }
+      editTimetable = (id) => {
+        this.setState({
+          edit_timetable: true,
+          edit_item_id: id,
+        })
+      }
+      editTimetableUnset = () => {
+        this.setState({
+          edit_timetable: false,
+          edit_item_id: null,
+        })
       }
 
 
@@ -300,8 +377,8 @@ class TimetableView extends Component {
                       <div className="Rtable-cell table-title-item"> Register / S'inscrire</div>
                     </li>):<></>}
                     {this.state.timetables.length > 0 && this.state.timetables.map((item, ind) => (
-                    <li key={item['id']} className="view-user-holder__list-item Rtable Rtable--5cols">
-                        <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
+                    !client.isLoggedIn() ? (<li key={item['id']} className="view-user-holder__list-item Rtable Rtable--5cols">
+                        <div className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
                         <div className="Rtable-cell table-item"> {item['name']}</div>
                         <div className="Rtable-cell table-item"> {item['time']}</div>
                         <div className="Rtable-cell table-item"> {`${item['start_time']} - ${item['end_time']}`}</div>
@@ -311,17 +388,63 @@ class TimetableView extends Component {
                           <a href={item['link']} target="_blank" rel="noopener noreferrer">Click here/Cliquez ici</a>
                           <div className="signup-time">Latest/Avant {item['signup_time']}</div>
                         </div>}
-                        {client.isLoggedIn() ? (
-                          item["accepted"]? (<input style={{backgroundColor: "red"}} type="submit" className="button" value="decline" />):
-                          (<input type="submit" className="button" value='accept' />)):<></>}
+                        </div>
+                    </li>):(
+                        !this.state.edit_timetable && this.state.edit_item_id!==item.id) ? 
+                        (<li key={item['id']} className="view-user-holder__list-item Rtable Rtable--5cols">
+                        <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
+                        <div className="editing-timetable">
+                          <svg style={{fill: "red"}} className="icon-editing-timetable icon-editing-delete" onClick={() => this.deletetimetable(item.id)}>
+                              <use xlinkHref="./icons/symbol-defs.svg#icon-bin"></use>
+                          </svg>
+                          <svg style={{fill: "blue"}} className="icon-editing-timetable" onClick={() => this.editTimetable(item.id)}>
+                              <use xlinkHref="./icons/symbol-defs.svg#icon-pencil"></use>
+                          </svg>
+                          {/* <img src="./delete.png" alt="delete" className="view-user-holder__delete" /> */}
+                        </div>
+                        <div className="Rtable-cell table-item"> {item['name']}</div>
+                        <div className="Rtable-cell table-item"> {item['time']}</div>
+                        <div className="Rtable-cell table-item"> {`${item['start_time']} - ${item['end_time']}`}</div>
+                        <div className="Rtable-cell table-item"> {item['studio']}</div>
+                        {!item["signup"] ? (<div className="Rtable-cell table-item" > <span style={{color: "red"}}>Closed</span></div>)
+                        :<div className="Rtable-cell table-item">
+                          <a href={item['link']} target="_blank" rel="noopener noreferrer">Click here/Cliquez ici</a>
+                          <div className="signup-time">Latest/Avant {item['signup_time']}</div>
+                        </div>}
+                        {item["accepted"]? (<input style={{backgroundColor: "red"}} type="submit" className="button" value="decline" />):
+                          (<input type="submit" className="button" value='accept' />)}
                         </form>
-                        {client.isLoggedIn() ? (
-                        <img src="./delete.png" alt="delete" className="view-user-holder__delete" onClick={() => this.deletetimetable(item.id)}/>):<></>}
-                        {/* {client.isLoggedIn() &&<div className="student-display">
-                        <span >Students Signedup {item['students'].length }</span>
-                        </div>} */}
-                    </li>
-                    ))}
+                      </li>):(
+                          <form className="view-user-holder__list-item Rtable Rtable--5cols edit-items__form-view " id="update-video-form" onSubmit={this.submitTimeTable}>
+                          <div>
+                          <svg style={{fill: "blue"}} className="icon-editing-timetable" onClick={() => this.editTimetableUnset()}>
+                              <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
+                          </svg>
+                          </div>
+                          <input type="text" placeholder={item["name"]} className="Rtable-cell table-item"  name="name" onChange={this.handleChange} />
+                          <div className="Rtable-cell table-item" >
+                          <input type="text" placeholder={item['start_time']}  name="start_time" onChange={this.handleChange} />
+                          <input type="text" placeholder={item['end_time']}  name="end_time" onChange={this.handleChange} />
+                          </div>
+                          <input className="Rtable-cell table-item" type="text" placeholder={item['studio']}  name="studio" onChange={this.handleChange} />
+                          <div className="Rtable-cell table-item">
+                            <input type="text" placeholder={item["link"]} className="Rtable-cell table-item"  name="link" onChange={this.handleChange} />
+                            <DatePicker
+                            selected={this.state.signup_time? new Date(this.state.signup_time):new Date(item['signup_time'])}
+                            onChange={this.handleUpdateSelect}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            timeCaption="time"
+                            dateFormat="MMMM d, yyyy h:mm"
+                            />
+                          </div>
+                          {this.state.updateInProgress? <input type="submit" className="button" value='Updating...' disabled/> : <input type="submit" className="button" value='Update' />}
+                        
+                          </form>
+                      )
+                    )
+                    )}
                 </ul>
                 </div>}
                 { !this.state.timetables && <div id="view-user-items" className="view-user-holder__view-user-items">
