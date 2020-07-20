@@ -1263,6 +1263,29 @@ def create_app(test_config=None):
         return jsonify({'status': 'success'})
 
 
+    @app.route('/timetable', methods=['PUT'])
+    @requires_auth
+    def update_timetable():
+        data = request.json
+        if (data.get('id') == ''):
+            abort(422)
+        timetable = TimeTable.query.filter(TimeTable.id == data.get(
+            'id')).first()
+
+        try:
+            timetable.name = data.get('name') if data.get('name') else timetable.name
+            timetable.link = data.get('link') if data.get('link') else timetable.link
+            timetable.start_time = data.get('start_time') if data.get('start_time') else timetable.start_time
+            timetable.end_time = data.get('end_time') if data.get('end_time') else timetable.end_time
+            timetable.signup_time = datetime.strptime(data.get('signup_time'), "%Y-%m-%d %H:%M") if data.get('signup_time') else timetable.signup_time
+            timetable.studio = data.get('studio') if data.get('studio') else timetable.studio
+            timetable.update()
+        except Exception:
+            abort(422)
+
+        return jsonify({'status': 'success'})
+
+
     @app.route('/timetable/<int:timetable_id>', methods=['DELETE'])
     @requires_auth
     @requires_admin
