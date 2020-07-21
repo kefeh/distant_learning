@@ -390,7 +390,7 @@ class TimetableView extends Component {
                         </div>}
                         </div>
                     </li>):(
-                        !this.state.edit_timetable && this.state.edit_item_id!==item.id) ? 
+                        !this.state.edit_timetable || this.state.edit_item_id!==item.id) ? 
                         (<li key={item['id']} className="view-user-holder__list-item Rtable Rtable--5cols">
                         <form className="edit-items__form-view edit-user__form-view" id="edit-video-form" onSubmit={this.acceptSchedule.bind(this, item['id'])}>
                         <div className="editing-timetable">
