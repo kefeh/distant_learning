@@ -415,7 +415,7 @@ class MainCategoryNav extends Component {
                                         </div>
                                     </div>
                                     <div className="main-body-content-section">
-                                        <div className='timetable-button' onClick={() => {this.showTimeTableMain()}}>
+                                        {/* <div className='timetable-button' onClick={() => {this.showTimeTableMain()}}>
                                         {(!this.state.viewTimeTable && !this.state.viewRevisionVideos)? (<div><svg className="icon-calendar icon-calendar-question">
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-calendar"></use>
                                         </svg>
@@ -424,7 +424,7 @@ class MainCategoryNav extends Component {
                                             <use xlinkHref="./icons/symbol-defs.svg#icon-arrow-left2"></use>
                                         </svg>
                                         back</div>}
-                                        </div>
+                                        </div> */}
                                         {(this.state.viewTimeTable || this.state.viewRevisionVideos) && <div className={`timetable-button-secondary ${this.state.viewTimeTable?"front":"back"}`} onClick={() => {this.showRevisionVideo()}}>
                                         {this.state.viewTimeTable? (<div className="floating-button">
                                             <div className="button-names">
@@ -454,10 +454,10 @@ class MainCategoryNav extends Component {
                                         </div>): <div className="video-body">
                                             <VideoView from_add={this.state.videos} delete_hide={true} revision={this.state.viewRevisionVideos} />
                                         </div>}
-                                        <div className="timetable-notification">
+                                        {/* <div className="timetable-notification">
                                             <p>Check timetable regularly before the start of class for instructions on how to attend</p>
                                             <p>Vérifiez régulièrement les implois du temps avant le début du cours pour savoir comment y assister.</p>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 {/* </div> */}
                                 {/* <div className="row main-body-content">
